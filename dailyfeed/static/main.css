@@ -1,0 +1,21 @@
+body {
+	color: #333333;
+	background-color: #fcfcfc;
+	margin-top: 5rem;
+}
+
+.bg-deepblue {
+	background-color: #00547a;
+}
+
+.site-header .navbar-nav .nav-link.active {
+  font-weight: 500;
+}
+
+.dropdown-multicol {
+	min-width: 35em;
+}
+
+p.card-text > a {
+	color: #333333;
+}
