@@ -31,17 +31,17 @@ topics = [
             {
                 "site_name": "The Verge",
                 "url": "https://www.theverge.com",
-                "rss_link": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml"
+                "rss_link": "https://www.theverge.com/rss/breaking/index.xml"
             },
             {
                 "site_name": "TechCrunch",
                 "url": "https://www.techcrunch.com",
-                "rss_link": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml"
+                "rss_link": "http://feeds.feedburner.com/TechCrunch/"
             },
             {
                 "site_name": "Wired",
                 "url": "https://www.wired.com",
-                "rss_link": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml"
+                "rss_link": "https://www.wired.com/feed/rss"
             }
         ]
     },
@@ -49,14 +49,14 @@ topics = [
         "topic_name": "Health",
         "sites": [
             {
-                "site_name": "Harvard Health",
-                "url": "https://www.health.harvard.edu",
-                "rss_link": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml"
+                "site_name": "Medical News Today",
+                "url": "https://www.medicalnewstoday.com/",
+                "rss_link": "https://rss.medicalnewstoday.com/featurednews.xml"
             },
             {
-                "site_name": "WebMD",
-                "url": "https://www.webmd.com",
-                "rss_link": "https://rss.nytimes.com/services/xml/rss/nyt/World.xml"
+                "site_name": "MayoClinic",
+                "url": "https://www.mayoclinic.org/",
+                "rss_link": "https://www.mayoclinic.org/about-this-site/rss-feeds"
             }
         ]
     }
