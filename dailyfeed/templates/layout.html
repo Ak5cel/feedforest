@@ -75,7 +75,7 @@
                         <div class="row">
                             {% for topic in topics %}
                                 <div class="col-sm-6 col-md-4">
-                                    <h6 class="dropdown-header">{{  topic.topic_name }}</h6>
+                                    <h6 class="dropdown-header">{{  topic.topic_name.upper() }}</h6>
                                     {% for rssfeed in topic.rss_feeds %}
                                     <a class="dropdown-item" href="#">
                                         <div class="form-check">
