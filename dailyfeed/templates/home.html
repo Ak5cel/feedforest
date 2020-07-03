@@ -5,21 +5,12 @@
 		<div class="col-sm-12 col-md-6 col-lg-4">
 			<div class="card mt-4">
 				<div class="card-body">
-					<h5 class="card-title">{{ topic['topic_name'] }}</h5>
-					{% for site in topic['sites'] %}
-						{% set rss_link = site['rss_link'] %}
-						{% set feed = parse(rss_link) %}
-						{% set entries = feed.entries[:3] %}
-						{% set title1 = entries[0].title %}
-	    				{% set title2 = entries[1].title %}
-	    				{% set title3 = entries[2].title %}
-						<a href="{{ site['url'] }}"><small class="text-muted">{{ site['site_name'] }}</small></a>
-						<p class="card-text"><a href="{{ entries[0].link }}">{{ title1 }}</a></p>
-						<a href="{{ site['url'] }}"><small class="text-muted">{{ site['site_name'] }}</small></a>
-						<p class="card-text"><a href="{{ entries[1].link }}">{{ title2 }}</a></p>
-						<a href="{{ site['url'] }}"><small class="text-muted">{{ site['site_name'] }}</small></a>
-						<p class="card-text"><a href="{{ entries[2].link }}">{{ title3 }}</a></p>
-						
+					<h5 class="card-title">{{ topic.topic_name }}</h5>
+					{% for article in topic.articles %}
+						<a href="{{ article.rssfeed.site_url }}">
+							<small class="text-muted">{{ article.rssfeed.site_name }}</small>
+						</a>
+						<p class="card-text"><a href="{{ article.link }}">{{ article.title }}</a></p>
 					{% endfor %}
 				</div>
 			</div>	

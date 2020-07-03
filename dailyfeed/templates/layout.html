@@ -55,7 +55,7 @@
                                     <input class="form-check-input" type="checkbox" value="" 
                                         id="{{ 'topic' ~ loop.index }}">
                                     <label class="form-check-label" for="{{ 'topic' ~ loop.index }}">
-                                        {{ topic['topic_name'] }}
+                                        {{ topic.topic_name }}
                                     </label>
                                 </div>
                             </a>
@@ -69,19 +69,19 @@
                 <div class="dropdown">
                     <button class="btn btn-outline-dark btn-block text-left dropdown-toggle" type="button" id="sitesDropdownButton" 
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Sites
+                        Feeds
                     </button>
                     <div class="dropdown-menu dropdown-multicol" aria-labelledby="sitesDropdownButton">
                         <div class="row">
                             {% for topic in topics %}
                                 <div class="col-sm-6 col-md-4">
-                                    <h6 class="dropdown-header">{{  topic['topic_name'] }}</h6>
-                                    {% for site in topic.sites %}
+                                    <h6 class="dropdown-header">{{  topic.topic_name }}</h6>
+                                    {% for rssfeed in topic.rss_feeds %}
                                     <a class="dropdown-item" href="#">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="" id="{{ 'site' ~ loop.index }}">
-                                            <label class="form-check-label" for="{{ 'site' ~ loop.index }}">
-                                                {{ site['site_name'] }}
+                                            <input class="form-check-input" type="checkbox" value="" id="{{ 'rssfeed' ~ loop.index }}">
+                                            <label class="form-check-label" for="{{ 'rssfeed' ~ loop.index }}">
+                                                {{ rssfeed.site_name }}
                                             </label>
                                         </div>
                                     </a>
