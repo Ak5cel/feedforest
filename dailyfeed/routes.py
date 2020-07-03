@@ -56,7 +56,7 @@ topics = [
             {
                 "site_name": "MayoClinic",
                 "url": "https://www.mayoclinic.org/",
-                "rss_link": "https://www.mayoclinic.org/about-this-site/rss-feeds"
+                "rss_link": "https://www.mayoclinic.org/rss/all-news"
             }
         ]
     }
