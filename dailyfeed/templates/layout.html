@@ -133,37 +133,6 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
-    <script>
-        function filterFeeds() {
-            console.log('Clicked Apply');
-            // Get the topics form
-            const topicsForm = document.getElementById('topicsForm');
-            // Get all the checkboxes in the form
-            const topicsCheckboxes = topicsForm.getElementsByClassName('form-check-input');
-            // See which all topics are selected
-            let selectedTopics = [];
-            for (var i = 0; i < topicsCheckboxes.length; i++) {
-                if (topicsCheckboxes[i].checked) {
-                    selectedTopics.push(topicsCheckboxes[i].name);
-                }
-            }
-            // Get all the filterable divs
-            let filterDivs = document.getElementsByClassName('filterdiv');
-            // Hide all filterdivs
-            for (var i = 0; i < filterDivs.length; i++) {
-                filterDivs[i].style.display = "none";
-            }
-            // Show only the divs matching selected topics
-            for (var i = 0; i < selectedTopics.length; i++) {
-                selectedTopic = selectedTopics[i];
-                for (var j = 0; j < filterDivs.length; j++) {
-                    if (filterDivs[j].classList.contains(selectedTopic)) {
-                        filterDivs[j].style.display = "";
-                    }
-                }
-            }
-            
-        }
-    </script>
+    <script src="{{ url_for('static', filename='filter-scripts.js') }}"></script>
 </body>
 </html>
