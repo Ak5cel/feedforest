@@ -2,7 +2,7 @@
 
 {% block content %}
 	{% for topic in topics %}
-		<div class="col-sm-12 col-md-6 col-lg-4">
+		<div class="col-sm-12 col-md-6 col-lg-4 filterdiv {{ topic.topic_name }}">
 			<div class="card mt-4">
 				<div class="card-body">
 					<h5 class="card-title">{{ topic.topic_name }}</h5>

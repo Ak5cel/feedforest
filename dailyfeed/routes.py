@@ -1,15 +1,20 @@
-from flask import render_template, url_for
+from flask import render_template, url_for, request, flash, redirect
 from feedparser import parse
 from dailyfeed import app
 from dailyfeed.models import Topic, Article
 
 
-@app.route('/')
-@app.route('/home')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/home', methods=['GET', 'POST'])
 def home():
-    topics = Topic.query.all()
-    articles = Article.query.all()
-    return render_template('home.html', title='Home', topics=topics, articles=articles, parse=parse)
+    if request.method == "GET":
+        topics = Topic.query.all()
+        articles = Article.query.all()
+    return render_template('home.html',
+                           title='Home',
+                           topics=topics,
+                           articles=articles,
+                           parse=parse)
 
 
 @app.route('/about')
