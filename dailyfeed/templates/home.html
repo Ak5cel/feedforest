@@ -7,10 +7,10 @@
 				<div class="card-body">
 					<h5 class="card-title">{{ topic.topic_name }}</h5>
 					{% for article in topic.articles %}
-						<a href="{{ article.rssfeed.site_url }}">
+						<a href="{{ article.rssfeed.site_url }}" class="site-link">
 							<small class="text-muted">{{ article.rssfeed.site_name }}</small>
 						</a>
-						<p class="card-text"><a href="{{ article.link }}">{{ article.title }}</a></p>
+						<p class="card-text article-link"><a href="{{ article.link }}">{{ article.title }}</a></p>
 					{% endfor %}
 				</div>
 			</div>	
