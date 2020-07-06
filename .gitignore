@@ -7,3 +7,5 @@ ehthumbs_vista.db
 __pycache__/
 
 venv/
+
+app.db
