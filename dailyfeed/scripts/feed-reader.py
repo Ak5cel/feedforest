@@ -15,7 +15,7 @@ from dailyfeed import db
 from dailyfeed.models import Topic, RSSFeed, Article
 
 # First, clear all entries from the 'article' table.
-# This is so that only the most recent records exit in the table
+# This is so that only the most recent records exist in the table
 # TODO: change this so that the previous records are kept temporarily. Only delete
 # them once the current script runs successfully.
 Article.query.delete()
