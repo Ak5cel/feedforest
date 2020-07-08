@@ -1,10 +1,10 @@
 from flask import render_template, url_for, request, flash, redirect
 from flask_login import current_user, login_user, logout_user
 from feedparser import parse
-from dailyfeed import app
-from dailyfeed.models import Topic, Article, User
-from dailyfeed.forms import LoginForm, SignupForm
-from dailyfeed import db, bcrypt
+from feedforest import app
+from feedforest.models import Topic, Article, User
+from feedforest.forms import LoginForm, SignupForm
+from feedforest import db, bcrypt
 
 
 @app.route('/', methods=['GET', 'POST'])
