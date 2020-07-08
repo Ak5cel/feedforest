@@ -1,4 +1,4 @@
-from dailyfeed import app
+from feedforest import app
 
 if __name__ == '__main__':
     app.run(debug=True)
