@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from feedforest import db, login_manager
+from dailyfeed import db, login_manager
 
 
 @login_manager.user_loader

@@ -11,9 +11,9 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
     {% if title %}
-        <title>FeedForest - {{ title }}</title>
+        <title>DailyFeed - {{ title }}</title>
     {% else %}
-        <title>FeedForest</title>
+        <title>DailyFeed</title>
     {% endif %}
     
 </head>
@@ -21,7 +21,7 @@
     <header class="site-header">
         <nav class='navbar navbar-expand-md navbar-dark bg-deepblue fixed-top'>
             <div class="container">
-                <a class="navbar-brand" href="{{ url_for('home') }}">feedforest</a>
+                <a class="navbar-brand" href="{{ url_for('home') }}">DailyFeed</a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle">
                     <span class="navbar-toggler-icon"></span>
                 </button>
