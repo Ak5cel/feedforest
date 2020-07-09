@@ -1,5 +1,22 @@
 {% extends "layout.html" %}
 
 {% block content %}
-	<h1>Account Page</h1>
+	<div class="col-sm-12 col-md-4 col-lg-3">
+		<!-- <nav class="nav vnav flex-column navbar-light bg-light border-right">
+			<a class="nav-item nav-link active" href="{{ url_for('account') }}">Profile Summary</a>
+			<a class="nav-item nav-link" href="{{ url_for('account') }}">Edit Profile</a>
+			<a class="nav-item nav-link" href="{{ url_for('account') }}">Selected Feeds</a>
+			<a class="nav-item nav-link" href="{{ url_for('account') }}">Email Preferences</a>
+		</nav> -->
+		<div class="list-group sidenav">
+			<a class="list-group-item list-group-item-action active" data-toggle="list" href="{{ url_for('account') }}">Profile Summary</a>
+			<a class="list-group-item list-group-item-action" data-toggle="list" href="{{ url_for('account') }}">Edit Profile</a>
+			<a class="list-group-item list-group-item-action" data-toggle="list" href="{{ url_for('account') }}">Selected Feeds</a>
+			<a class="list-group-item list-group-item-action" data-toggle="list" href="{{ url_for('account') }}">Email Preferences</a>
+		</div>
+	</div>
+	<div class="col-sm-12 col-md-8 col-lg-9">
+		{% block account_info %}
+		{% endblock %}
+	</div>
 {% endblock content %}

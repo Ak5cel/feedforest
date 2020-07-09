@@ -1,0 +1,55 @@
+{% extends "account.html" %}
+
+{% block account_info %}
+	<div class="bg-light border p-3 mb-5">
+		<div class="media content-section p-3 mb-3">
+			<img class="rounded-circle profile-pic mr-3" src="{{ url_for('static', filename='profile-pics/cutebaby.jpg') }}">
+			<div class="media-body d-flex flex-column align-items-start align-self-center">
+				<h3 class="font-weight-bold">{{ current_user.username }}</h3>
+				<p class="text-secondary">{{ current_user.email }}</p>
+				<a class="btn btn-outline-secondary btn-sm mt-1" href="{{ url_for('edit_profile') }}">Edit Profile</a>
+			</div>
+		</div>
+		<div class="content-section mb-3">
+			<div class="d-flex justify-content-between">
+				<h5>Selected Feeds</h5>
+				{% if current_user.selected_feeds[0] %}
+					<a class="btn btn-outline-secondary btn-sm" href="{{ url_for('edit_profile') }}">Edit Feeds</a>
+				{% else %}
+					<a class="btn btn-outline-secondary btn-sm" href="{{ url_for('edit_profile') }}">Add Feeds</a>
+				{% endif %}
+			</div>
+			{% if current_user.selected_feeds[0] %}
+				<ul class="list-group list-group-flush">
+					{% for selected_feed in current_user.selected_feeds %}
+						<li class="list-group-item">
+							<small class="text-muted">{{ selected_feed.site_name }}</small>
+							<p class="mb-0"><a href="{{ selected_feed.rss_link }}">{{ selected_feed.rss_link }}</a></p>
+						</li>
+					{% endfor %}
+				</ul>
+			{% else %}
+				<div class="d-flex flex-column align-items-center justify-content-center" style="height: 150px">
+					<small class="text-muted mb-2">No feeds selected</small>
+					<small>
+						Click 
+						<a href="{{ url_for('edit_profile') }}">Add Feeds</a>
+						to start adding feeds!
+					</small>
+				</div>
+			{% endif %}
+		</div>
+		<div class="content-section">
+			<div class="d-flex justify-content-between">
+				<h5>Email Preferences</h5>
+				<a class="btn btn-outline-secondary btn-sm" href="{{ url_for('edit_profile') }}">Edit Preferences</a>	
+			</div>
+			<ul class="list-group list-group-flush">
+				<li class="list-group-item">
+					<small>Email Frequency</small>
+					<p class="mb-0">Everyday @ 7:00 am</p>
+				</li>
+			</ul>
+		</div>
+	</div>
+{% endblock %}

@@ -8,8 +8,16 @@ body {
 	background-color: #00547a;
 }
 
+.content-section {
+	background-color: #ffffff;
+	padding: 15px;
+	border: 1px solid #dddddd;
+	border-radius: 3px;
+	/*margin-bottom: 15px;*/
+}
+
 .site-header .navbar-nav .nav-link.active {
-  font-weight: 500;
+  	font-weight: 500;
 }
 
 .dropdown-multicol {
@@ -19,3 +27,38 @@ body {
 p.card-text > a {
 	color: #333333;
 }
+
+nav.vnav .nav-link{
+	padding: 0.6rem 1rem;
+	color: gray;
+}
+
+nav.vnav .nav-link:hover{
+	background-color: #f4f4f4;
+}
+
+nav.vnav .nav-link:active{
+	background-color: #f0f0f0;
+}
+
+nav.vnav .nav-link.active{
+	background-color: #d4f981;
+	color: #333333;
+	font-weight: 500;
+}
+
+img.profile-pic {
+	width: 150px;
+	height: 150px;
+}
+
+.list-group.sidenav {
+	border-radius: 0;
+}
+
+.list-group-item-action.active {
+	background-color: var(--gray);
+	border-color: var(--gray);
+}
+
+

@@ -51,7 +51,8 @@ def login():
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
                 return redirect(url_for('my_feeds'))
-            return redirect(url_for(next_page))
+            next_view_name = next_page.split('/')[1]
+            return redirect(url_for(next_view_name))
         else:
             flash('Login unsuccessful. Please check email and password.', 'danger')
     return render_template('login.html', title='Login', form=form)
@@ -76,9 +77,16 @@ def my_articles():
 
 
 @app.route('/account')
+@app.route('/account/summary')
 @login_required
 def account():
-    return render_template('account.html', title='About Us')
+    return render_template('profile-summary.html', title='Account')
+
+
+@app.route('/account/edit-profile')
+@login_required
+def edit_profile():
+    return render_template('about.html', title='About Us')
 
 
 @app.route('/about')
