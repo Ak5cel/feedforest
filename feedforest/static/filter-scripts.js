@@ -1,3 +1,4 @@
+// SCRIPTS FOR THE HOME PAGE -------------------------------------------------------------
 function filterFeedsByTopic() {
             // Get the topics form
             const topicsForm = document.getElementById('topicsForm');
@@ -72,3 +73,18 @@ function filterFeedsBySite() {
                 
             }
         }
+// END SCRIPTS FOR THE HOME PAGE ------------------------------------------------------
+
+$(document).ready(function() {
+    $('.topic-selector').on('click', (e) => {
+        let topic = e.target.id;
+        if (topic == 'all') {
+            $('.feed-info').show().addClass('d-flex');
+        } else {
+            // Hide all feeds
+            $('.feed-info').hide().removeClass('d-flex');
+            // Show just the feeds from the selected topic
+            $('.feed-info' + '.' + topic).show().addClass('d-flex');    
+        }
+    })
+})
