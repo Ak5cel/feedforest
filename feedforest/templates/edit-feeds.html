@@ -4,13 +4,13 @@
 	<div class="content-section mb-3">
 		<h5 class="mb-4">Edit Feeds</h5>
 		<div class="dropdown">
-			<button class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">
-				Topics
+			<button id="topicsDropdown" class="btn btn-outline-secondary dropdown-toggle mb-2" data-toggle="dropdown">
+				All Topics
 			</button>
 			<div class="dropdown-menu">
-				<a class="dropdown-item topic-selector" id="all" href="#">All Topics</a>
+				<a class="dropdown-item dropdown-link topic-selector active" id="all" href="#">All Topics</a>
 				{% for topic in topics %}
-					<a class="dropdown-item topic-selector"  id="{{ topic.topic_name }}" href="#">{{ topic.topic_name }}</a>
+					<a class="dropdown-item dropdown-link topic-selector"  id="{{ topic.topic_name }}" href="#">{{ topic.topic_name }}</a>
 				{% endfor %}
 			</div>
 			<ul class="list-group list-group-flush">
