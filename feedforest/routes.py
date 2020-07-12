@@ -3,8 +3,8 @@ from flask_login import current_user, login_user, logout_user, login_required
 from feedparser import parse
 from werkzeug.urls import url_parse
 from feedforest import app
-from feedforest.models import Topic, Article, User
-from feedforest.forms import LoginForm, SignupForm
+from feedforest.models import Topic, RSSFeed, Article, User
+from feedforest.forms import LoginForm, SignupForm, EmptyForm
 from feedforest import db, bcrypt
 
 
@@ -87,6 +87,40 @@ def account():
 @login_required
 def edit_profile():
     return render_template('about.html', title='About Us')
+
+
+@app.route('/account/edit-feeds', methods=['GET', 'POST'])
+@login_required
+def edit_feeds():
+    topics = Topic.query.all()
+    feeds = RSSFeed.query.all()
+    empty_form = EmptyForm()
+    if empty_form.validate_on_submit():
+        result = request.form
+        flash(result.get('submit'), 'info')
+    return render_template('edit-feeds.html', title='Account - Edit Feeds', topics=topics, feeds=feeds, empty_form=empty_form)
+
+
+@app.route('/account/edit-feeds/add', methods=['POST'])
+@login_required
+def add_feed():
+    feed_id = request.args.get('feed_id', type=int)
+    current_user.add_feed(feed_id)
+    return "Added feed"
+
+
+@app.route('/account/edit-feeds/remove', methods=['POST'])
+@login_required
+def remove_feed():
+    feed_id = request.args.get('feed_id', type=int)
+    current_user.remove_feed(feed_id)
+    return "Removed feed"
+
+
+@app.route('/account/edit-email-pref')
+@login_required
+def edit_email_pref():
+    return render_template('edit-email-pref.html', title='Account - Edit Feeds')
 
 
 @app.route('/about')

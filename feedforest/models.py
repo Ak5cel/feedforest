@@ -56,5 +56,19 @@ class User(db.Model, UserMixin):
     selected_feeds = db.relationship('RSSFeed', secondary=user_feed_map, lazy='subquery',
                                      backref=db.backref('selected_by', lazy=True))
 
+    def add_feed(self, feed_id):
+        if int(feed_id):
+            feed = RSSFeed.query.get(int(feed_id))
+            if feed not in self.selected_feeds:
+                self.selected_feeds.append(feed)
+                db.session.commit()
+
+    def remove_feed(self, feed_id):
+        if int(feed_id):
+            feed = RSSFeed.query.get(int(feed_id))
+            if feed in self.selected_feeds:
+                self.selected_feeds.remove(feed)
+                db.session.commit()
+
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"

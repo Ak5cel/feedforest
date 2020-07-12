@@ -31,3 +31,7 @@ class SignupForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user:
             raise ValidationError('That email is taken. Please choose a different one.')
+
+
+class EmptyForm(FlaskForm):
+    submit = SubmitField('Submit')
