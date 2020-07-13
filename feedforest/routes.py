@@ -73,7 +73,8 @@ def my_feeds():
 @app.route('/myarticles')
 @login_required
 def my_articles():
-    return render_template('myarticles.html', title='My Articles')
+    empty_form = EmptyForm()
+    return render_template('myarticles.html', title='My Articles', empty_form=empty_form)
 
 
 @app.route('/account')
@@ -130,7 +131,7 @@ def bookmark_article():
 def unbookmark_article():
     article_id = request.args.get('article_id', type=int)
     current_user.unbookmark_article(article_id)
-    return "Un-bookmarked article"
+    return redirect(url_for('my_articles'))
 
 
 @app.route('/account/edit-email-pref')
