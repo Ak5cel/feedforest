@@ -28,19 +28,25 @@
 
                 <div class="collapse navbar-collapse" id="navbarToggle">
                     <div class="navbar-nav mr-auto">
-                        <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
+                        <a class="nav-item nav-link {% if request.endpoint == 'home' %} active {% endif %}" 
+                        href="{{ url_for('home') }}">Home</a>
                         {% if current_user.is_authenticated %}
-                            <a class="nav-item nav-link" href="{{ url_for('my_feeds') }}">My Feeds</a>
-                            <a class="nav-item nav-link" href="{{ url_for('my_articles') }}">My Articles</a>
+                            <a class="nav-item nav-link {% if request.endpoint == 'my_feeds' %} active {% endif %}" 
+                            href="{{ url_for('my_feeds') }}">My Feeds</a>
+                            <a class="nav-item nav-link {% if request.endpoint == 'my_articles' %} active {% endif %}" 
+                            href="{{ url_for('my_articles') }}">My Articles</a>
                         {% endif %}
                     </div>
                     <div class="navbar-nav">
                         {% if current_user.is_authenticated %}
-                            <a class="nav-item nav-link" href="{{ url_for('account') }}">Account</a>
+                            <a class="nav-item nav-link {% if request.endpoint == 'account' %} active {% endif %}" 
+                            href="{{ url_for('account') }}">Account</a>
                             <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
                         {% else %}
-                            <a class="nav-item nav-link" href="{{ url_for('login') }}">Login</a>
-                            <a class="nav-item nav-link" href="{{ url_for('signup') }}">Sign up</a>
+                            <a class="nav-item nav-link {% if request.endpoint == 'login' %} active {% endif %}" 
+                            href="{{ url_for('login') }}">Login</a>
+                            <a class="nav-item nav-link {% if request.endpoint == 'signup' %} active {% endif %}" 
+                            href="{{ url_for('signup') }}">Sign up</a>
                         {% endif %}
                     </div>
                 </div>  
