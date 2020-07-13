@@ -48,6 +48,7 @@ img.profile-pic {
 	border-radius: 0;
 }
 
+/*CARD COLUMNS SETTINGS*/
 /*Extra small devices (portrait phones, less than 576px)
 No media query for `xs` since this is the default in Bootstrap*/
 
@@ -77,4 +78,22 @@ No media query for `xs` since this is the default in Bootstrap*/
 	.card-columns {
 		column-count: 3;
 	}
+}
+
+.article .fa-bookmark {
+	visibility: hidden;
+	color: #cbea86;
+}
+
+.article:hover .fa-bookmark {
+	visibility: visible;
+}
+
+.article .fa-bookmark:hover {
+	font-weight: 900;
+}
+
+.article[data-status="bookmarked"] .fa-bookmark {
+	visibility: visible;
+	font-weight: 900;
 }

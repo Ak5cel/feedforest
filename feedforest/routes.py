@@ -73,7 +73,7 @@ def my_feeds():
 @app.route('/myarticles')
 @login_required
 def my_articles():
-    return render_template('about.html', title='About Us')
+    return render_template('myarticles.html', title='My Articles')
 
 
 @app.route('/account')
@@ -115,6 +115,22 @@ def remove_feed():
     feed_id = request.args.get('feed_id', type=int)
     current_user.remove_feed(feed_id)
     return "Removed feed"
+
+
+@app.route('/bookmark', methods=['POST'])
+@login_required
+def bookmark_article():
+    article_id = request.args.get('article_id', type=int)
+    current_user.bookmark_article(article_id)
+    return "Bookmarked article"
+
+
+@app.route('/unbookmark', methods=['POST'])
+@login_required
+def unbookmark_article():
+    article_id = request.args.get('article_id', type=int)
+    current_user.unbookmark_article(article_id)
+    return "Un-bookmarked article"
 
 
 @app.route('/account/edit-email-pref')

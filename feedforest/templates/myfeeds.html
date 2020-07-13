@@ -11,9 +11,26 @@
 							<a class="text-dark" href="{{ feed.rss_link }}" title="{{ feed.rss_link }}">{{ feed.site_name }}</a>
 						</h5>
 						{% for article in feed.articles %}
-							<p class="card-text">
-								<a href="{{ article.link }}">{{ article.title }}</a>
-							</p>
+							{% if article in current_user.bookmarked_articles %}
+								<div class="article d-flex justify-content-between" data-status="bookmarked" data-article-id="{{ article.id }}">
+									<p class="card-text pr-4 pb-1">
+										<a href="{{ article.link }}">{{ article.title }}</a>
+									</p>
+									<a href="#" class="toggle-bookmark">
+										<i class="far fa-bookmark"></i>
+									</a>
+								</div>	
+							{% else %}
+								<div class="article d-flex justify-content-between" data-status="not-bookmarked" data-article-id="{{ article.id }}">
+									<p class="card-text pr-4 pb-1">
+										<a href="{{ article.link }}">{{ article.title }}</a>
+									</p>
+									<a href="#" class="toggle-bookmark">
+										<i class="far fa-bookmark"></i>
+									</a>
+								</div>
+							{% endif %}
+														
 						{% endfor %}
 					</div>
 				</div>

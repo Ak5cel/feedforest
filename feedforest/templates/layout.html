@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
-
+    <script src="https://kit.fontawesome.com/775a21356d.js" crossorigin="anonymous"></script>
     {% if title %}
         <title>FeedForest | {{ title }}</title>
     {% else %}
@@ -90,5 +90,9 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
     <script src="{{ url_for('static', filename='filter-scripts.js') }}"></script>
     <script src="{{ url_for('static', filename='add-remove-feeds.js') }}"></script>
+    <script src="{{ url_for('static', filename='bookmark-article.js') }}"></script>
+    <script type=text/javascript>
+      $SCRIPT_ROOT = {{ request.script_root|tojson|safe }}; 
+    </script>
 </body>
 </html>
