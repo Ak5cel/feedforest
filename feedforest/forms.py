@@ -35,3 +35,22 @@ class SignupForm(FlaskForm):
 
 class EmptyForm(FlaskForm):
     submit = SubmitField('Submit')
+
+
+class RequestPasswordResetForm(FlaskForm):
+    email = StringField('Email',
+                        validators=[DataRequired(), Email(message='Not a valid email address')])
+    submit = SubmitField('Send Reset Request')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is None:
+            raise ValidationError('No account found with that email. Please signup first.')
+
+
+class PasswordResetForm(FlaskForm):
+    password = PasswordField('New Password',
+                             validators=[DataRequired(), Length(min=10, max=50)])
+    confirm_password = PasswordField('Confirm Password',
+                                     validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')

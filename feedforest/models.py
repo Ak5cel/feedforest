@@ -1,5 +1,9 @@
+from flask import url_for
 from flask_login import UserMixin
-from feedforest import db, login_manager
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+import smtplib
+import ssl
+from feedforest import db, login_manager, app
 
 
 @login_manager.user_loader
@@ -90,6 +94,50 @@ class User(db.Model, UserMixin):
             if article in self.bookmarked_articles:
                 self.bookmarked_articles.remove(article)
                 db.session.commit()
+
+    def generate_token(self, expires_sec=1800):
+        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+        except Exception:
+            return None
+        return User.query.get(user_id)
+
+    def send_password_reset_email(self, token):
+        reset_password_link = url_for('reset_password_with_token', token=token, _external=True)
+        subject = 'Reset Password'
+        sender_email = app.config['MAIL_USERNAME']
+        receiver_email = self.email
+        body = f"""Please visit the following link to reset your password:
+        {reset_password_link}
+        """
+        message = f"""From: FeedForest <{sender_email}>
+To: {self.username} <{receiver_email}>
+Subject: [FeedForest] Reset Password
+
+Dear {self.username},
+
+Please visit the following link to reset your password:
+{reset_password_link}
+(The link expires in 30 minutes).
+
+If you have not requested a password reset, simply ignore this message.
+
+Sincerely,
+The FeedForest Team
+        """
+
+        context = ssl.create_default_context()
+        with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as server:
+            server.ehlo()
+            server.starttls(context=context)
+            server.login(sender_email, app.config['MAIL_PASSWORD'])
+            server.sendmail(sender_email, receiver_email, message)
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"

@@ -4,7 +4,8 @@ from feedparser import parse
 from werkzeug.urls import url_parse
 from feedforest import app
 from feedforest.models import Topic, RSSFeed, Article, User
-from feedforest.forms import LoginForm, SignupForm, EmptyForm
+from feedforest.forms import (LoginForm, SignupForm, EmptyForm,
+                              RequestPasswordResetForm, PasswordResetForm)
 from feedforest import db, bcrypt
 
 
@@ -47,7 +48,6 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password_hash, form.password.data):
             login_user(user, remember=form.remember.data)
-            flash('Login successful.', 'success')
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
                 return redirect(url_for('my_feeds'))
@@ -99,7 +99,8 @@ def edit_feeds():
     if empty_form.validate_on_submit():
         result = request.form
         flash(result.get('submit'), 'info')
-    return render_template('edit-feeds.html', title='Account - Edit Feeds', topics=topics, feeds=feeds, empty_form=empty_form)
+    return render_template('edit-feeds.html', title='Account - Edit Feeds',
+                           topics=topics, feeds=feeds, empty_form=empty_form)
 
 
 @app.route('/account/edit-feeds/add', methods=['POST'])
@@ -132,6 +133,38 @@ def unbookmark_article():
     article_id = request.args.get('article_id', type=int)
     current_user.unbookmark_article(article_id)
     return redirect(url_for('my_articles'))
+
+
+@app.route('/reset-password', methods=['GET', 'POST'])
+def request_password_reset():
+    if current_user.is_authenticated:
+        return redirect(url_for('myfeeds'))
+    form = RequestPasswordResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        token = user.generate_token()
+        user.send_password_reset_email(token)
+        flash('Please check your email for a link to reset your password. The link expires in 30 minutes.', 'info')
+        return redirect(url_for('login'))
+    return render_template('request-password-reset.html', title='Reset Password', form=form)
+
+
+@app.route('/reset-password/<string:token>', methods=['GET', 'POST'])
+def reset_password_with_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('myfeeds'))
+    form = PasswordResetForm()
+    if form.validate_on_submit():
+        user = User.verify_token(token)
+        if user is None:
+            flash('Token expired or invalid.', 'warning')
+            return redirect(url_for('request_password_reset'))
+        pw_hash = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user.password_hash = pw_hash
+        db.session.commit()
+        flash('Your password has been reset. You may now login.', 'success')
+        return redirect(url_for('login'))
+    return render_template('password-reset.html', title='Reset Password', form=form)
 
 
 @app.route('/account/edit-email-pref')
