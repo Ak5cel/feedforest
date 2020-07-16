@@ -62,10 +62,14 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(30), index=True, unique=True, nullable=False)
     email = db.Column(db.String(120), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
+    email_verified = db.Column(db.Boolean, nullable=False, server_default='true')
     selected_feeds = db.relationship('RSSFeed', secondary=user_feed_map, lazy='subquery',
                                      backref=db.backref('selected_by', lazy=True))
     bookmarked_articles = db.relationship('Article', secondary=user_article_map, lazy='subquery',
                                           backref=db.backref('bookmarked_by', lazy=True))
+
+    def set_email_verified(self, bool):
+        self.email_verified = bool
 
     def add_feed(self, feed_id):
         if int(feed_id):
@@ -95,7 +99,7 @@ class User(db.Model, UserMixin):
                 self.bookmarked_articles.remove(article)
                 db.session.commit()
 
-    def generate_token(self, expires_sec=1800):
+    def generate_token(self, expires_sec=None):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)
         return s.dumps({'user_id': self.id}).decode('utf-8')
 
@@ -108,14 +112,19 @@ class User(db.Model, UserMixin):
             return None
         return User.query.get(user_id)
 
+    @staticmethod
+    def send_email(sender_email, receiver_email, message):
+        context = ssl.create_default_context()
+        with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as server:
+            server.ehlo()
+            server.starttls(context=context)
+            server.login(sender_email, app.config['MAIL_PASSWORD'])
+            server.sendmail(sender_email, receiver_email, message)
+
     def send_password_reset_email(self, token):
         reset_password_link = url_for('reset_password_with_token', token=token, _external=True)
-        subject = 'Reset Password'
         sender_email = app.config['MAIL_USERNAME']
         receiver_email = self.email
-        body = f"""Please visit the following link to reset your password:
-        {reset_password_link}
-        """
         message = f"""From: FeedForest <{sender_email}>
 To: {self.username} <{receiver_email}>
 Subject: [FeedForest] Reset Password
@@ -131,13 +140,25 @@ If you have not requested a password reset, simply ignore this message.
 Sincerely,
 The FeedForest Team
         """
+        User.send_email(sender_email, receiver_email, message)
 
-        context = ssl.create_default_context()
-        with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as server:
-            server.ehlo()
-            server.starttls(context=context)
-            server.login(sender_email, app.config['MAIL_PASSWORD'])
-            server.sendmail(sender_email, receiver_email, message)
+    def send_email_verification_email(self, token):
+        verification_link = url_for('verify_email_with_token', token=token, _external=True)
+        sender_email = app.config['MAIL_USERNAME']
+        receiver_email = self.email
+        message = f"""From: FeedForest <{sender_email}>
+To: {self.username} <{receiver_email}>
+Subject: [FeedForest] Verify Email
+
+Dear {self.username},
+
+Please visit the following link to verify your email:
+{verification_link}
+
+Sincerely,
+The FeedForest Team
+        """
+        User.send_email(sender_email, receiver_email, message)
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"

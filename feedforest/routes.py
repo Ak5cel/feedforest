@@ -32,10 +32,13 @@ def signup():
         new_user = User(username=form.username.data,
                         email=form.email.data,
                         password_hash=pw_hash)
+        new_user.set_email_verified(False)
         db.session.add(new_user)
         db.session.commit()
-        flash('Account created successfully! You may now login.', 'success')
-        return redirect(url_for('login'))
+        token = new_user.generate_token()
+        new_user.send_email_verification_email(token)
+        flash('Account created successfully! We have sent you an email to verify your email address.', 'success')
+        return render_template('email-verification-sent.html', title='Verify email')
     return render_template('signup.html', title='Sign up', form=form)
 
 
@@ -46,7 +49,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password_hash, form.password.data):
+        if user and bcrypt.check_password_hash(user.password_hash, form.password.data) and user.email_verified:
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
@@ -54,7 +57,7 @@ def login():
             next_view_name = next_page.split('/')[1]
             return redirect(url_for(next_view_name))
         else:
-            flash('Login unsuccessful. Please check email and password.', 'danger')
+            flash('Login unsuccessful. Please check if you are using a verified email and the correct password.', 'danger')
     return render_template('login.html', title='Login', form=form)
 
 
@@ -138,11 +141,11 @@ def unbookmark_article():
 @app.route('/reset-password', methods=['GET', 'POST'])
 def request_password_reset():
     if current_user.is_authenticated:
-        return redirect(url_for('myfeeds'))
+        return redirect(url_for('my_feeds'))
     form = RequestPasswordResetForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        token = user.generate_token()
+        token = user.generate_token(expires_sec=1800)
         user.send_password_reset_email(token)
         flash('Please check your email for a link to reset your password. The link expires in 30 minutes.', 'info')
         return redirect(url_for('login'))
@@ -152,7 +155,7 @@ def request_password_reset():
 @app.route('/reset-password/<string:token>', methods=['GET', 'POST'])
 def reset_password_with_token(token):
     if current_user.is_authenticated:
-        return redirect(url_for('myfeeds'))
+        return redirect(url_for('my_feeds'))
     form = PasswordResetForm()
     if form.validate_on_submit():
         user = User.verify_token(token)
@@ -165,6 +168,20 @@ def reset_password_with_token(token):
         flash('Your password has been reset. You may now login.', 'success')
         return redirect(url_for('login'))
     return render_template('password-reset.html', title='Reset Password', form=form)
+
+
+@app.route('/verify-email/<string:token>')
+def verify_email_with_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('my_feeds'))
+    user = User.verify_token(token)
+    if user is None:
+        flash('Invalid Token.', 'warning')
+        return redirect(url_for('home'))
+    user.email_verified = True
+    db.session.commit()
+    flash('Email verified. You may now login.', 'success')
+    return redirect(url_for('login'))
 
 
 @app.route('/account/edit-email-pref')
