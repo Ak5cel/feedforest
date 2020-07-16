@@ -2,11 +2,10 @@ from flask import render_template, url_for, request, flash, redirect
 from flask_login import current_user, login_user, logout_user, login_required
 from feedparser import parse
 from werkzeug.urls import url_parse
-from feedforest import app
-from feedforest.models import Topic, RSSFeed, Article, User
-from feedforest.forms import (LoginForm, SignupForm, EmptyForm,
-                              RequestPasswordResetForm, PasswordResetForm)
-from feedforest import db, bcrypt
+from .models import Topic, RSSFeed, Article, User
+from .forms import (LoginForm, SignupForm, EmptyForm,
+                    RequestPasswordResetForm, PasswordResetForm)
+from . import app, db, bcrypt
 
 
 @app.route('/')

@@ -3,7 +3,7 @@ from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import smtplib
 import ssl
-from feedforest import db, login_manager, app
+from . import db, login_manager, app
 
 
 @login_manager.user_loader
