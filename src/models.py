@@ -3,7 +3,7 @@ from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import smtplib
 import ssl
-from . import db, login_manager, app
+from . import db, login_manager, app, bcrypt
 
 
 @login_manager.user_loader
@@ -67,6 +67,13 @@ class User(db.Model, UserMixin):
                                      backref=db.backref('selected_by', lazy=True))
     bookmarked_articles = db.relationship('Article', secondary=user_article_map, lazy='subquery',
                                           backref=db.backref('bookmarked_by', lazy=True))
+
+    def check_password(self, pw):
+        return bcrypt.check_password_hash(self.password_hash, pw)
+
+    @staticmethod
+    def hash_password(pw):
+        return bcrypt.generate_password_hash(pw).decode('utf-8')
 
     def set_email_verified(self, bool):
         self.email_verified = bool

@@ -34,7 +34,7 @@
 					    {% endif %}
 					</div>
 					<div class="form-group col-sm-12 col-md-8 col-xl-7">
-					    {{ details_form.submit(class="btn btn-success btn-sm mt-3") }}
+					    {{ details_form.submit(class="btn btn-success btn-sm mt-3", value="Update Profile") }}
 					</div>		
 				</div>
 			</fieldset>
@@ -86,7 +86,7 @@
 						{% endif %}
 					</div>
 					<div class="form-group col-sm-12 col-md-8 col-xl-7">
-					    {{ password_form.submit(class="btn btn-success btn-sm mt-3") }}
+					    {{ password_form.submit_pwd(class="btn btn-success btn-sm mt-3", value="Update Password") }}
 					</div>	
 				</div>
 			</fieldset>

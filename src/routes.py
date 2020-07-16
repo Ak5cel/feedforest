@@ -28,7 +28,7 @@ def signup():
         return redirect(url_for('my_feeds'))
     form = SignupForm()
     if form.validate_on_submit():
-        pw_hash = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        pw_hash = User.hash_password(form.password.data)
         new_user = User(username=form.username.data,
                         email=form.email.data,
                         password_hash=pw_hash)
@@ -49,7 +49,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user and bcrypt.check_password_hash(user.password_hash, form.password.data) and user.email_verified:
+        if user and user.check_password(form.password.data) and user.email_verified:
             login_user(user, remember=form.remember.data)
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
@@ -93,7 +93,7 @@ def account():
 def edit_profile():
     details_form = EditDetailsForm()
     password_form = ChangePasswordForm()
-    if details_form.validate_on_submit():
+    if details_form.submit.data and details_form.validate():
         if details_form.username.data != current_user.username:
             current_user.username = details_form.username.data
             flash('Your username has been updated!', 'success')
@@ -104,7 +104,15 @@ def edit_profile():
                   "\nYour current email will remain unchanged until the new email "
                   "is verified.", 'info')
             return redirect(url_for('edit_profile'))
-    if request.method == 'GET':
+    elif password_form.submit_pwd.data and password_form.validate():
+        if not current_user.check_password(password_form.old_password.data):
+            flash('Old password incorrect.', 'danger')
+        else:
+            current_user.password_hash = User.hash_password(password_form.new_password.data)
+            db.session.commit()
+            flash('Password updated!', 'success')
+        return redirect(url_for('edit_profile'))
+    else:
         details_form.username.data = current_user.username
         details_form.email.data = current_user.email
     return render_template('edit-profile.html', title='Edit Profile',
