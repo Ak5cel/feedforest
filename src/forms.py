@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from flask_login import current_user
 from .models import User
 
 
@@ -54,3 +55,31 @@ class PasswordResetForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+
+class EditDetailsForm(FlaskForm):
+    username = StringField('Username',
+                           validators=[DataRequired(), Length(min=3, max=30)])
+    email = StringField('Email',
+                        validators=[DataRequired(), Email(message='Not a valid email address')])
+    submit = SubmitField('Update Profile')
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user and user.username != current_user.username:
+            raise ValidationError('That username is taken. Please choose a different one.')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user and user.email != current_user.email:
+            raise ValidationError('That email is taken. Please choose a different one.')
+
+
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField('Old Password',
+                                 validators=[DataRequired(), Length(min=10, max=50)])
+    new_password = PasswordField('New Password',
+                                 validators=[DataRequired(), Length(min=10, max=50)])
+    confirm_password = PasswordField('Confirm New Password',
+                                     validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Update Password')

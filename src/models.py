@@ -101,7 +101,7 @@ class User(db.Model, UserMixin):
 
     def generate_token(self, expires_sec=None):
         s = Serializer(app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
+        return s.dumps({"user_id": self.id}).decode('utf-8')
 
     @staticmethod
     def verify_token(token):
@@ -111,6 +111,21 @@ class User(db.Model, UserMixin):
         except Exception:
             return None
         return User.query.get(user_id)
+
+    def generate_token_with_email(self, email, expires_sec=None):
+        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({"user_id": self.id, "email": email}).decode('utf-8')
+
+    @staticmethod
+    def verify_token_with_email(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+            email = s.loads(token)['email']
+        except Exception:
+            return None
+        user = User.query.get(user_id)
+        return user, email
 
     @staticmethod
     def send_email(sender_email, receiver_email, message):
@@ -143,7 +158,7 @@ The FeedForest Team
         User.send_email(sender_email, receiver_email, message)
 
     def send_email_verification_email(self, token):
-        verification_link = url_for('verify_email_with_token', token=token, _external=True)
+        verification_link = url_for('verify_email', token=token, _external=True)
         sender_email = app.config['MAIL_USERNAME']
         receiver_email = self.email
         message = f"""From: FeedForest <{sender_email}>
@@ -154,6 +169,26 @@ Dear {self.username},
 
 Please visit the following link to verify your email:
 {verification_link}
+
+Sincerely,
+The FeedForest Team
+        """
+        User.send_email(sender_email, receiver_email, message)
+
+    def send_email_change_email(self, token, new_email):
+        verification_link = url_for('verify_new_email', token=token, _external=True)
+        sender_email = app.config['MAIL_USERNAME']
+        receiver_email = new_email
+        message = f"""From: FeedForest <{sender_email}>
+To: {self.username} <{receiver_email}>
+Subject: [FeedForest] Verify Email
+
+Dear {self.username},
+
+Please visit the following link to verify your new email:
+{verification_link}
+
+(Your account email will be changed only after verification).
 
 Sincerely,
 The FeedForest Team

@@ -4,7 +4,8 @@ from feedparser import parse
 from werkzeug.urls import url_parse
 from .models import Topic, RSSFeed, Article, User
 from .forms import (LoginForm, SignupForm, EmptyForm,
-                    RequestPasswordResetForm, PasswordResetForm)
+                    RequestPasswordResetForm, PasswordResetForm,
+                    EditDetailsForm, ChangePasswordForm)
 from . import app, db, bcrypt
 
 
@@ -76,7 +77,8 @@ def my_feeds():
 @login_required
 def my_articles():
     empty_form = EmptyForm()
-    return render_template('myarticles.html', title='My Articles', empty_form=empty_form)
+    return render_template('myarticles.html', title='My Articles',
+                           empty_form=empty_form)
 
 
 @app.route('/account')
@@ -86,10 +88,27 @@ def account():
     return render_template('profile-summary.html', title='Account')
 
 
-@app.route('/account/edit-profile')
+@app.route('/account/edit-profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    return render_template('about.html', title='About Us')
+    details_form = EditDetailsForm()
+    password_form = ChangePasswordForm()
+    if details_form.validate_on_submit():
+        if details_form.username.data != current_user.username:
+            current_user.username = details_form.username.data
+            flash('Your username has been updated!', 'success')
+        if details_form.email.data != current_user.email:
+            token = current_user.generate_token_with_email(details_form.email.data)
+            current_user.send_email_change_email(token=token, new_email=details_form.email.data)
+            flash("A verification link has been sent to your new email. "
+                  "\nYour current email will remain unchanged until the new email "
+                  "is verified.", 'info')
+            return redirect(url_for('edit_profile'))
+    if request.method == 'GET':
+        details_form.username.data = current_user.username
+        details_form.email.data = current_user.email
+    return render_template('edit-profile.html', title='Edit Profile',
+                           details_form=details_form, password_form=password_form)
 
 
 @app.route('/account/edit-feeds', methods=['GET', 'POST'])
@@ -170,8 +189,9 @@ def reset_password_with_token(token):
 
 
 @app.route('/verify-email/<string:token>')
-def verify_email_with_token(token):
+def verify_email(token):
     if current_user.is_authenticated:
+        flash('Email already verified!.', 'info')
         return redirect(url_for('my_feeds'))
     user = User.verify_token(token)
     if user is None:
@@ -181,6 +201,19 @@ def verify_email_with_token(token):
     db.session.commit()
     flash('Email verified. You may now login.', 'success')
     return redirect(url_for('login'))
+
+
+@app.route('/verify-new-email/<string:token>')
+def verify_new_email(token):
+    status = User.verify_token_with_email(token)
+    if status is None:
+        flash('Invalid Token.', 'warning')
+    else:
+        user, email = status
+        user.email = email
+        db.session.commit()
+        flash('Email changed! New email: ' + email, 'success')
+    return redirect(url_for('home'))
 
 
 @app.route('/account/edit-email-pref')
