@@ -11,8 +11,8 @@ logging.basicConfig(level=logging.DEBUG,
 logging.disable(logging.CRITICAL)
 
 from feedparser import parse
-from feedforest import db
-from feedforest.models import Topic, RSSFeed, Article
+from . import db
+from .models import Topic, RSSFeed, Article
 
 # First, clear all entries from the 'article' table.
 # This is so that only the most recent records exist in the table
