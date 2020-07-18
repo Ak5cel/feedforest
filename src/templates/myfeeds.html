@@ -3,39 +3,52 @@
 {% block content %}
 	<div class="col">
 		<h3 class="mb-4">My Feeds</h3>
-		<div class="card-columns">
-			{% for feed in current_user.selected_feeds %}
-				<div class="card mb-4">
-					<div class="card-body">
-						<h5 class="card-title mb-4">
-							<a class="text-dark" href="{{ feed.rss_link }}" title="{{ feed.rss_link }}">{{ feed.site_name }}</a>
-						</h5>
-						{% for article in feed.articles %}
-							{% if article in current_user.bookmarked_articles %}
-								<div class="article d-flex justify-content-between" data-status="bookmarked" data-article-id="{{ article.id }}">
-									<p class="card-text pr-4 pb-1">
-										<a href="{{ article.link }}">{{ article.title }}</a>
-									</p>
-									<a href="#" class="toggle-bookmark">
-										<i class="far fa-bookmark"></i>
-									</a>
-								</div>	
-							{% else %}
-								<div class="article d-flex justify-content-between" data-status="not-bookmarked" data-article-id="{{ article.id }}">
-									<p class="card-text pr-4 pb-1">
-										<a href="{{ article.link }}">{{ article.title }}</a>
-									</p>
-									<a href="#" class="toggle-bookmark">
-										<i class="far fa-bookmark"></i>
-									</a>
-								</div>
-							{% endif %}
-														
-						{% endfor %}
+		{% if current_user.selected_feeds[0] %}
+			<div class="card-columns">
+				{% for feed in current_user.selected_feeds %}
+					<div class="card mb-4">
+						<div class="card-body">
+							<h5 class="card-title mb-4">
+								<a class="text-dark" href="{{ feed.rss_link }}" title="{{ feed.rss_link }}">{{ feed.site_name }}</a>
+							</h5>
+							{% for article in feed.articles %}
+								{% if article in current_user.bookmarked_articles %}
+									<div class="article d-flex justify-content-between" data-status="bookmarked" data-article-id="{{ article.id }}">
+										<p class="card-text pr-4 pb-1">
+											<a href="{{ article.link }}">{{ article.title }}</a>
+										</p>
+										<a href="#" class="toggle-bookmark">
+											<i class="far fa-bookmark"></i>
+										</a>
+									</div>	
+								{% else %}
+									<div class="article d-flex justify-content-between" data-status="not-bookmarked" data-article-id="{{ article.id }}">
+										<p class="card-text pr-4 pb-1">
+											<a href="{{ article.link }}">{{ article.title }}</a>
+										</p>
+										<a href="#" class="toggle-bookmark">
+											<i class="far fa-bookmark"></i>
+										</a>
+									</div>
+								{% endif %}
+															
+							{% endfor %}
+						</div>
 					</div>
-				</div>
-			{% endfor %}
-		</div>	
+				{% endfor %}
+			</div>
+		{% else %}
+			<div class="content-section">
+				<div class="d-flex flex-column align-items-center justify-content-center" style="height: 150px">
+					<small class="text-muted mb-2">No feeds selected</small>
+					<small>
+						Click 
+						<a href="{{ url_for('edit_feeds') }}">Add Feeds</a>
+						to start adding feeds!
+					</small>
+				</div>	
+			</div>
+		{% endif %}
 	</div>
 	
 {% endblock content %}

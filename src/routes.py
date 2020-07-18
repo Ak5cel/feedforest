@@ -96,6 +96,7 @@ def edit_profile():
     if details_form.submit.data and details_form.validate():
         if details_form.username.data != current_user.username:
             current_user.username = details_form.username.data
+            db.session.commit()
             flash('Your username has been updated!', 'success')
         if details_form.email.data != current_user.email:
             token = current_user.generate_token_with_email(details_form.email.data)
