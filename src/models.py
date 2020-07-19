@@ -28,6 +28,7 @@ class RSSFeed(db.Model):
     rss_link = db.Column(db.Text, unique=True, nullable=False)
     site_name = db.Column(db.String(30), nullable=False)
     site_url = db.Column(db.Text, unique=True, nullable=False)
+    updated_on = db.Column(db.DateTime)
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=False)
     articles = db.relationship('Article', backref='rssfeed', lazy=True)
 
@@ -39,6 +40,7 @@ class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
     link = db.Column(db.Text, unique=True, nullable=False)
+    refreshed_on = db.Column(db.DateTime)
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=False)
     rssfeed_id = db.Column(db.Integer, db.ForeignKey('rss_feed.id'), nullable=False)
 
