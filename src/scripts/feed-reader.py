@@ -2,6 +2,11 @@
 # Collects articles from all the RSS feeds and inserts them into
 # the 'article' table.
 # ---------------------------------------------------------------
+from datetime import datetime
+from time import mktime
+from feedparser import parse
+from src import db
+from src.models import RSSFeed, Article
 
 # Logging setup for debugging
 import logging
@@ -10,57 +15,85 @@ logging.basicConfig(level=logging.DEBUG,
 # Comment this out to enable logging mode
 logging.disable(logging.CRITICAL)
 
-from feedparser import parse
-from . import db
-from .models import Topic, RSSFeed, Article
+# -----------------------------------------------------------------
+# THE PROCESS:
+#   * When the script is started, set CURRENT_REFRESH_TIME as utcnow()
+# 1. Clear all articles except user saved articles
+# 2. Go through each RSSFeed, check whether the updated_on column
+#    matches the updated field
+# 3.a. If it does not, get the new batch of articles.
+#      For each article, check whether it is aleady in the table.
+#      If it is, change its refreshed_on.
+#      If it is not, add it.
+#   b. If it does, get the articles with the latest refresh time.
+#      Change their refreshed_on to the new value.
+# -----------------------------------------------------------------
 
-# First, clear all entries from the 'article' table.
+# Sets number of articles to extract from each feed
+MAX_ARTICLES_COUNT = 3
+
+# When the script is started, set CURRENT_REFRESH_TIME
+CURRENT_REFRESH_TIME = datetime.utcnow()
+
+# First, clear all articles except user saved articles.
 # This is so that only the most recent records exist in the table
-# TODO: change this so that the previous records are kept temporarily. Only delete
-# them once the current script runs successfully.
-Article.query.delete()
-logging.debug('Cleared previous article records')
+Article.query.filter(~Article.bookmarked_by.any()).delete(synchronize_session=False)
+logging.debug('Cleared unbookmarked articles')
 
-# Fetch a list of all topics from the db
-topics = Topic.query.all()
-logging.debug(f'Fetched topics: {topics}')
+# Fetch a list of all RSS feeds from the db
+rssfeeds = RSSFeed.query.all()
+logging.debug(f'Fetched {len(rssfeeds)} RSS Feeds')
 
-# For each topic, fetch a list of corresponding RSS feeds
-# from the 'rss_feed' table, parse the feeds and insert the articles
-# into the 'article' table
-for topic in topics:
-  logging.debug(f'Getting feeds for topic: {topic.topic_name}...')
-  rssfeeds = RSSFeed.query\
-      .filter_by(topic=topic)\
-      .all()
-  logging.debug(f'Collected feeds: {rssfeeds}')
+for feed in rssfeeds:
+    # Parse the feed
+    logging.debug(f'Parsing feed: {feed}...')
+    parsed_feed = parse(feed.rss_link)
 
-  for rssfeed in rssfeeds:
-    logging.debug(f'Getting articles for rssfeed: {rssfeed}...')
-    parsed_feed = parse(rssfeed.rss_link)
-    # Extract the first 3 articles from the parsed feed
-    entries = parsed_feed.entries[:3]
-    logging.debug(f'Collected {len(entries)} entries')
-    logging.debug(f'Entry 0: {entries[0].title}')
-    logging.debug(f'Entry 1: {entries[1].title}')
-    logging.debug(f'Entry 2: {entries[2].title}')
+    # Get the time the feed was last updated
+    ts = parsed_feed.feed.get('updated_parsed', None)  # returns a time.struct_time instance
+    if ts:
+        updated_on = datetime.utcfromtimestamp(mktime(ts))  # converts time.struct_time into UTC datetime.datetime instance
 
-    # Create 3 article records
-    article1 = Article(title=entries[0].title,
-                       link=entries[0].link,
-                       topic=topic,
-                       rssfeed=rssfeed)
-    article2 = Article(title=entries[1].title,
-                       link=entries[1].link,
-                       topic=topic,
-                       rssfeed=rssfeed)
-    article3 = Article(title=entries[2].title,
-                       link=entries[2].link,
-                       topic=topic,
-                       rssfeed=rssfeed)
-    db.session.add(article1)
-    db.session.add(article2)
-    db.session.add(article3)
+    # Check whether the feed was updated since last database refresh
+    if ts and feed.updated_on == updated_on:
+        logging.debug('Feed up-to-date. Updating refresh times to current time...')
+        # If the feed is up-to-date, get the articles from that feed
+        # from the previous refresh.
+        # Change their refreshed_on to the new value.
+        previous_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
+        status = Article.query\
+            .filter_by(rssfeed=feed, refreshed_on=previous_refresh)\
+            .update({Article.refreshed_on: CURRENT_REFRESH_TIME}, synchronize_session='evaluate')
+        if status == 0:
+            logging.debug('Update FAILED')
+            db.session.rollback()
+        elif status == 1:
+            logging.debug('Update successful')
+    else:
+        logging.debug('Remote Feed has been updated. Fetching latest articles...')
+        # Extract the first 3 articles from the parsed feed
+        entries = parsed_feed.entries[:MAX_ARTICLES_COUNT]
+        logging.debug(f'Fetched {len(entries)} articles.')
 
-# Commit changes to the tables
+        for entry in entries:
+            logging.debug(f'Checking Article {entries.index(entry)}')
+            # For each article, check whether it is aleady in the table.
+            # If it is, change its refreshed_on.
+            # Otherwise, add it to the table.
+            duplicate_article = Article.query.filter_by(link=entry.link).first()
+            if duplicate_article:
+                logging.debug(f'Duplicate Article ({entries.index(entry)}), updating refreshed_on...')
+                duplicate_article.refreshed_on = CURRENT_REFRESH_TIME
+            else:
+                new_article = Article(title=entry.title,
+                                      link=entry.link,
+                                      refreshed_on=CURRENT_REFRESH_TIME,
+                                      topic=feed.topic,
+                                      rssfeed=feed)
+                db.session.add(new_article)
+                logging.debug(f'Added Article ({entries.index(entry)})')
+
+
+# Commit changes to the database
 db.session.commit()
+logging.debug('Database refresh complete.')
