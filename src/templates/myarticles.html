@@ -4,9 +4,9 @@
 	<div class="col">
 		<h3 class="mb-4">My Articles</h3>
 		<div class="content-section pt-1">
-			{% if current_user.bookmarked_articles[0] %}
+			{% if bookmarked_articles[0] %}
 				<ul class="list-group list-group-flush">
-					{% for article in current_user.bookmarked_articles %}
+					{% for article in bookmarked_articles %}
 						<li class="list-group-item p-2 d-flex justify-content-between">
 							<div class="d-flex flex-column justify-content-end">
 								<small>

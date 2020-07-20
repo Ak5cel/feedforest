@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import url_for
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -59,7 +60,8 @@ user_feed_map = db.Table('user_feed_map',
 # Association table between users and bookmarked articles
 user_article_map = db.Table('user_article_map',
                             db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-                            db.Column('article_id', db.Integer, db.ForeignKey('article.id'), primary_key=True))
+                            db.Column('article_id', db.Integer, db.ForeignKey('article.id'), primary_key=True),
+                            db.Column('bookmarked_on', db.DateTime, default=datetime.utcnow))
 
 
 class User(db.Model, UserMixin):

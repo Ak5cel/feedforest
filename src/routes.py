@@ -2,7 +2,7 @@ from flask import render_template, url_for, request, flash, redirect
 from flask_login import current_user, login_user, logout_user, login_required
 from feedparser import parse
 from werkzeug.urls import url_parse
-from .models import Topic, RSSFeed, Article, User
+from .models import Topic, RSSFeed, Article, User, user_article_map
 from .forms import (LoginForm, SignupForm, EmptyForm,
                     RequestPasswordResetForm, PasswordResetForm,
                     EditDetailsForm, ChangePasswordForm)
@@ -80,8 +80,13 @@ def my_feeds():
 @login_required
 def my_articles():
     empty_form = EmptyForm()
+    bookmarked_articles = Article.query\
+        .join(user_article_map, (Article.id == user_article_map.c.article_id))\
+        .filter(user_article_map.c.user_id == current_user.id)\
+        .order_by(user_article_map.c.bookmarked_on.desc())\
+        .all()
     return render_template('myarticles.html', title='My Articles',
-                           empty_form=empty_form)
+                           empty_form=empty_form, bookmarked_articles=bookmarked_articles)
 
 
 @app.route('/account')
