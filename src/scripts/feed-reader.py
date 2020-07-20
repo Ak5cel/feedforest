@@ -67,7 +67,7 @@ for feed in rssfeeds:
         if status == 0:
             logging.debug('Update FAILED')
             db.session.rollback()
-        elif status == 1:
+        elif status > 0:
             logging.debug('Update successful')
     else:
         logging.debug('Remote Feed has been updated. Fetching latest articles...')

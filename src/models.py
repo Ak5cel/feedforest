@@ -17,7 +17,10 @@ class Topic(db.Model):
     rss_feeds = db.relationship('RSSFeed',
                                 backref=db.backref('topic', cascade='all'),
                                 lazy=True)
-    articles = db.relationship('Article', backref='topic', lazy=True)
+    articles = db.relationship('Article',
+                               backref='topic',
+                               order_by="asc(Article.rssfeed_id)",
+                               lazy=True)
 
     def __repr__(self):
         return f"Topic('{self.topic_name}')"

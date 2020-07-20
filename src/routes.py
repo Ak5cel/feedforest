@@ -14,7 +14,8 @@ from . import app, db, bcrypt
 def home():
     if request.method == "GET":
         topics = Topic.query.all()
-        articles = Article.query.all()
+        sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
+        articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
     return render_template('home.html',
                            title='Home',
                            topics=topics,
@@ -70,7 +71,9 @@ def logout():
 @app.route('/myfeeds')
 @login_required
 def my_feeds():
-    return render_template('myfeeds.html', title='My Feeds')
+    sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
+    latest_articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
+    return render_template('myfeeds.html', title='My Feeds', latest_articles=latest_articles)
 
 
 @app.route('/myarticles')
