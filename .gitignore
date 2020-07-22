@@ -9,3 +9,7 @@ __pycache__/
 venv/
 
 app.db
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
