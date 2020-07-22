@@ -76,6 +76,9 @@
 
 
 {% block content %}
+	<div class="col-12 text-right">
+		<small class="text-muted">Last updated: {{ last_updated_on.strftime('%d/%m/%Y, %I:%M %p %Z') }}</small>
+	</div>
 	{% for topic in topics %}
 		<div class="col-sm-12 col-md-6 col-lg-4 filterdiv {{ topic.topic_name }}">
 			<div class="card mt-4">

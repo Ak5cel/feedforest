@@ -16,10 +16,12 @@ def home():
         topics = Topic.query.all()
         sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
         articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
+        last_updated_on = db.session.query(db.func.max(Article.refreshed_on)).scalar()
     return render_template('home.html',
                            title='Home',
                            topics=topics,
                            articles=articles,
+                           last_updated_on=last_updated_on,
                            parse=parse)
 
 
@@ -73,7 +75,11 @@ def logout():
 def my_feeds():
     sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
     latest_articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
-    return render_template('myfeeds.html', title='My Feeds', latest_articles=latest_articles)
+    last_updated_on = db.session.query(db.func.max(Article.refreshed_on)).scalar()
+    return render_template('myfeeds.html',
+                           title='My Feeds',
+                           latest_articles=latest_articles,
+                           last_updated_on=last_updated_on)
 
 
 @app.route('/myarticles')
