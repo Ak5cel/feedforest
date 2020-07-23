@@ -5,7 +5,7 @@ from werkzeug.urls import url_parse
 from .models import Topic, RSSFeed, Article, User, user_article_map
 from .forms import (LoginForm, SignupForm, EmptyForm,
                     RequestPasswordResetForm, PasswordResetForm,
-                    EditDetailsForm, ChangePasswordForm)
+                    EditDetailsForm, ChangePasswordForm, EmailPreferencesForm)
 from . import app, db, bcrypt
 
 
@@ -242,7 +242,8 @@ def verify_new_email(token):
 @app.route('/account/edit-email-pref')
 @login_required
 def edit_email_pref():
-    return render_template('edit-email-pref.html', title='Account - Edit Feeds')
+    form = EmailPreferencesForm()
+    return render_template('edit-email-pref.html', title='Account - Email Preferences', form=form)
 
 
 @app.route('/about')
