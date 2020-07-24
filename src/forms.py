@@ -95,3 +95,7 @@ class EmailPreferencesForm(FlaskForm):
     # Hidden elements
     utc_offset = StringField('offset')
     time_from_db = StringField('time_from_db')
+
+
+class HiddenElementForm(FlaskForm):
+    hidden_element = StringField('hidden')

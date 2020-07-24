@@ -47,8 +47,19 @@
 		<ul class="list-group list-group-flush">
 			<li class="list-group-item">
 				<small>Email Frequency</small>
-				<p class="mb-0">Everyday @ 7:00 am</p>
+				<form>
+					{{ hidden_time_form.hidden_tag() }}
+					{{ hidden_time_form.hidden_element(id="hiddenTime", type="hidden") }}
+				</form>				
+				{% if current_user.email_frequency %}
+					<p class="mb-0">Everyday @ <span id="hourField"></span>:00 <span id="ampmField"></span></p>
+				{% else %}
+					<p class="mb-0">Never</p>
+				{% endif %}
+				
 			</li>
 		</ul>
 	</div>
+	<script src="{{ url_for('static', filename='datetime-utils.js') }}"></script>
+	<script src="{{ url_for('static', filename='profile-summary-time.js') }}"></script>
 {% endblock account_info %}

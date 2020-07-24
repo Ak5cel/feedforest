@@ -5,7 +5,8 @@ from werkzeug.urls import url_parse
 from .models import Topic, RSSFeed, Article, User, user_article_map
 from .forms import (LoginForm, SignupForm, EmptyForm,
                     RequestPasswordResetForm, PasswordResetForm,
-                    EditDetailsForm, ChangePasswordForm, EmailPreferencesForm)
+                    EditDetailsForm, ChangePasswordForm, EmailPreferencesForm,
+                    HiddenElementForm)
 from . import app, db, bcrypt
 from .utils import get_utc_time
 
@@ -100,7 +101,9 @@ def my_articles():
 @app.route('/account/summary')
 @login_required
 def account():
-    return render_template('profile-summary.html', title='Account')
+    hidden_time_form = HiddenElementForm()
+    hidden_time_form.hidden_element.data = current_user.email_frequency
+    return render_template('profile-summary.html', title='Account', hidden_time_form=hidden_time_form)
 
 
 @app.route('/account/edit-profile', methods=['GET', 'POST'])
@@ -255,6 +258,7 @@ def edit_email_pref():
             time_utc = get_utc_time(hour_24, utc_offset)
             current_user.email_frequency = time_utc
         db.session.commit()
+        flash('Your preferences have been updated!', 'success')
         return redirect(url_for('edit_email_pref'))
     else:
         form.frequency.data = 1 if current_user.email_frequency else 0
