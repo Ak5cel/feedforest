@@ -7,6 +7,7 @@ from .forms import (LoginForm, SignupForm, EmptyForm,
                     RequestPasswordResetForm, PasswordResetForm,
                     EditDetailsForm, ChangePasswordForm, EmailPreferencesForm)
 from . import app, db, bcrypt
+from .utils import get_utc_time
 
 
 @app.route('/')
@@ -239,10 +240,25 @@ def verify_new_email(token):
     return redirect(url_for('home'))
 
 
-@app.route('/account/edit-email-pref')
+@app.route('/account/edit-email-pref', methods=['GET', 'POST'])
 @login_required
 def edit_email_pref():
     form = EmailPreferencesForm()
+    if form.validate_on_submit():
+        if form.frequency.data == 0:
+            current_user.email_frequency = None
+        elif form.frequency.data == 1:
+            hour_12 = form.hour.data
+            am_or_pm = form.am_or_pm.data
+            hour_24 = hour_12 if am_or_pm == 'am' else (hour_12 + 12)
+            utc_offset = int(form.utc_offset.data)
+            time_utc = get_utc_time(hour_24, utc_offset)
+            current_user.email_frequency = time_utc
+        db.session.commit()
+        return redirect(url_for('edit_email_pref'))
+    else:
+        form.frequency.data = 1 if current_user.email_frequency else 0
+        form.time_from_db.data = current_user.email_frequency
     return render_template('edit-email-pref.html', title='Account - Email Preferences', form=form)
 
 

@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, PasswordField, BooleanField,
-                     SubmitField, RadioField, SelectField, FormField)
+                     SubmitField, RadioField, SelectField)
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_login import current_user
 from .models import User
@@ -86,12 +86,12 @@ class ChangePasswordForm(FlaskForm):
     submit_pwd = SubmitField('Update Password')
 
 
-class TimeForm(FlaskForm):
-    hour = SelectField('Hour', choices=[(num, f'{num}:00') for num in range(1, 13)])
-    am_or_pm = SelectField('AM/PM', choices=[('am', 'AM'), ('pm', 'PM')])
-
-
 class EmailPreferencesForm(FlaskForm):
-    frequency = RadioField('Email Frequency', choices=[(0, 'Never'), (1, 'Daily')])
-    time = FormField(TimeForm)
+    frequency = RadioField('Email Frequency', choices=[(0, 'Never'), (1, 'Daily')], coerce=int)
+    # NOTE: Setting default hour and am_or_pm to prevent validation errors when 'Never' is selected
+    hour = SelectField('Hour', choices=[(num, f'{num}:00') for num in range(1, 13)], coerce=int, default=1)
+    am_or_pm = SelectField('AM/PM', choices=[('am', 'AM'), ('pm', 'PM')], default='am')
     submit = SubmitField('Update Preferences')
+    # Hidden elements
+    utc_offset = StringField('offset')
+    time_from_db = StringField('time_from_db')

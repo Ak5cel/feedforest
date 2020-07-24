@@ -6,6 +6,8 @@
 			{{ form.hidden_tag() }}
 			<fieldset>
 				<legend class="border-bottom mb-4">Edit Email Preferences</legend>
+				{{ form.utc_offset(id="hiddenOffset", type="hidden") }}
+				{{ form.time_from_db(id="hiddenTime", type="hidden") }}
 				<div class="row">
 					<div class="form-group col-sm-12 col-md-8 col-xl-7">
 					    {{ form.frequency.label(for="frequencyField") }}
@@ -30,33 +32,38 @@
 					    	{% endfor %}
 					    {% endif %}
 					</div>
-					<fieldset class="col-sm-12 col-md-8 col-xl-7" id="timeFieldSet">
-						<div class="form-group">
-						    {{ form.time.label(for="timeField") }}
-						    <div class="form-row">
-						    	{% if form.time.errors %}
+					<div class="form-group col-sm-12 col-md-8 col-xl-7">
+						<fieldset class="col" id="timeFieldSet">
+							<div class="form-group">
+							    <div class="form-row">
 						    		<div class="form-group col-sm-5 col-md-6">
-						    			{{ form.time.hour(class="custom-select is-invalid", id="hourField") }}
+						    			{% if form.hour.errors %}
+						    				{{ form.hour(class="custom-select custom-select-sm is-invalid", id="hourField") }}
+											<div class="invalid-feedback">
+											    {% for error in form.frequency.errors %}
+											        <span>{{ error }}</span>
+											    {% endfor %}
+											</div>
+						    			{% else %}
+											{{ form.hour(class="custom-select custom-select-sm", id="hourField") }}
+						    			{% endif %}
 						    		</div>
-						    		<div class="form-group col-sm-3 col-md-4">
-						    			{{ form.time.am_or_pm(class="custom-select is-invalid", id="ampmField") }}
+						    		<div class="form-group col-sm-4 col-md-5">
+						    			{% if form.am_or_pm.errors %}
+						    				{{ form.am_or_pm(class="custom-select custom-select-sm is-invalid", id="ampmField") }}
+											<div class="invalid-feedback">
+											    {% for error in form.frequency.errors %}
+											        <span>{{ error }}</span>
+											    {% endfor %}
+											</div>
+						    			{% else %}
+											{{ form.am_or_pm(class="custom-select custom-select-sm", id="ampmField") }}
+						    			{% endif %}
 						    		</div>
-						    	    <div class="invalid-feedback">
-						    	        {% for error in form.time.errors %}
-						    	            <span>{{ error }}</span>
-						    	        {% endfor %}
-						    	    </div>
-						    	{% else %}
-						    		<div class="form-group col-sm-5 col-md-6">
-						    			{{ form.time.hour(class="custom-select custom-select-sm", id="hourField") }}
-						    		</div>
-						    		<div class="form-group col-sm-3 col-md-4">
-						    			{{ form.time.am_or_pm(class="custom-select custom-select-sm", id="ampmField") }}	
-						    		</div>
-						    	{% endif %}	
-						    </div>
-						</div>
-					</fieldset>
+							    </div>
+							</div>	
+						</fieldset>	
+					</div>
 					<div class="form-group col-sm-12 col-md-8 col-xl-7">
 					    {{ form.submit(class="btn btn-success btn-sm mt-3") }}
 					</div>	
@@ -64,4 +71,5 @@
 			</fieldset>
 		</form>
 	</div>
+	<script src="{{ url_for('static', filename='datetime-utils.js') }}"></script>
 {% endblock account_info %}

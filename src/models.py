@@ -70,6 +70,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
     email_verified = db.Column(db.Boolean, nullable=False, server_default='true')
+    email_frequency = db.Column(db.Time)
     selected_feeds = db.relationship('RSSFeed', secondary=user_feed_map, lazy='subquery',
                                      backref=db.backref('selected_by', lazy=True))
     bookmarked_articles = db.relationship('Article', secondary=user_article_map, lazy='subquery',

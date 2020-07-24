@@ -4,8 +4,12 @@ $(document).ready(function(){
 	let never = document.getElementById('0'); 
 	let daily = document.getElementById('1');
 
-	never.checked = true;
-	timeFieldSet.disabled = true;
+	if (never.checked) {
+		timeFieldSet.disabled = true;
+		
+	} else if (daily.checked) {
+		timeFieldSet.disabled = false;
+	}
 	
 	$('input[type="radio"]').on('click', (e) => {
 		
