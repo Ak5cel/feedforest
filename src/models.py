@@ -149,7 +149,7 @@ class User(db.Model, UserMixin):
             server.ehlo()
             server.starttls(context=context)
             server.login(sender_email, app.config['MAIL_PASSWORD'])
-            server.sendmail(sender_email, receiver_email, message)
+            server.sendmail(sender_email, receiver_email, message.encode("utf8"))
 
     def send_password_reset_email(self, token):
         reset_password_link = url_for('reset_password_with_token', token=token, _external=True)
