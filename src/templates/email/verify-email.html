@@ -1,0 +1,14 @@
+{% extends "email/default-email-layout.html" %}
+
+{% block content %}
+    <p>
+    Visit the following link to verify your email:
+    <div class="btn-wrapper">
+        <a href="{{ verification_link }}" class="btn">Verify Email</a>
+    </div>
+    </p>
+{% endblock content %}
+
+{% block footer %}
+    If you have not created a new account at FeedForest, please ignore this message.
+{% endblock footer %}

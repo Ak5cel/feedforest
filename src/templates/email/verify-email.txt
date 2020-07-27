@@ -1,0 +1,7 @@
+Dear {user.username},
+
+Please visit the following link to verify your email:
+{verification_link}
+
+Sincerely,
+The FeedForest Team

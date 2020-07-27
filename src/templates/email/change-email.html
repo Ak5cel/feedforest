@@ -1,0 +1,17 @@
+{% extends "email/default-email-layout.html" %}
+
+{% block content %}
+    <p>
+    Visit the following link to verify your email:
+    <div class="btn-wrapper">
+        <a href="{{ verification_link }}" class="btn">Verify Email</a>
+    </div>
+    </p>
+    <p>
+        Your account email will be changed only after verification.
+    </p>
+{% endblock content %}
+
+{% block footer %}
+    If you have not requested an email change, please ignore this message.
+{% endblock footer %}

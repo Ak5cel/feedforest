@@ -1,9 +1,12 @@
 from datetime import datetime
-from flask import url_for
+from flask import url_for, render_template
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from premailer import transform
 import smtplib
 import ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 from . import db, login_manager, app, bcrypt
 
 
@@ -143,72 +146,77 @@ class User(db.Model, UserMixin):
         return user, email
 
     @staticmethod
-    def send_email(sender_email, receiver_email, message):
+    def send_email(subject, sender_email, receiver_email, text_body, html_body):
+        # MIMEMultipart setup
+        message = MIMEMultipart("alternative")
+        message["Subject"] = subject
+        message["From"] = sender_email
+        message["To"] = receiver_email
+
+        # Create text and hml MIMEText objects
+        part1 = MIMEText(text_body, "plain")
+        part2 = MIMEText(html_body, "html")
+
+        # Add HTML/plain-text parts to MIMEMultipart message
+        # The email client will try to render the last part first
+        message.attach(part1)
+        message.attach(part2)
+
+        # Create secure connection with server and send email
         context = ssl.create_default_context()
         with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as server:
             server.ehlo()
             server.starttls(context=context)
             server.login(sender_email, app.config['MAIL_PASSWORD'])
-            server.sendmail(sender_email, receiver_email, message.encode("utf8"))
+            server.sendmail(sender_email, receiver_email, message.as_string())
 
     def send_password_reset_email(self, token):
         reset_password_link = url_for('reset_password_with_token', token=token, _external=True)
         sender_email = app.config['MAIL_USERNAME']
         receiver_email = self.email
-        message = f"""From: FeedForest <{sender_email}>
-To: {self.username} <{receiver_email}>
-Subject: [FeedForest] Reset Password
-
-Dear {self.username},
-
-Please visit the following link to reset your password:
-{reset_password_link}
-(The link expires in 30 minutes).
-
-If you have not requested a password reset, simply ignore this message.
-
-Sincerely,
-The FeedForest Team
-        """
-        User.send_email(sender_email, receiver_email, message)
+        User.send_email(
+            subject='[FeedForest] Reset Password',
+            sender_email=sender_email,
+            receiver_email=receiver_email,
+            text_body=render_template('email/reset-password.txt',
+                                      user=self,
+                                      reset_password_link=reset_password_link),
+            html_body=transform(render_template('email/reset-password.html',
+                                                user=self,
+                                                reset_password_link=reset_password_link))
+        )
 
     def send_email_verification_email(self, token):
         verification_link = url_for('verify_email', token=token, _external=True)
         sender_email = app.config['MAIL_USERNAME']
         receiver_email = self.email
-        message = f"""From: FeedForest <{sender_email}>
-To: {self.username} <{receiver_email}>
-Subject: [FeedForest] Verify Email
-
-Dear {self.username},
-
-Please visit the following link to verify your email:
-{verification_link}
-
-Sincerely,
-The FeedForest Team
-        """
-        User.send_email(sender_email, receiver_email, message)
+        User.send_email(
+            subject='[FeedForest] Verify Email',
+            sender_email=sender_email,
+            receiver_email=receiver_email,
+            text_body=render_template('email/verify-email.txt',
+                                      user=self,
+                                      verification_link=verification_link),
+            html_body=transform(render_template('email/verify-email.html',
+                                                user=self,
+                                                verification_link=verification_link))
+        )
 
     def send_email_change_email(self, token, new_email):
         verification_link = url_for('verify_new_email', token=token, _external=True)
         sender_email = app.config['MAIL_USERNAME']
         receiver_email = new_email
-        message = f"""From: FeedForest <{sender_email}>
-To: {self.username} <{receiver_email}>
-Subject: [FeedForest] Verify Email
-
-Dear {self.username},
-
-Please visit the following link to verify your new email:
-{verification_link}
-
-(Your account email will be changed only after verification).
-
-Sincerely,
-The FeedForest Team
-        """
-        User.send_email(sender_email, receiver_email, message)
+        User.send_email(
+            subject='[FeedForest] Verify New Email',
+            sender_email=sender_email,
+            receiver_email=receiver_email,
+            text_body=render_template('email/change-email.txt',
+                                      user=self,
+                                      verification_link=verification_link),
+            html_body=transform(render_template('email/change-email.html',
+                                                user=self,
+                                                verification_link=verification_link))
+        )
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"
