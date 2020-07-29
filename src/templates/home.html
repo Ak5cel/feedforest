@@ -44,6 +44,7 @@
 	            <form method="POST" action="" id="sitesForm">
 	                <div class="row">
 	                    {% for topic in topics %}
+	                    	{% set outer_loop = loop %}
 	                        <div class="col-sm-6 col-md-4 topic-section">
 	                            <h6 class="dropdown-header">{{  topic.topic_name.upper() }}</h6>
 	                            {% for rssfeed in topic.rss_feeds %}
@@ -53,9 +54,9 @@
 	                                        type="checkbox"
 	                                        value=""
 	                                        name="{{ rssfeed.site_name }}"
-	                                        id="{{ 'rssfeed' ~ loop.index }}"
+	                                        id="{{ 'rssfeed' ~ outer_loop.index ~ loop.index }}"
 	                                        checked>
-	                                    <label class="form-check-label" for="{{ 'rssfeed' ~ loop.index }}">
+	                                    <label class="form-check-label" for="{{ 'rssfeed' ~ outer_loop.index ~ loop.index }}">
 	                                        {{ rssfeed.site_name }}
 	                                    </label>
 	                                </div>
@@ -79,9 +80,10 @@
 	<div class="col-12 text-right">
 		<small class="text-muted">Last updated: {{ last_updated_on.strftime('%d/%m/%Y, %I:%M %p %Z') }}</small>
 	</div>
-	{% for topic in topics %}
-		<div class="col-sm-12 col-md-6 col-lg-4 filterdiv {{ topic.topic_name }}">
-			<div class="card mt-4">
+	<div class="col">
+		<div class="card-columns ">
+		{% for topic in topics %}
+			<div class="card mt-2 filterdiv {{ topic.topic_name }}">
 				<div class="card-body">
 					<h5 class="card-title">{{ topic.topic_name }}</h5>
 					{% for article in topic.articles %}
@@ -93,7 +95,9 @@
 						{% endif %}
 					{% endfor %}
 				</div>
-			</div>	
+			</div>
+		{% endfor %}	
 		</div>
-	{% endfor %}
+	</div>
+	
 {% endblock content %}
