@@ -1,5 +1,40 @@
 {% extends "layout.html" %}
 
 {% block content %}
-	<h1>About Page</h1>
+	<div class="col-sm-12 col-md-9 col-lg-7">
+		<div class="content-section mb-3">
+			<h3 class="mb-4">About FeedForest</h3>
+			<p>
+				FeedForest makes newsfeed subscription a breeze! Instead of having to subscribe
+				to several newsletters, get the latest updates from your favourite sites with a single account.
+			</p>
+			<p>
+				Features include:
+				<ul>
+					<li>A database of articles updated every hour.</li>
+					<li>A customisable Feed Wall with the latest updates from your selected feeds.</li>
+					<li>Option to get daily emails at your preferred time with the same contents as 
+						your personal feed wall.
+					</li>
+				</ul>
+			</p>	
+		</div>
+		
+		<div class="d-flex justify-content-center">
+			<div class="text-center px-3 border-right">
+				<span class="text-muted">Built with Flask</span><br>
+				<a href="https://flask.palletsprojects.com/en/1.1.x/">
+					<img src="{{ url_for('static', filename='images/Flask_logo.svg') }}" 
+						alt="Flask logo"
+						width=110px>	
+				</a>
+			</div>
+			<div class="text-center px-3">
+				<span class="text-muted">Find this project on GitHub</span><br>
+				<a href="https://github.com/Ak5cel/feedforest" class="text-secondary" target="_blank">
+					<i class="fab fa-github-square fa-2x mt-2" style="vertical-align: middle;"></i>
+				</a>
+			</div>
+		</div>
+	</div>
 {% endblock content %}

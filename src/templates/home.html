@@ -101,16 +101,16 @@
 	</div>
 	{% if not current_user.is_authenticated %}
 		<div class="col-12 mb-3">
-			<div class="card text-center">
+			<div class="card text-center bg-light">
 				<div class="card-body">
 					<h5 class="card-title">
 						Find it useful? Sign up for more
 					</h5>
 					<p class="card-text">
-						For creating a custom feed wall and receiving daily emails from your selected feeds, 
+						For creating a custom feed wall and receiving daily updates from the feeds of your choice, 
 						create an account!
 					</p>
-					<a href="#" class="btn btn-primary">Create an account</a>
+					<a href="{{ url_for('signup') }}" class="btn btn-primary">Create an account</a>
 				</div>
 			</div>	
 		</div>
