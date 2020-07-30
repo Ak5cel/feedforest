@@ -1,5 +1,6 @@
 from datetime import datetime, time, timedelta
 from time import mktime
+from html import unescape
 from feedparser import parse
 from . import celery, db, app
 from .models import RSSFeed, Article, User
@@ -18,19 +19,20 @@ def setup_periodic_tasks(sender, **kwargs):
     # FOR TESTING ONLY
     # Remove before deployment
     # sender.add_periodic_task(10.0, greet.s('Akhila'))
-    
-    # Calls fetch_articles() every hour    
+
+    # Calls fetch_articles() every hour
     sender.add_periodic_task(
         crontab(minute='*/5'),
         fetch_articles.s()
-        )
-        
+    )
+
     # Sends daily emails to those users whose chosen email time lies
     # in the next ten minutes
     sender.add_periodic_task(
         crontab(minute='*/5'),
         send_batch_emails_handler.s()
     )
+
 
 @celery.task
 def send_batch_emails_handler():
@@ -39,7 +41,7 @@ def send_batch_emails_handler():
 
 @celery.task
 def fetch_articles():
-    
+
     # -----------------------------------------------------------------
     # THE PROCESS:
     #   * When the script is started, set CURRENT_REFRESH_TIME as utcnow()
@@ -53,7 +55,7 @@ def fetch_articles():
     #   b. If it does, get the articles with the latest refresh time.
     #      Change their refreshed_on to the new value.
     # -----------------------------------------------------------------
-    
+
     # Sets number of articles to extract from each feed
     MAX_ARTICLES_COUNT = 3
 
@@ -110,7 +112,7 @@ def fetch_articles():
                     logging.debug(f'Duplicate Article ({entries.index(entry)}), updating refreshed_on...')
                     duplicate_article.refreshed_on = CURRENT_REFRESH_TIME
                 else:
-                    new_article = Article(title=entry.title,
+                    new_article = Article(title=unescape(entry.title),
                                           link=entry.link,
                                           refreshed_on=CURRENT_REFRESH_TIME,
                                           topic=feed.topic,
@@ -118,16 +120,16 @@ def fetch_articles():
                     db.session.add(new_article)
                     logging.debug(f'Added Article ({entries.index(entry)})')
 
-
     # Commit changes to the database
     db.session.commit()
     logging.debug('Database refresh complete.')
-    
+
+
 @celery.task
 def get_user_ids():
     # The time gap between each batch email sending task (in minutes)
     TIME_GAP = 10
-    
+
     start_time = datetime.utcnow()
     logging.debug(f'Start datetime: {start_time}')
     min_time = start_time.time()
@@ -136,59 +138,42 @@ def get_user_ids():
     logging.debug(f'min_time: {max_time}')
     # Get all users whose preferred email time lies within the time gap
     users = User.query.filter(User.email_frequency > min_time, User.email_frequency <= max_time).all()
-    # Edge case: in the last slot, for eg. slot between 23:50 and 00:00, 
-    # users with 00:00 were not considered as 00:00 is less than 23:50 even 
-    # though it's on the next day. 
+    # Edge case: in the last slot, for eg. slot between 23:50 and 00:00,
+    # users with 00:00 were not considered as 00:00 is less than 23:50 even
+    # though it's on the next day.
     # Workaround:
     if min_time.hour == 22 and min_time.minute == (60 - TIME_GAP):
         midnight_users = User.query.filter_by(email_frequency=time(0, 0)).all()
         users.extend(midnight_users)
     return [u.id for u in users]
-    
+
+
 @celery.task
 def send_batch_emails(uids):
     for uid in uids:
         send_daily_email.delay(uid)
-        
+
+
 @celery.task
 def send_daily_email(uid):
     print('Entered method')
     user = User.query.get(uid)
     sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
     latest_articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
-    
+
     message_content = ''
     formatted_article = ''
     for article in latest_articles:
         formatted_article = f'<a href="{article.link}">{article.title}</a><\br>'
         message_content += formatted_article
-        
+
     message = f"""Hi {user.username},
 Here are the latest articles from your selected feeds!
 
 {message_content}
     """
-    
+
     sender_email = app.config['MAIL_USERNAME']
     receiver_email = user.email
     User.send_email(sender_email, receiver_email, message)
     print('Email sent')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

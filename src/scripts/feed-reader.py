@@ -4,6 +4,7 @@
 # ---------------------------------------------------------------
 from datetime import datetime
 from time import mktime
+from html import unescape
 from feedparser import parse
 from src import db
 from src.models import RSSFeed, Article
@@ -85,7 +86,7 @@ for feed in rssfeeds:
                 logging.debug(f'Duplicate Article ({entries.index(entry)}), updating refreshed_on...')
                 duplicate_article.refreshed_on = CURRENT_REFRESH_TIME
             else:
-                new_article = Article(title=entry.title,
+                new_article = Article(title=unescape(entry.title),
                                       link=entry.link,
                                       refreshed_on=CURRENT_REFRESH_TIME,
                                       topic=feed.topic,
