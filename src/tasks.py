@@ -2,6 +2,8 @@ from datetime import datetime, time, timedelta
 from time import mktime
 from html import unescape
 from feedparser import parse
+from premailer import transform
+from flask import render_template
 from . import celery, db, app
 from .models import RSSFeed, Article, User
 from celery.schedules import crontab
@@ -160,20 +162,16 @@ def send_daily_email(uid):
     user = User.query.get(uid)
     sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
     latest_articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
-
-    message_content = ''
-    formatted_article = ''
-    for article in latest_articles:
-        formatted_article = f'<a href="{article.link}">{article.title}</a><\br>'
-        message_content += formatted_article
-
-    message = f"""Hi {user.username},
-Here are the latest articles from your selected feeds!
-
-{message_content}
-    """
-
-    sender_email = app.config['MAIL_USERNAME']
-    receiver_email = user.email
-    User.send_email(sender_email, receiver_email, message)
-    print('Email sent')
+    print('Sending email...')
+    User.send_email(
+        subject="[FeedForest] Here's the latest updates from your feeds",
+        sender_email=app.config['MAIL_USERNAME'],
+        receiver_email=user.email,
+        text_body=render_template('email/daily-email.txt',
+                                  user=user,
+                                  articles=latest_articles),
+        html_body=transform(render_template('email/daily-email.html',
+                                            user=user,
+                                            articles=latest_articles))
+    )
+    print('Email sent.')

@@ -1,0 +1,23 @@
+{% extends "email/default-email-layout.html" %}
+
+{% block content %}
+    <p style="padding-bottom: 30px;">Here are the latest articles from your selected feeds.</p>
+    
+    {% for article in articles %}
+    <div style="border: 1px solid #dededf;
+              border-top: 0;
+              border-right: 0;
+              border-left: 0;
+              padding-bottom: 10px;
+              margin-bottom: 20px;">
+        <p>
+            <small class="text-muted">
+                <a href="{{ article.rssfeed.site_url }}">{{ article.rssfeed.site_name }}</a>
+            </small><br>
+            <a href="{{ article.link }}">{{ article.title }}</a>
+        </p>    
+    </div>
+        
+
+    {% endfor %}
+{% endblock content %}

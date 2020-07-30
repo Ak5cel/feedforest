@@ -1,0 +1,14 @@
+Hey {user.username},
+
+Here are the latest articles from your selected feeds.
+
+{% for article in articles %}
+Feed: {{ article.rssfeed.site_name }}
+Title: {{ article.title }}
+URL: {{ article.link }} 
+*******
+
+{% endfor %}
+
+Sincerely,
+The FeedForest Team
