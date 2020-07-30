@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import (StringField, PasswordField, BooleanField,
-                     SubmitField, RadioField, SelectField)
+                     SubmitField, RadioField, SelectField, TextAreaField)
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from flask_login import current_user
 from .models import User
@@ -99,3 +99,14 @@ class EmailPreferencesForm(FlaskForm):
 
 class HiddenElementForm(FlaskForm):
     hidden_element = StringField('hidden')
+
+
+class FeedbackForm(FlaskForm):
+    name = StringField('Your name*', validators=[DataRequired(), Length(min=2, max=30)])
+    email = StringField('Email*',
+                        validators=[DataRequired(), Email(message='Not a valid email address')])
+    feedback = TextAreaField('Feedback*', validators=[DataRequired(), Length(min=3, max=120)])
+    feedback_type = RadioField('Feedback type',
+                               choices=[('Bug', 'Bug'), ('Suggestion', 'Suggestion'), ('Other', 'Other')],
+                               default='Suggestion')
+    submit = SubmitField('Send Feedback')

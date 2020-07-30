@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="col-sm-12 col-md-8 offset-md-2 col-lg-6 offset-lg-3 mb-3">
+        <div class="bg-white p-4 border mt-3">
+            <form method="POST" action="">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4">Send us your feedback!</legend>
+                    <p class="text-muted">
+                        Discovered a bug? Have a suggestion on how we can improve? Let us know using the fields below.
+                    </p>
+                    <div class="form-group">
+                        {{ form.name.label(for="nameField") }}
+                        {% if form.name.errors %}
+                            {{ form.name(class="form-control is-invalid", id="nameField") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.name.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.name(class="form-control", id="nameField") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.email.label(for="emailField") }}
+                        {% if form.email.errors %}
+                            {{ form.email(class="form-control is-invalid", id="emailField") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.email.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.email(class="form-control", id="emailField") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.feedback.label(for="feedbackField") }}
+                        {% if form.feedback.errors %}
+                            {{ form.feedback(class="form-control is-invalid", id="feedbackField") }}
+                            <div class="invalid-feedback">
+                                {% for error in form.feedback.errors %}
+                                    <span>{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            {{ form.feedback(class="form-control", id="feedbackField") }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        {% for radio in form.feedback_type %}
+                            <div class="form-check">
+                                {{ radio(class="form-check-input", type="radio", id=loop.index0) }}
+                                {{ radio.label(class="form-check-label", for=loop.index0) }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-group">
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </fieldset>
+            </form> 
+        </div>
+    </div>
+{% endblock content %}

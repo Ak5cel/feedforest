@@ -6,9 +6,9 @@ from .models import Topic, RSSFeed, Article, User, user_article_map
 from .forms import (LoginForm, SignupForm, EmptyForm,
                     RequestPasswordResetForm, PasswordResetForm,
                     EditDetailsForm, ChangePasswordForm, EmailPreferencesForm,
-                    HiddenElementForm)
+                    HiddenElementForm, FeedbackForm)
 from . import app, db, bcrypt
-from .utils import get_utc_time
+from .utils import get_utc_time, send_feedback_email
 
 
 @app.route('/')
@@ -269,3 +269,16 @@ def edit_email_pref():
 @app.route('/about')
 def about():
     return render_template('about.html', title='About Us')
+
+
+@app.route('/feedback', methods=['GET', 'POST'])
+def feedback():
+    form = FeedbackForm()
+    if form.validate_on_submit():
+        send_feedback_email(name=form.name.data,
+                            email=form.email.data,
+                            feedback=form.feedback.data,
+                            type=form.feedback_type.data)
+        flash('Thank you for your feedback!', 'success')
+        return redirect(url_for('feedback'))
+    return render_template('feedback.html', title='Feedback', form=form)
