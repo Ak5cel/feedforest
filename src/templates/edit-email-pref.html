@@ -71,6 +71,9 @@
 			</fieldset>
 		</form>
 	</div>
+{% endblock account_info %}
+{% block scripts %}
 	<script src="{{ url_for('static', filename='datetime-utils.js') }}"></script>
 	<script src="{{ url_for('static', filename='edit-email-pref.js') }}"></script>
-{% endblock account_info %}
+	<script src="{{ url_for('static', filename='email-pref-radios.js') }}"></script>
+{% endblock scripts %}

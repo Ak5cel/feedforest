@@ -116,3 +116,7 @@
 		</div>
 	{% endif %}
 {% endblock content %}
+
+{% block scripts %}
+	<script src="{{ url_for('static', filename='filter-scripts.js') }}"></script>
+{% endblock scripts %}
