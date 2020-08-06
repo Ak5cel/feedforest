@@ -13,6 +13,10 @@ function getUserLocaleTime(time_from_db, utc_offset) {
 	if (hours > 12) {
 		hours -= 12;
 		am_or_pm = 'pm';
+	} else if (hours == 12) {
+		am_or_pm = 'pm'
+	} else if (hours == 0) {
+		hours = 12
 	}
 	return [hours, am_or_pm]
 }

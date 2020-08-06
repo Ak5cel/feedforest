@@ -8,7 +8,7 @@ from .forms import (LoginForm, SignupForm, EmptyForm,
                     EditDetailsForm, ChangePasswordForm, EmailPreferencesForm,
                     HiddenElementForm, FeedbackForm)
 from . import app, db, bcrypt
-from .utils import get_utc_time, send_feedback_email
+from .utils import get_utc_time, send_feedback_email, get_24h_from_12h
 
 
 @app.route('/')
@@ -251,9 +251,7 @@ def edit_email_pref():
         if form.frequency.data == 0:
             current_user.email_frequency = None
         elif form.frequency.data == 1:
-            hour_12 = form.hour.data
-            am_or_pm = form.am_or_pm.data
-            hour_24 = hour_12 if am_or_pm == 'am' else (hour_12 + 12)
+            hour_24 = get_24h_from_12h(form.hour.data, form.am_or_pm.data)
             utc_offset = int(form.utc_offset.data)
             time_utc = get_utc_time(hour_24, utc_offset)
             current_user.email_frequency = time_utc

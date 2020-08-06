@@ -26,6 +26,14 @@ def get_datetime_from_time_struct(ts):
     return None
 
 
+def get_24h_from_12h(hour_12, am_or_pm):
+    am_or_pm = am_or_pm.lower()
+    if hour_12 != 12:
+        return hour_12 if am_or_pm == 'am' else (hour_12 + 12)
+    else:
+        return 0 if am_or_pm == 'am' else 12
+
+
 def send_feedback_email(name, email, feedback, type):
     User.send_email(
         subject=f'[FeedForest] Feedback: {type}',
