@@ -27,7 +27,8 @@ body {
 	min-width: 45em;
 }
 
-p.card-text > a {
+p.card-text > a,
+a.text-dark {
 	color: #333333;
 }
 

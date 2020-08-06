@@ -78,20 +78,27 @@
 
 {% block content %}
 	<div class="col-12 text-right">
-		<small class="text-muted">Last updated: {{ last_updated_on.strftime('%d/%m/%Y, %I:%M %p %Z') }}</small>
+		<small class="text-muted">Last updated: {{ last_updated_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</small>
 	</div>
 	<div class="col">
 		<div class="card-columns ">
 		{% for topic in topics %}
 			<div class="card mt-2 filterdiv {{ topic.topic_name }}">
 				<div class="card-body">
-					<h5 class="card-title">{{ topic.topic_name }}</h5>
+					<h4 class="card-title">{{ topic.topic_name }}</h4>
 					{% for article in topic.articles %}
 						{% if article in articles %}
 							<a href="{{ article.rssfeed.site_url }}" class="site-link">
-								<small class="text-muted">{{ article.rssfeed.site_name }}</small>
+								<small>{{ article.rssfeed.site_name }}</small>
 							</a>
-							<p class="card-text article-link"><a href="{{ article.link }}">{{ article.title }}</a></p>
+							<p class="card-text article-link">
+								<a href="{{ article.link }}">{{ article.title }}</a><br>
+								{% if article.published_on %}
+								<small class="text-muted">
+									{{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC
+								</small>
+								{% endif %}
+							</p>
 						{% endif %}
 					{% endfor %}
 				</div>

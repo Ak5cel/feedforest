@@ -48,6 +48,7 @@ class Article(db.Model):
     title = db.Column(db.Text, nullable=False)
     link = db.Column(db.Text, unique=True, nullable=False)
     refreshed_on = db.Column(db.DateTime)
+    published_on = db.Column(db.DateTime)
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=False)
     rssfeed_id = db.Column(db.Integer, db.ForeignKey('rss_feed.id'), nullable=False)
 

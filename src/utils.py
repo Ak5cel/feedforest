@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from time import mktime
 from flask import render_template
 from premailer import transform
 from . import app
@@ -19,6 +20,12 @@ def get_user_locale_time(utc_time, offset):
     return user_locale_time
 
 
+def get_datetime_from_time_struct(ts):
+    if ts:
+        return datetime.utcfromtimestamp(mktime(ts))
+    return None
+
+
 def send_feedback_email(name, email, feedback, type):
     User.send_email(
         subject=f'[FeedForest] Feedback: {type}',
@@ -33,3 +40,12 @@ def send_feedback_email(name, email, feedback, type):
                                             email=email,
                                             feedback=feedback))
     )
+
+# Custom date handlers for feedparser
+
+
+def custom_date_handler(date_string):
+    """parse a UTC date in `%A, %B %d, %Y` format"""
+    d = datetime.strptime(date_string, "%A, %B %d, %Y")
+    return (d.year, d.month, d.day,
+            0, 0, 0, 0, 0, 0)

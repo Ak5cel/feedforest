@@ -1,11 +1,11 @@
 from datetime import datetime, time, timedelta
-from time import mktime
 from html import unescape
-from feedparser import parse
+import feedparser
 from premailer import transform
 from flask import render_template
 from . import celery, db, app
 from .models import RSSFeed, Article, User
+from .utils import get_datetime_from_time_struct, custom_date_handler
 from celery.schedules import crontab
 
 # Logging setup for debugging
@@ -76,12 +76,13 @@ def fetch_articles():
     for feed in rssfeeds:
         # Parse the feed
         logging.debug(f'Parsing feed: {feed}...')
-        parsed_feed = parse(feed.rss_link)
+        feedparser.registerDateHandler(custom_date_handler)
+        parsed_feed = feedparser.parse(feed.rss_link)
 
         # Get the time the feed was last updated
         ts = parsed_feed.feed.get('updated_parsed', None)  # returns a time.struct_time instance
         if ts:
-            updated_on = datetime.utcfromtimestamp(mktime(ts))  # converts time.struct_time into UTC datetime.datetime instance
+            updated_on = get_datetime_from_time_struct(ts)  # converts time.struct_time into UTC datetime.datetime instance
 
         # Check whether the feed was updated since last database refresh
         if ts and feed.updated_on == updated_on:
@@ -117,6 +118,7 @@ def fetch_articles():
                     new_article = Article(title=unescape(entry.title),
                                           link=entry.link,
                                           refreshed_on=CURRENT_REFRESH_TIME,
+                                          published_on=get_datetime_from_time_struct(entry.published_parsed),
                                           topic=feed.topic,
                                           rssfeed=feed)
                     db.session.add(new_article)

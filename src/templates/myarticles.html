@@ -10,10 +10,16 @@
 						<li class="list-group-item p-2 d-flex justify-content-between">
 							<div class="d-flex flex-column justify-content-end">
 								<small>
-									<a class="text-muted" href="{{ article.rssfeed.site_url }}">{{ article.rssfeed.site_name }}</a>
+									<a href="{{ article.rssfeed.site_url }}">{{ article.rssfeed.site_name }}</a>
 								</small>
 								<p class="mb-0 pr-3">
-									<a href="{{ article.link }}">{{ article.title }}</a>
+									<a class="text-dark" href="{{ article.link }}">{{ article.title }}</a>
+									{% if article.published_on %}
+									<br>
+									<small class="text-muted">
+										{{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC
+									</small>
+									{% endif %}
 								</p>	
 							</div>
 							<div class="d-flex flex-column align-items-end">
