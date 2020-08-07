@@ -68,6 +68,24 @@ user_article_map = db.Table('user_article_map',
                             db.Column('bookmarked_on', db.DateTime, default=datetime.utcnow))
 
 
+class UserRole(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    role_name = db.Column(db.String(20))
+
+    users = db.relationship('User',
+                            backref=db.backref('role', lazy=True),
+                            passive_deletes="all")
+
+    @staticmethod
+    def get_default_role_id():
+        DEFAULT_ROLE_NAME = 'user'
+        return UserRole.get_role(DEFAULT_ROLE_NAME).id
+
+    @staticmethod
+    def get_role(role_name):
+        return UserRole.query.filter_by(role_name=role_name).first()
+
+
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), index=True, unique=True, nullable=False)
@@ -79,6 +97,11 @@ class User(db.Model, UserMixin):
                                      backref=db.backref('selected_by', lazy=True))
     bookmarked_articles = db.relationship('Article', secondary=user_article_map, lazy='subquery',
                                           backref=db.backref('bookmarked_by', lazy=True))
+    role_id = db.Column(db.Integer,
+                        db.ForeignKey('user_role.id',
+                                      onupdate="CASCADE",
+                                      ondelete="SET DEFAULT"),
+                        default=UserRole.get_default_role_id)
 
     def check_password(self, pw):
         return bcrypt.check_password_hash(self.password_hash, pw)
