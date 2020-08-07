@@ -32,11 +32,11 @@ class MyAdminIndexView(AdminIndexView):
         if not current_user.is_authenticated:
             # redirect to login page if user doesn't has not logged in
             flash('Authorized access only. Please login first.', 'warning')
-            return redirect(url_for('login', next=request.url))
+            return redirect(url_for('login', next=request.full_path))
         if current_user.role.role_name != 'admin':
             # redirect to home page if user doesn't have access
             flash('You do not have access to that page.', 'danger')
-            return redirect(url_for('home', next=request.url))
+            return redirect(url_for('home', next=request.full_path))
 
 
 admin = Admin(app, index_view=MyAdminIndexView())

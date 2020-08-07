@@ -42,7 +42,8 @@ def signup():
         db.session.commit()
         token = new_user.generate_token()
         new_user.send_email_verification_email(token)
-        flash('Account created successfully! We have sent you an email to verify your email address.', 'success')
+        flash('Account created successfully! We have sent you an email to \
+            verify your email address.', 'success')
         return render_template('email-verification-sent.html', title='Verify email')
     return render_template('signup.html', title='Sign up', form=form)
 
@@ -59,10 +60,11 @@ def login():
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
                 return redirect(url_for('my_feeds'))
-            next_view_name = next_page.split('/')[1]
-            return redirect(url_for(next_view_name))
+            # next_view_name = next_page.split('/')[1]
+            return redirect(next_page)
         else:
-            flash('Login unsuccessful. Please check if you are using a verified email and the correct password.', 'danger')
+            flash('Login unsuccessful. Please check if you are using a \
+                verified email and the correct password.', 'danger')
     return render_template('login.html', title='Login', form=form)
 
 
