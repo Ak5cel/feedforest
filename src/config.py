@@ -9,7 +9,7 @@ with open(CONFIG_FILE_PATH) as config_file:
 
 class Config(object):
     SECRET_KEY = config.get('SECRET_KEY') or '666b601b6739add4b3c04df94d9fe4f1'
-    SQLALCHEMY_DATABASE_URI = config.get('DATABASE_URL') or \
+    SQLALCHEMY_DATABASE_URI = config.get('SQLALCHEMY_DATABASE_URI') or \
         'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 

@@ -2,6 +2,7 @@ from datetime import datetime
 from flask import url_for, render_template
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from sqlalchemy.sql import expression
 from premailer import transform
 import smtplib
 import ssl
@@ -17,7 +18,7 @@ def load_user(user_id):
 
 class Topic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    topic_name = db.Column(db.String(20), unique=True, nullable=False)
+    topic_name = db.Column(db.String(20), index=True, unique=True, nullable=False)
     rss_feeds = db.relationship('RSSFeed',
                                 backref=db.backref('topic', cascade='all'),
                                 lazy=True)
@@ -32,9 +33,9 @@ class Topic(db.Model):
 
 class RSSFeed(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    rss_link = db.Column(db.Text, unique=True, nullable=False)
-    site_name = db.Column(db.String(30), nullable=False)
-    site_url = db.Column(db.Text, unique=True, nullable=False)
+    rss_link = db.Column(db.String(768), unique=True, nullable=False)
+    site_name = db.Column(db.String(30), index=True, unique=True, nullable=False)
+    site_url = db.Column(db.String(2048), nullable=False)
     updated_on = db.Column(db.DateTime)
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=False)
     articles = db.relationship('Article', backref='rssfeed', lazy=True)
@@ -46,7 +47,7 @@ class RSSFeed(db.Model):
 class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.Text, nullable=False)
-    link = db.Column(db.Text, unique=True, nullable=False)
+    link = db.Column(db.String(2048), nullable=False)
     refreshed_on = db.Column(db.DateTime)
     published_on = db.Column(db.DateTime)
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=False)
@@ -85,13 +86,16 @@ class UserRole(db.Model):
     def get_role(role_name):
         return UserRole.query.filter_by(role_name=role_name).first()
 
+    def __repr__(self):
+        return f"UserRole('{self.id}', '{self.role_name}')"
+
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(30), index=True, unique=True, nullable=False)
-    email = db.Column(db.String(120), index=True, unique=True, nullable=False)
+    email = db.Column(db.String(254), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
-    email_verified = db.Column(db.Boolean, nullable=False, server_default='true')
+    email_verified = db.Column(db.Boolean, nullable=False, server_default=expression.true())
     email_frequency = db.Column(db.Time)
     selected_feeds = db.relationship('RSSFeed', secondary=user_feed_map, lazy='subquery',
                                      backref=db.backref('selected_by', lazy=True))
