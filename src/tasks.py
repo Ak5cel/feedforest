@@ -2,8 +2,8 @@ from datetime import datetime, time, timedelta
 from html import unescape
 import feedparser
 from premailer import transform
-from flask import render_template
-from . import celery, db, app
+from flask import render_template, current_app
+from . import db, celery
 from .models import RSSFeed, Article, User
 from .utils import get_datetime_from_time_struct, custom_date_handler
 from celery.schedules import crontab
@@ -167,7 +167,7 @@ def send_daily_email(uid):
     print('Sending email...')
     User.send_email(
         subject="[FeedForest] Here's the latest updates from your feeds",
-        sender_email=app.config['MAIL_USERNAME'],
+        sender_email=current_app.config['MAIL_USERNAME'],
         receiver_email=user.email,
         text_body=render_template('email/daily-email.txt',
                                   user=user,

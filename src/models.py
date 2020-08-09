@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import url_for, render_template
+from flask import url_for, render_template, current_app
 from flask_login import UserMixin
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from sqlalchemy.sql import expression
@@ -8,7 +8,7 @@ import smtplib
 import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from . import db, login_manager, app, bcrypt
+from . import db, login_manager, bcrypt
 
 
 @login_manager.user_loader
@@ -146,12 +146,12 @@ class User(db.Model, UserMixin):
                 db.session.commit()
 
     def generate_token(self, expires_sec=None):
-        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
         return s.dumps({"user_id": self.id}).decode('utf-8')
 
     @staticmethod
     def verify_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
+        s = Serializer(current_app.config['SECRET_KEY'])
         try:
             user_id = s.loads(token)['user_id']
         except Exception:
@@ -159,12 +159,12 @@ class User(db.Model, UserMixin):
         return User.query.get(user_id)
 
     def generate_token_with_email(self, email, expires_sec=None):
-        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
         return s.dumps({"user_id": self.id, "email": email}).decode('utf-8')
 
     @staticmethod
     def verify_token_with_email(token):
-        s = Serializer(app.config['SECRET_KEY'])
+        s = Serializer(current_app.config['SECRET_KEY'])
         try:
             user_id = s.loads(token)['user_id']
             email = s.loads(token)['email']
@@ -192,15 +192,15 @@ class User(db.Model, UserMixin):
 
         # Create secure connection with server and send email
         context = ssl.create_default_context()
-        with smtplib.SMTP(app.config['MAIL_SERVER'], app.config['MAIL_PORT']) as server:
+        with smtplib.SMTP(current_app.config['MAIL_SERVER'], current_app.config['MAIL_PORT']) as server:
             server.ehlo()
             server.starttls(context=context)
-            server.login(sender_email, app.config['MAIL_PASSWORD'])
+            server.login(sender_email, current_app.config['MAIL_PASSWORD'])
             server.sendmail(sender_email, receiver_email, message.as_string())
 
     def send_password_reset_email(self, token):
-        reset_password_link = url_for('reset_password_with_token', token=token, _external=True)
-        sender_email = app.config['MAIL_USERNAME']
+        reset_password_link = url_for('auth.reset_password_with_token', token=token, _external=True)
+        sender_email = current_app.config['MAIL_USERNAME']
         receiver_email = self.email
         User.send_email(
             subject='[FeedForest] Reset Password',
@@ -215,8 +215,8 @@ class User(db.Model, UserMixin):
         )
 
     def send_email_verification_email(self, token):
-        verification_link = url_for('verify_email', token=token, _external=True)
-        sender_email = app.config['MAIL_USERNAME']
+        verification_link = url_for('auth.verify_email', token=token, _external=True)
+        sender_email = current_app.config['MAIL_USERNAME']
         receiver_email = self.email
         User.send_email(
             subject='[FeedForest] Verify Email',
@@ -231,8 +231,8 @@ class User(db.Model, UserMixin):
         )
 
     def send_email_change_email(self, token, new_email):
-        verification_link = url_for('verify_new_email', token=token, _external=True)
-        sender_email = app.config['MAIL_USERNAME']
+        verification_link = url_for('auth.verify_new_email', token=token, _external=True)
+        sender_email = current_app.config['MAIL_USERNAME']
         receiver_email = new_email
         User.send_email(
             subject='[FeedForest] Verify New Email',

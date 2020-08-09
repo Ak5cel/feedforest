@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta
 from time import mktime
-from flask import render_template
+from flask import render_template, current_app
 from premailer import transform
-from . import app
 from .models import User
 
 
@@ -37,8 +36,8 @@ def get_24h_from_12h(hour_12, am_or_pm):
 def send_feedback_email(name, email, feedback, type):
     User.send_email(
         subject=f'[FeedForest] Feedback: {type}',
-        sender_email=app.config['MAIL_USERNAME'],
-        receiver_email=app.config['MAIL_USERNAME'],
+        sender_email=current_app.config['MAIL_USERNAME'],
+        receiver_email=current_app.config['MAIL_USERNAME'],
         text_body=render_template('email/feedback.txt',
                                   name=name,
                                   email=email,

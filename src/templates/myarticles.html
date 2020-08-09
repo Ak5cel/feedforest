@@ -24,7 +24,7 @@
 							</div>
 							<div class="d-flex flex-column align-items-end">
 								<small class="text-light-gray pb-2">{{ article.topic.topic_name }}</small>
-								<form action="{{ url_for('unbookmark_article', article_id=article.id) }}" method="POST">
+								<form action="{{ url_for('user.unbookmark_article', article_id=article.id) }}" method="POST">
 									{{ empty_form.hidden_tag() }}
 									{{ empty_form.submit(value='Remove', class='btn btn-sm btn-secondary') }}
 								</form>
@@ -37,7 +37,7 @@
 					<small class="text-muted mb-2">No articles bookmarked</small>
 					<small>
 						Go to  
-						<a href="{{ url_for('my_feeds') }}">My Feeds</a>
+						<a href="{{ url_for('user.my_feeds') }}">My Feeds</a>
 						and click on the <i class="far fa-bookmark text-success"></i> next to an article to bookmark it!
 					</small>
 				</div>

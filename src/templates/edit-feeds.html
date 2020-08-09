@@ -25,15 +25,15 @@
 							<small class="text-light-gray">{{ feed.topic.topic_name }}</small>
 							{% if feed in current_user.selected_feeds %}
 								<!-- <a class="rem-btn badge badge-pill badge-secondary" href="#">Remove</a> -->
-								<form id="{{ feed.id }}" class="add-remove" action="{{ url_for('remove_feed', feed_id=feed.id) }}" method="POST"
-									data-alt-action="{{ url_for('add_feed', feed_id=feed.id) }}">
+								<form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.remove_feed', feed_id=feed.id) }}" method="POST"
+									data-alt-action="{{ url_for('user.add_feed', feed_id=feed.id) }}">
 									{{ empty_form.hidden_tag() }}
 									{{ empty_form.submit(value='Remove', class='btn btn-sm btn-secondary') }}
 								</form>
 							{% else %}
 								<!-- <a class="add-btn badge badge-pill badge-success" href="#">Add</a> -->
-								<form id="{{ feed.id }}" class="add-remove" action="{{ url_for('add_feed', feed_id=feed.id) }}" method="POST"
-									data-alt-action="{{ url_for('remove_feed', feed_id=feed.id) }}">
+								<form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.add_feed', feed_id=feed.id) }}" method="POST"
+									data-alt-action="{{ url_for('user.remove_feed', feed_id=feed.id) }}">
 									{{ empty_form.hidden_tag() }}
 									{{ empty_form.submit(value='Add', class='btn btn-sm btn-success') }}
 								</form>

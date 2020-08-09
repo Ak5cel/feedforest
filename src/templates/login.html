@@ -42,7 +42,7 @@
                     <div class="form-group">
                         {{ form.submit(class="btn btn-primary") }}
                         <small class="ml-2">
-                            <a href="{{ url_for('request_password_reset') }}">Forgot Password?</a>
+                            <a href="{{ url_for('auth.request_password_reset') }}">Forgot Password?</a>
                         </small>
                     </div>
                 </fieldset>
@@ -50,7 +50,7 @@
         </div>
         <div class="border-top pt-3">
             <small class="text-muted">
-                Don't have an account?<a class="ml-2" href="{{ url_for('signup') }}">Sign up</a>
+                Don't have an account?<a class="ml-2" href="{{ url_for('auth.signup') }}">Sign up</a>
             </small>
         </div>
     </div>
