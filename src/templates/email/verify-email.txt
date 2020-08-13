@@ -1,7 +1,14 @@
-Dear {user.username},
+Hey {{ user.username }}!
 
-Please visit the following link to verify your email:
-{verification_link}
+We just need to verify your email address to complete setting up your account.
 
-Sincerely,
+Visit the following URL to verify your email:
+{{ verification_link }}
+
+Thank you for choosing FeedForest!
+
+Love,
 The FeedForest Team
+
+------------------------------------------------------------------
+If you have not signed up at FeedForest, please ignore this email.

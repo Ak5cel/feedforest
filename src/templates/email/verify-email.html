@@ -1,14 +1,17 @@
-{% extends "email/default-email-layout.html" %}
+{% extends "email/default-template.html" %}
 
-{% block content %}
-    <p>
-    Visit the following link to verify your email:
-    <div class="btn-wrapper">
-        <a href="{{ verification_link }}" class="btn">Verify Email</a>
-    </div>
-    </p>
-{% endblock content %}
+{% block main_content %}
+<div class="main-content align-center">
+    <img src="https://i.ibb.co/1J6y513/undraw-festivities-tvvj-transparent.png" alt="Hero image" border="0">
+    <h2>You're nearly there!</h2>
+    <p class="text-main">We just need to verify your email address to complete setting up your account.</p>
+    <a href="{{ verification_link }}" class="button">Verify Email</a>
+    <hr class="hr-bottom">
+    <p class="sub-text">Or paste this URL into your browser:</p>
+    <p class="long-link">{{ verification_link }}</p>
+</div>
+{% endblock main_content %}
 
 {% block footer %}
-    If you have not created a new account at FeedForest, please ignore this message.
+    <p>If you have not signed up at FeedForest, please ignore this email.</p>
 {% endblock footer %}

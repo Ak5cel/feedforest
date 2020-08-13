@@ -1,7 +1,7 @@
-Dear {user.username},
+Dear {{ user.username }},
 
 Please visit the following link to verify your new email:
-{verification_link}
+{{ verification_link }}
 
 Your account email will be changed only after verification.
 

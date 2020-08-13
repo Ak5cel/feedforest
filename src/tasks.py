@@ -1,8 +1,7 @@
 from datetime import datetime, time, timedelta
 from html import unescape
 import feedparser
-from premailer import transform
-from flask import render_template, current_app
+from flask import current_app
 from . import db, celery
 from .models import RSSFeed, Article, User
 from .utils import get_datetime_from_time_struct, custom_date_handler
@@ -160,20 +159,6 @@ def send_batch_emails(uids):
 
 @celery.task
 def send_daily_email(uid):
-    print('Entered method')
     user = User.query.get(uid)
-    sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
-    latest_articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
-    print('Sending email...')
-    User.send_email(
-        subject="[FeedForest] Here's the latest updates from your feeds",
-        sender_email=current_app.config['MAIL_USERNAME'],
-        receiver_email=user.email,
-        text_body=render_template('email/daily-email.txt',
-                                  user=user,
-                                  articles=latest_articles),
-        html_body=transform(render_template('email/daily-email.html',
-                                            user=user,
-                                            articles=latest_articles))
-    )
-    print('Email sent.')
+    with current_app.test_request_context(base_url='https://www.feedforest.dev'):
+        user.send_daily_email()

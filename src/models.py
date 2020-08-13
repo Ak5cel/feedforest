@@ -174,7 +174,11 @@ class User(db.Model, UserMixin):
         return user, email
 
     @staticmethod
-    def send_email(subject, sender_email, receiver_email, text_body, html_body):
+    def send_email(subject,
+                   sender_email,
+                   receiver_email,
+                   text_body,
+                   html_body):
         # MIMEMultipart setup
         message = MIMEMultipart("alternative")
         message["Subject"] = subject
@@ -243,8 +247,34 @@ class User(db.Model, UserMixin):
                                       verification_link=verification_link),
             html_body=transform(render_template('email/change-email.html',
                                                 user=self,
-                                                verification_link=verification_link))
+                                                verification_link=verification_link,
+                                                new_email=new_email)
+                                )
         )
+
+    def send_daily_email(self):
+        print('Entered method')
+        sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
+        latest_articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
+        my_feeds_link = url_for('user.my_feeds', _external=True)
+        unsubscribe_link = url_for('user.edit_email_pref', _external=True)
+        print('Sending email...')
+        User.send_email(
+            subject="[FeedForest] Here's the latest updates from your feeds",
+            sender_email=current_app.config['MAIL_USERNAME'],
+            receiver_email=self.email,
+            text_body=render_template('email/daily-email.txt',
+                                      user=self,
+                                      articles=latest_articles,
+                                      my_feeds_link=my_feeds_link,
+                                      unsubscribe_link=unsubscribe_link),
+            html_body=transform(render_template('email/daily-email.html',
+                                                user=self,
+                                                articles=latest_articles,
+                                                my_feeds_link=my_feeds_link,
+                                                unsubscribe_link=unsubscribe_link))
+        )
+        print('Email sent.')
 
     def __repr__(self):
         return f"User('{self.username}', '{self.email}')"

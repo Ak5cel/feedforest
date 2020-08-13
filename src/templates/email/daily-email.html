@@ -1,193 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "email/default-template.html" %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=">
-  <title></title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+{% block main_content %}
+<div class="main-content align-center">
+    <img src="https://i.ibb.co/C6r7y6j/undraw-daily-email.png" alt="undraw-daily-email" border="0">
+    <h2>Hey {{ user.username }}!</h2>
+    <p class="text-main" style="">Here are the latest articles from your selected feeds.</p>
+    {% for article in articles %}
+        <div class="article">
+            <hr>
+            <a href="{{ article.rssfeed.site_url }}" class="feed-name">{{ article.rssfeed.site_name }}</a><br>
+            <a href="{{ article.link }} " class="article-title">{{ article.title }}</a><br>
+            {% if article.published_on %}
+                <span class="published-on">{{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</span>
+            {% endif %}            
+        </div>
+    {% endfor %}
+    <p class="text-main mt-30">Visit your feed wall for further updates</p>
+    <a href="{{ my_feeds_link }}" class="button" style="margin-top: 15px">My Feed Wall</a>
+    <hr class="hr-bottom">
+    <p class="sub-text align-left">Trouble with the link above? Paste this URL into your browser (login required):</p>
+    <p class="long-link">{{ my_feeds_link }}</p>
+</div>
+{% endblock main_content %}
 
-    body {
-      margin: 0;
-      padding: 0 0 20px 0;
-      font-family: 'Roboto', sans-serif;
-      font-size: 16px;
-      box-sizing: border-box;
-      background-color: #f2f2f2;
-    }
-
-    img {
-      border: 0;
-      width: 100%;
-      max-width: 500px;
-      height: auto;
-      line-height: 100%;
-      outline: none;
-      text-decoration: none;
-    }
-
-    table {
-      border-collapse: collapse !important;
-    }
-
-    tr,
-    td {
-      padding: 0;
-    }
-
-    .text-dark {
-      color: #201F2F;
-    }
-
-    .heading {
-      font-size: 1.5em;
-      font-weight: 700;
-      padding-top: 40px;
-      padding-bottom: 15px;
-    }
-
-    .paragraph {
-      font-size: 0.97em;
-      padding-bottom: 10px;
-    }
-
-    .fill-screen {
-      width: 100%;
-      height: 100%;
-    }
-
-    .backdrop {
-      width: inherit;
-      padding: 20px 0px;
-      margin: 0px;
-      text-align: center;
-    }
-
-    .container {
-      width: 100%;
-      height: 100%;
-      max-width: 490px;
-      margin: auto;
-      background-color: #FAFAF9;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-box-shadow: inset 0px 0px 0px 0.8px #E4E4E4;
-      -moz-box-shadow: inset 0px 0px 0px 0.8px #E4E4E4;
-      box-shadow: inset 0px 0px 0px 0.8px #E4E4E4;
-      border-radius: 2px;
-    }
-
-    .header {
-      padding: 28px 8% 28px 8%;
-      margin: 0 0 20px 0;
-      background-color: #201F2F;
-      color: #FAFAF9;
-      font-weight: 700;
-      font-size: 1.1em;
-      box-sizing: border-box;
-    }
-
-    .main-content {
-      valign: top;
-      height: auto;
-      padding-left: 8%;
-      padding-right: 8%;
-      padding-top: 0px;
-    }
-
-    .btn {
-      text-decoration: none;
-      border-radius: 3px;
-      font-size: 0.97em;
-      font-weight: 700;
-      color: #FAFAF9;
-      text-decoration: none;
-      background-color: #6484BC;
-      border-top: 15px solid #6484BC;
-      border-bottom: 15px solid #6484BC;
-      border-left: 40px solid #6484BC;
-      border-right: 40px solid #6484BC;
-      border-radius: 3px;
-      -webkit-border-radius: 3px;
-      -moz-border-radius: 3px;
-      display: inline-block;
-      margin-top: 20px;
-    }
-
-    .footer-wrapper {
-      width: 100%;
-      max-width: 490px;
-      margin: auto;
-      min-height: 40px;
-    }
-
-    .footer {
-      padding-top: 12px;
-      padding-bottom: 50px;
-      padding-left: 8%;
-      padding-right: 8%;
-      font-size: 0.7em;
-      color: #828282;
-      line-height: 1.45em;
-    }
-
-    .footer a {
-      color: #828282;
-    }
-  </style>
-</head>
-
-<body>
-  <table class="fill-screen">
-    <tr>
-      <td class="backdrop">
-        <table class="container">
-          <tr>
-            <td class="header">
-              FeedForest
-            </td>
-          </tr>
-          <tr>
-            <td class="main-content">
-              <table style="height: auto; margin-top: 10px; margin-bottom: 30px;">
-                <tr>
-                  <td>
-                    <img src="{{ url_for('static', filename='images/undraw_festivities_tvvj.png', _external=True) }}" alt="">
-                  </td>
-                </tr>
-                <tr>
-                  <td class="heading text-dark">
-                    You're nearly there!
-                  </td>
-                </tr>
-                <tr>
-                  <td class="paragraph text-dark">
-                    We just need to verify your email address to complete setting up your account.
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <a href="#" class="btn">
-                      Verify Email
-                    </a>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-        <table class="footer-wrapper">
-          <tr>
-            <td class="footer">
-              If you have not signed up at FeedForest, please ignore this email.<br>
-              Sent by FeedForest <b>·</b> <a href="#">feedforest.dev</a>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-
-</html>
+{% block footer %}
+        <p>You received this email as part of your daily subscription to FeedForest.</p>
+        <p>You may <a href="{{ unsubscribe_link }}"><u>Unsubscribe</u></a> at any time.</p>
+{% endblock footer %}

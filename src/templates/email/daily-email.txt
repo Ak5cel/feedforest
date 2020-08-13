@@ -1,14 +1,23 @@
-Hey {user.username},
+Hey {{ user.username }},
 
 Here are the latest articles from your selected feeds.
 
 {% for article in articles %}
 Feed: {{ article.rssfeed.site_name }}
 Title: {{ article.title }}
-URL: {{ article.link }} 
+URL: {{ article.link }}
+{% if article.published_on %}
+	Published on: {{ article.published_on }}
+{% endif %}
 *******
 
 {% endfor %}
 
+For further updates, visit your feed wall at {{ my_feeds_link }}
+
 Sincerely,
 The FeedForest Team
+
+-----------------------------
+You received this email as part of your daily subscription to FeedForest.
+You may unsubscribe at any time by visiting {{ unsubscribe_link }}
