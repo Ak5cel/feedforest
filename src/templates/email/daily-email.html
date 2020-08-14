@@ -8,7 +8,7 @@
     {% for article in articles %}
         <div class="article">
             <hr>
-            <a href="{{ article.rssfeed.site_url }}" class="feed-name">{{ article.rssfeed.site_name }}</a><br>
+            <a href="{{ article.rssfeed.site_url }}" class="feed-name">{{ article.rssfeed.feed_name }}</a><br>
             <a href="{{ article.link }} " class="article-title">{{ article.title }}</a><br>
             {% if article.published_on %}
                 <span class="published-on">{{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</span>

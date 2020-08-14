@@ -47,7 +47,7 @@ class AdminView(ModelView):
 class RSSFeedAdminView(AdminView):
     column_filters = [
         'rss_link',
-        'site_name',
+        'feed_name',
         'site_url',
         'updated_on',
         'topic_id'

@@ -53,11 +53,11 @@
 	                                    <input class="form-check-input"
 	                                        type="checkbox"
 	                                        value=""
-	                                        name="{{ rssfeed.site_name }}"
+	                                        name="{{ rssfeed.feed_name }}"
 	                                        id="{{ 'rssfeed' ~ outer_loop.index ~ loop.index }}"
 	                                        checked>
 	                                    <label class="form-check-label" for="{{ 'rssfeed' ~ outer_loop.index ~ loop.index }}">
-	                                        {{ rssfeed.site_name }}
+	                                        {{ rssfeed.feed_name }}
 	                                    </label>
 	                                </div>
 	                            </a>
@@ -89,7 +89,7 @@
 					{% for article in topic.articles %}
 						{% if article in articles %}
 							<a href="{{ article.rssfeed.site_url }}" class="site-link">
-								<small>{{ article.rssfeed.site_name }}</small>
+								<small>{{ article.rssfeed.feed_name }}</small>
 							</a>
 							<p class="card-text article-link">
 								<a href="{{ article.link }}">{{ article.title }}</a><br>

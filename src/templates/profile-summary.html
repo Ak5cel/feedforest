@@ -22,7 +22,7 @@
 			<ul class="list-group list-group-flush">
 				{% for selected_feed in current_user.selected_feeds %}
 					<li class="list-group-item">
-						<small class="text-muted">{{ selected_feed.site_name }}</small>
+						<small class="text-muted">{{ selected_feed.feed_name }}</small>
 						<p class="mb-0"><a href="{{ selected_feed.rss_link }}">{{ selected_feed.rss_link }}</a></p>
 					</li>
 				{% endfor %}

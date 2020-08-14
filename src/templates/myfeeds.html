@@ -12,7 +12,7 @@
 					<div class="card mb-4">
 						<div class="card-body">
 							<h4 class="card-title mb-4">
-								<a class="text-dark" href="{{ feed.rss_link }}" title="{{ feed.rss_link }}">{{ feed.site_name }}</a>
+								<a class="text-dark" href="{{ feed.rss_link }}" title="{{ feed.rss_link }}">{{ feed.feed_name }}</a>
 							</h4>
 							{% for article in feed.articles %}
 								{% if article in latest_articles %}

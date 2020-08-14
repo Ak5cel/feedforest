@@ -8,7 +8,6 @@ def add_new_feeds(filename='new-feeds.csv'):
     path = os.path.abspath(__file__)
     dir_path = os.path.dirname(path)
     path_to_csv = os.path.join(dir_path, filename)
-    print(path_to_csv)
     with open(path_to_csv) as file:
         reader = csv.DictReader(file, fieldnames=['topic_name', 'feed_name', 'rss_link', 'site_url'])
 
@@ -21,7 +20,7 @@ def add_new_feeds(filename='new-feeds.csv'):
                 topic = Topic(topic_name=row['topic_name'])
                 db.session.add(topic)
             new_feed = RSSFeed(rss_link=row['rss_link'],
-                               site_name=row['feed_name'],
+                               feed_name=row['feed_name'],
                                site_url=row['site_url'],
                                topic=topic)
             db.session.add(new_feed)

@@ -18,7 +18,7 @@ def load_user(user_id):
 
 class Topic(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    topic_name = db.Column(db.String(20), index=True, unique=True, nullable=False)
+    topic_name = db.Column(db.String(30), index=True, unique=True, nullable=False)
     rss_feeds = db.relationship('RSSFeed',
                                 backref=db.backref('topic', cascade='all'),
                                 lazy=True)
@@ -34,14 +34,14 @@ class Topic(db.Model):
 class RSSFeed(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     rss_link = db.Column(db.String(768), unique=True, nullable=False)
-    site_name = db.Column(db.String(30), index=True, unique=True, nullable=False)
+    feed_name = db.Column(db.String(100), index=True, unique=True, nullable=False)
     site_url = db.Column(db.String(2048), nullable=False)
     updated_on = db.Column(db.DateTime)
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=False)
     articles = db.relationship('Article', backref='rssfeed', lazy=True)
 
     def __repr__(self):
-        return f"RSSFeed('{self.rss_link}', '{self.site_name}', '{self.topic.topic_name}')"
+        return f"RSSFeed('{self.rss_link}', '{self.feed_name}', '{self.topic.topic_name}')"
 
 
 class Article(db.Model):
