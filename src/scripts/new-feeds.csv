@@ -1,0 +1,69 @@
+Topic,Feed name,Feed link,site_url
+Arts and Entertainment,BBC News - Entertainment & Arts,http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml,https://www.bbc.co.uk/news/
+Arts and Entertainment,NYT > Arts,https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml,https://www.nytimes.com/section/arts
+Arts and Entertainment,NYT > Movies,https://rss.nytimes.com/services/xml/rss/nyt/Movies.xml,https://www.nytimes.com/section/movies
+Arts and Entertainment,NYT > Arts > Music,https://rss.nytimes.com/services/xml/rss/nyt/Music.xml,https://www.nytimes.com/section/arts/music
+Arts and Entertainment,NYT > Theater,https://rss.nytimes.com/services/xml/rss/nyt/Theater.xml,https://www.nytimes.com/section/theater
+Books,NYT > Books,https://rss.nytimes.com/services/xml/rss/nyt/Books.xml,https://www.nytimes.com/section/books
+Books,NYT > Books > Book Review,https://rss.nytimes.com/services/xml/rss/nyt/SundayBookReview.xml,https://www.nytimes.com/section/books/review
+Business,BBC News - Business,http://feeds.bbci.co.uk/news/business/rss.xml,https://www.bbc.co.uk/news/
+Business,NYT > Business,https://rss.nytimes.com/services/xml/rss/nyt/Business.xml,https://www.nytimes.com/section/business
+Business,NYT > Business > Entrepreneurship,https://rss.nytimes.com/services/xml/rss/nyt/SmallBusiness.xml,https://www.nytimes.com/section/business/smallbusiness
+Business,NYT > Business > Energy & Environment,https://rss.nytimes.com/services/xml/rss/nyt/EnergyEnvironment.xml,https://www.nytimes.com/section/business/energy-environment
+Business,Seth Godin's Blog,http://sethgodin.typepad.com/seths_blog/atom.xml,https://seths.blog
+Business,Entrepreneur,https://www.entrepreneur.com/topic/marketing.rss,https://www.entrepreneur.com/topic/marketing
+Business,Inc.com,https://www.inc.com/rss,https://www.inc.com/
+Business,Small Business Trends,http://feeds.feedburner.com/SmallBusinessTrends/,https://smallbiztrends.com
+Business,Young Upstarts,http://www.youngupstarts.com/feed/,https://www.youngupstarts.com
+Business,crowdspring Blog,https://feedpress.me/crowdSPRING,https://www.crowdspring.com/blog/
+Business,The Guardian | Business (UK),https://www.theguardian.com/uk/business/rss,https://www.theguardian.com/uk/business
+Business,Wall Street Journal Business,https://feeds.a.dj.com/rss/WSJcomUSBusiness.xml,http://online.wsj.com
+Family and Education,BBC News - Family & Education,http://feeds.bbci.co.uk/news/education/rss.xml,https://www.bbc.co.uk/news/
+Health,BBC News - Health,http://feeds.bbci.co.uk/news/health/rss.xml,https://www.bbc.co.uk/news/
+Health,NYT > Health,https://www.nytimes.com/services/xml/rss/nyt/Health.xml,https://www.nytimes.com/section/health
+Health,NYT > Well,https://rss.nytimes.com/services/xml/rss/nyt/Well.xml,https://www.nytimes.com/section/well
+Health,Harvard Health Blog,https://www.health.harvard.edu/blog/feed,https://www.health.harvard.edu/blog
+Lifestyle,Serious Eats,http://feeds.feedburner.com/seriouseatsfeaturesvideos,https://www.seriouseats.com/
+Miscellaneous,Lifehacker,https://lifehacker.com/rss,https://lifehacker.com
+Miscellaneous,TED Talks Daily,http://feeds.feedburner.com/TEDTalks_video,https://www.ted.com/talks
+News,BBC News -  Top Stories,http://feeds.bbci.co.uk/news/rss.xml,https://www.bbc.co.uk/news/
+News,BBC News - World,http://feeds.bbci.co.uk/news/world/rss.xml,https://www.bbc.co.uk/news/
+News,BBC News - UK,http://feeds.bbci.co.uk/news/uk/rss.xml,https://www.bbc.co.uk/news/
+News,NYT > Top Stories,https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml,https://www.nytimes.com
+News,NYT > World News,https://rss.nytimes.com/services/xml/rss/nyt/World.xml,https://www.nytimes.com/section/world
+News,Vox -  All,https://www.vox.com/rss/index.xml,https://www.vox.com/
+News,Reddit's /r/worldnews,https://www.reddit.com/r/worldnews/top/.rss,https://www.reddit.com/r/worldnews/top/
+Politics,BBC News - Politics,http://feeds.bbci.co.uk/news/politics/rss.xml,https://www.bbc.co.uk/news/
+Science and Environment,BBC News - Science & Environment,http://feeds.bbci.co.uk/news/science_and_environment/rss.xml,https://www.bbc.co.uk/news/
+Science and Environment,NYT > Climate and Environment,https://rss.nytimes.com/services/xml/rss/nyt/Climate.xml,https://www.nytimes.com/section/climate
+Science and Environment,Wired > Science Latest,https://www.wired.com/feed/category/science/latest/rss,https://www.wired.com/category/science/latest
+Science and Environment,Nature,http://feeds.nature.com/video/rss/current,http://www.nature.com/lindau/index.html
+Science and Environment,Journal of the American Chemical Society: Latest Articles (ACS Publications),http://feeds.feedburner.com/acs/jacsat,https://pubs.acs.org
+Science and Environment,STFC > Latest news,https://stfc.ukri.org/index.cfm/_api/feed/v1/stfc/?feedID=63AA78D5-2F8A-4075-938643807DD229DC,http://www.stfc.ac.uk
+Space and Cosmos,NYT > Science > Space & Cosmos,https://rss.nytimes.com/services/xml/rss/nyt/Space.xml,https://www.nytimes.com/section/science/space
+Sports,NYT > Sports,https://rss.nytimes.com/services/xml/rss/nyt/Sports.xml,https://www.nytimes.com/section/sports
+Technology,BBC News - Technology,http://feeds.bbci.co.uk/news/technology/rss.xml,https://www.bbc.co.uk/news/
+Technology,Scott Hanselman's Blog,http://feeds.hanselman.com/ScottHanselman,https://www.hanselman.com/blog/
+Technology,Slashdot,http://rss.slashdot.org/Slashdot/slashdotMain,https://slashdot.org/
+Technology,Engadget RSS Feed,https://www.engadget.com/rss.xml,https://www.engadget.com/rss.xml
+Technology,NYT > Technology,https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml,https://www.nytimes.com/section/technology
+Technology,The Verge -  All Posts,https://www.theverge.com/rss/index.xml,https://www.theverge.com/
+Technology,Ars Technica,http://feeds.arstechnica.com/arstechnica/index,https://arstechnica.com
+Technology,Wired,https://www.wired.com/feed/rss,https://www.wired.com
+Technology,Wired > Business Latest,https://www.wired.com/feed/category/business/latest/rss,https://www.wired.com/category/business/latest
+Technology,Wired >  Gear Latest,https://www.wired.com/feed/category/gear/latest/rss,https://www.wired.com/category/gear/latest
+Technology,Wired > Security Latest,https://www.wired.com/feed/category/security/latest/rss,https://www.wired.com/category/security/latest
+Technology,TechCrunch,http://feeds.feedburner.com/TechCrunch/,https://techcrunch.com
+Technology,How-To Geek,https://www.howtogeek.com/feed/,https://www.howtogeek.com
+Technology,The Next Web,http://feeds2.feedburner.com/TheNextWeb,https://thenextweb.com
+Technology,High Scalability,http://feeds.feedburner.com/HighScalability,http://highscalability.com/blog/
+Technology,Coding Horror,http://feeds.feedburner.com/codinghorror,https://blog.codinghorror.com/
+Technology,Hacker News,https://news.ycombinator.com/rss,https://news.ycombinator.com/
+Technology,Android Police,http://www.androidpolice.com/feed/,https://www.androidpolice.com
+Technology,Search Engine Land,http://feeds.searchengineland.com/searchengineland,https://searchengineland.com/
+Technology,Krebs on Security,http://krebsonsecurity.com/feed/,https://krebsonsecurity.com
+Technology,Schneier on Security,https://www.schneier.com/blog/atom.xml,https://www.schneier.com/blog/
+Technology,Reddit's /r/Technology,https://www.reddit.com/r/technology/.rss,https://www.reddit.com/r/technology/
+Travel,NYT > Travel,https://www.nytimes.com/services/xml/rss/nyt/Travel.xml,https://www.nytimes.com/section/travel
+Web development,CSS-Tricks,https://css-tricks.com/feed/,https://css-tricks.com
+Web development,Smashing Magazine,https://www.smashingmagazine.com/feed/,https://www.smashingmagazine.com/articles/
