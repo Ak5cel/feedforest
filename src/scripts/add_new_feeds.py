@@ -9,7 +9,7 @@ def add_new_feeds(filename='new-feeds.csv'):
     dir_path = os.path.dirname(path)
     path_to_csv = os.path.join(dir_path, filename)
     with open(path_to_csv) as file:
-        reader = csv.DictReader(file, fieldnames=['topic_name', 'feed_name', 'rss_link', 'site_url'])
+        reader = csv.DictReader(file)
 
         for row in reader:
             feed_exists = RSSFeed.query.filter_by(rss_link=row['rss_link']).first()

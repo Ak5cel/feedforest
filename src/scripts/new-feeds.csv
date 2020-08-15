@@ -1,4 +1,4 @@
-Topic,Feed name,Feed link,site_url
+topic_name,feed_name,rss_link,site_url
 Arts and Entertainment,BBC News - Entertainment & Arts,http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml,https://www.bbc.co.uk/news/
 Arts and Entertainment,NYT > Arts,https://rss.nytimes.com/services/xml/rss/nyt/Arts.xml,https://www.nytimes.com/section/arts
 Arts and Entertainment,NYT > Movies,https://rss.nytimes.com/services/xml/rss/nyt/Movies.xml,https://www.nytimes.com/section/movies
@@ -37,7 +37,6 @@ Politics,BBC News - Politics,http://feeds.bbci.co.uk/news/politics/rss.xml,https
 Science and Environment,BBC News - Science & Environment,http://feeds.bbci.co.uk/news/science_and_environment/rss.xml,https://www.bbc.co.uk/news/
 Science and Environment,NYT > Climate and Environment,https://rss.nytimes.com/services/xml/rss/nyt/Climate.xml,https://www.nytimes.com/section/climate
 Science and Environment,Wired > Science Latest,https://www.wired.com/feed/category/science/latest/rss,https://www.wired.com/category/science/latest
-Science and Environment,Nature,http://feeds.nature.com/video/rss/current,http://www.nature.com/lindau/index.html
 Science and Environment,Journal of the American Chemical Society: Latest Articles (ACS Publications),http://feeds.feedburner.com/acs/jacsat,https://pubs.acs.org
 Science and Environment,STFC > Latest news,https://stfc.ukri.org/index.cfm/_api/feed/v1/stfc/?feedID=63AA78D5-2F8A-4075-938643807DD229DC,http://www.stfc.ac.uk
 Space and Cosmos,NYT > Science > Space & Cosmos,https://rss.nytimes.com/services/xml/rss/nyt/Space.xml,https://www.nytimes.com/section/science/space
