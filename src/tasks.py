@@ -65,12 +65,15 @@ def fetch_articles():
 
     # First, clear all articles except user saved articles.
     # This is so that only the most recent records exist in the table
-    Article.query.filter(~Article.bookmarked_by.any()).delete(synchronize_session=False)
-    logging.debug('Cleared unbookmarked articles')
+    # Article.query.filter(~Article.bookmarked_by.any()).delete(synchronize_session=False)
+    # logging.debug('Cleared unbookmarked articles')
 
     # Fetch a list of all RSS feeds from the db
     rssfeeds = RSSFeed.query.all()
     logging.debug(f'Found {len(rssfeeds)} RSS Feeds')
+
+    # The time of the last database refresh
+    previous_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
 
     for feed in rssfeeds:
         # Parse the feed
@@ -90,7 +93,15 @@ def fetch_articles():
             # If the feed is up-to-date, get the articles from that feed
             # from the previous refresh.
             # Change their refreshed_on to the new value.
-            previous_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
+
+            # TODO: Remove this ------------------
+            matching_records = Article.query\
+                .filter_by(rssfeed=feed, refreshed_on=previous_refresh)\
+                .all()
+            print(f'{len(matching_records)} matches found.')
+            for article in matching_records:
+                print(f'{matching_records.index(article)}. {article.title}')
+            # ------------------------------------
             rows_affected = Article.query\
                 .filter_by(rssfeed=feed, refreshed_on=previous_refresh)\
                 .update({Article.refreshed_on: CURRENT_REFRESH_TIME}, synchronize_session='evaluate')
