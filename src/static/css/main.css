@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+
+body {
+	font-family: 'Roboto', sans-serif;
+	font-size: 1rem;
+	color: #222222;
+	background-color: var(--light);
+}
+
+footer {
+	min-height: 424px;
+	color: #7E7C97;
+}
+
+footer hr {
+	border: 0;
+    height: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(126, 124, 151, 0.3);
+    margin-top: 55px;
+}
+
+footer p {
+	margin: 0;
+}
+.main-heading {
+	font-weight: 400;
+}
+
+.sub-heading {
+	font-weight: 400;
+	margin-bottom: 2rem;
+}
+
+.padding-bottom	{
+	padding-bottom: 5rem;
+}
+
+.padding-top {
+	padding-top: 0.625rem;
+}
+
+.hero {
+	text-align: center;
+}
+
+.title-card {
+	/*border-color: transparent;*/
+	border-radius: 10px;
+}
+
+.title-card:before {
+	/* Position the pseudo-element.*/
+	content: ' ';
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	border-radius: 10px;
+
+	/* Create the box shadow at expanded size. */
+	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+	/* Hidden by default. */
+	opacity: 0;
+	transition: opacity 400ms;
+}
+
+.title-card:hover:before {
+	/* Show the pseudo-element on hover. */
+	opacity: 1;
+}
+
+.sign-up-box {
+	padding-top: 47px;
+	padding-bottom: 83px;
+	padding-left: 15px;
+	padding-right: 15px;
+	border-radius: 5px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.sign-up-box button {
+	border-radius: 17.5px;
+
+}
+
+/* Extra small devices (portrait phones, less than 576px)
+ * No media query for `xs` since this is the default in Bootstrap */
+
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) {
+	.hero {
+		text-align: left;
+	}
+	.sign-up-box {
+		padding-top: 47px;
+		padding-bottom: 83px;
+		padding-left: 15px;
+		padding-right: 15px;
+		border-radius: 5px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) {
+	.hero {
+		padding-bottom: 7rem;
+	}
+	.padding-top {
+		padding-top: 1.875rem;
+	}
+}
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+}
+
+/* Font sizes:
+ * -----------
+ *
+ * Default: 16px = 1rem;
+ * Main headings: 48px = 3rem;
+ * Sub-headings: 24px = 1.5rem;
+ * Secondary: 14px = 0.875rem;
+ * Tertiary: 12px = 0.75rem;
+*/

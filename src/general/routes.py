@@ -16,9 +16,14 @@ def home():
         sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
         articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
         last_updated_on = db.session.query(db.func.max(Article.refreshed_on)).scalar()
-    return render_template('home.html',
+        image_overlays = {
+            "Arts and Entertainment": "https://source.unsplash.com/NYrVisodQ2M",
+            "Books": "https://source.unsplash.com/Mmi_sUHNazo"
+        }
+    return render_template('index.html',
                            title='Home',
                            topics=topics,
+                           image_overlays=image_overlays,
                            articles=articles,
                            last_updated_on=last_updated_on,
                            parse=parse)
