@@ -1,12 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Carter+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Zilla+Slab+Highlight:wght@400;700&display=swap');
 
 body {
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Muli', sans-serif;
 	font-size: 1rem;
 	color: #222222;
 	background-color: var(--light);
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'Merriweather', serif;
 }
 
 footer {
@@ -25,6 +31,7 @@ footer hr {
 footer p {
 	margin: 0;
 }
+
 .main-heading {
 	font-weight: 400;
 }
@@ -42,8 +49,18 @@ footer p {
 	padding-top: 0.625rem;
 }
 
+.navbar img {
+	height: 1.25rem;
+	width: auto;
+}
+
 .hero {
 	text-align: center;
+}
+
+.hero img {
+	height: calc(1.475rem + 2.7vw);
+	width: auto;
 }
 
 .title-card {
@@ -94,9 +111,18 @@ footer p {
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
+	nav {
+		min-height: 83px;
+	}
+
+	nav .sign-up-btn {
+		border-radius: 20px;
+	}
+
 	.hero {
 		text-align: left;
 	}
+
 	.sign-up-box {
 		padding-top: 47px;
 		padding-bottom: 83px;

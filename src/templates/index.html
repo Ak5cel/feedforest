@@ -15,12 +15,17 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-theme.css') }}">
   <!-- Additional CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link href="https://fonts.googleapis.com/css?family=Merriweather|Muli:300" rel="stylesheet">
 </head>
 <body>
   <!-- Navbar  -->
   <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
     <div class="container">
-      <a href="#" class="navbar-brand">FeedForest</a>  
+      <a href="#" class="navbar-brand brand">
+        <img src="{{ url_for('static', filename='images/feedforest-logo.png') }}" 
+              alt=""
+              height="20px" width="auto">
+      </a>  
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#hamburger" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -32,7 +37,7 @@
         </div>
         <div class="navbar-nav">
           <a href="#" class="nav-link">Login</a>
-          <a href="#" class="nav-link">Sign up</a>
+          <a href="#" class="btn btn-primary sign-up-btn">Sign up</a>
         </div>
       </div>
     </div>
@@ -40,7 +45,10 @@
   <!-- Hero section -->
   <div class="jumbotron jumbotron-fluid bg-ultra-dark text-light padding-bottom hero vh-50">
     <div class="container">
-    <h1 class="display-4 main-heading">FeedForest</h1>
+    <h1 class="display-4 main-heading brand">
+      <img src="{{ url_for('static', filename='images/feedforest-logo.png') }}" 
+            alt="">
+    </h1>
     <p class="lead">
       A simple RSS Aggregator and feed subscription service.
     </p>
