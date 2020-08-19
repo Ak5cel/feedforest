@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html class="h-100">
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" type = "image/x-icon" href="{{ url_for('static', filename='images/rss.png') }}">
+  <script src="https://kit.fontawesome.com/775a21356d.js" crossorigin="anonymous"></script>
+  {% if title %}
+    <title>FeedForest | {{ title }}</title>
+  {% else %}
+    <title>FeedForest</title>
+  {% endif %}
+  <!-- Customized Bootstrap CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/custom-theme.css') }}">
+  <!-- Additional CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+  <!-- Navbar  -->
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+    <div class="container">
+      <a href="{{ url_for('general.home') }}" class="navbar-brand brand">
+        <img src="{{ url_for('static', filename='images/feedforest-logo.png') }}" 
+              alt=""
+              height="20px" width="auto">
+      </a>  
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#hamburger" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="hamburger">
+        <div class="navbar-nav mr-auto">
+          {% if not current_user.is_authenticated %}
+            <a class="nav-link active {% if request.endpoint == 'general.home' %} active {% endif %}" 
+            href="{{ url_for('general.home') }}">Home</a>
+          {% endif %}
+          <div class="nav-item dropdown">
+            <!-- TODO: update link -->
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Topics</a>
+            <div class="dropdown-menu">
+              {% for topic in topics %}
+                <!-- TODO: update links -->
+                <a class="dropdown-item" href="#">{{ topic.topic_name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+          {% if not current_user.is_authenticated %}
+            <a class="nav-link {% if request.endpoint == 'general.about' %} active {% endif %}" 
+            href="{{ url_for('general.about') }}">About</a>
+          {% endif %}
+        </div>
+        <div class="navbar-nav">
+          {% if not current_user.is_authenticated %}
+            <a class="nav-link {% if request.endpoint == 'auth.login' %} active {% endif %}" 
+            href="{{ url_for('auth.login') }}">Login</a>
+            <a class="btn btn-primary sign-up-btn" href="{{ url_for('auth.signup') }}">Sign up</a>
+          {% else %}
+            <a class="nav-link {% if request.endpoint == 'user.account' %} active {% endif %}" 
+            href="{{ url_for('user.account') }}">Account</a>
+            <a class="nav-link {% if request.endpoint == 'auth.logout' %} active {% endif %}" 
+            href="{{ url_for('auth.logout') }}">Logout</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+  {% block content %}{% endblock %}
+  <!-- Footer -->
+  <footer class="bg-dark padding-top padding-bottom">
+    <div class="container">
+      <hr>
+      <div class="d-flex w-100">
+        <div class="flex-grow-1 d-flex flex-column align-items-start">
+          <p><a href="{{ url_for('general.about') }}">About</a></p>
+          <p><a href="{{ url_for('general.feedback') }}">Send us your Feedback</a></p>
+        </div>
+        <div class="text-right">
+          Made with &#x2764;<br>
+          by <a href="https://github.com/Ak5cel">Ak5cel</a>
+        </div>
+      </div>
+      <div style="color: #48456A;" class="mt-4">
+          Logo icon made by 
+          <a href="https://www.flaticon.com/authors/vectors-market" 
+              style="color: #48456A; text-decoration: underline;"
+              title="Vectors Market">
+              Vectors Market
+          </a> 
+          from 
+          <a href="https://www.flaticon.com/" title="Flaticon"
+              style="color: #48456A; text-decoration: underline;">
+              www.flaticon.com
+          </a>
+      </div>
+    </div>
+  </footer>
+
+
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+  
+  <script>
+    $(document).ready(function(){
+    // Add smooth scrolling to all links
+    $("a").on('click', function(event) {
+
+      // Make sure this.hash has a value before overriding default behavior
+      if (this.hash !== "") {
+        // Prevent default anchor click behavior
+        event.preventDefault();
+
+        // Store hash
+        var hash = this.hash;
+
+        // Using jQuery's animate() method to add smooth page scroll
+        // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
+        $('html, body').animate({
+          scrollTop: $(hash).offset().top
+        }, 500, function(){
+
+          // Add hash (#) to URL when done scrolling (default click behavior)
+          window.location.hash = hash;
+        });
+      } // End if
+    });
+  });
+  </script>
+
+  {% block scripts %}{% endblock %}
+  
+  <script type=text/javascript>
+    $SCRIPT_ROOT = {{ request.script_root|tojson|safe }}; 
+  </script>
+
+</body>
+</html>
