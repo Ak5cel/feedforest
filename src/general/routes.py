@@ -18,7 +18,20 @@ def home():
         last_updated_on = db.session.query(db.func.max(Article.refreshed_on)).scalar()
         image_overlays = {
             "Arts and Entertainment": "https://source.unsplash.com/NYrVisodQ2M",
-            "Books": "https://source.unsplash.com/Mmi_sUHNazo"
+            "Books": "https://source.unsplash.com/Mmi_sUHNazo",
+            "Business": "https://source.unsplash.com/E7RLgUjjazc",
+            "Family and Education": "https://source.unsplash.com/4K2lIP0zc_k",
+            "Health": "https://source.unsplash.com/eofm5R5f9Kw",
+            "Lifestyle": "https://source.unsplash.com/GwNsgnSAfQM",
+            "Miscellaneous": "https://source.unsplash.com/IuLgi9PWETU",
+            "News": "https://source.unsplash.com/-4phLCSH_4o",
+            "Politics": "https://source.unsplash.com/-jqmcOHAQZw",
+            "Science and Environment": "https://source.unsplash.com/nyL-rzwP-Mk",
+            "Space and Cosmos": "https://source.unsplash.com/6SbFGnQTE8s",
+            "Sports": "https://source.unsplash.com/70YxSTWa2Zw",
+            "Technology": "https://source.unsplash.com/SYTO3xs06fU",
+            "Travel": "https://source.unsplash.com/uSFOwYo1qEw",
+            "Web development": "https://source.unsplash.com/gbRaa67fEPo"
         }
     return render_template('index.html',
                            title='Home',

@@ -65,7 +65,7 @@
     </div>
   </nav>
   <!-- Hero section -->
-  <div class="jumbotron jumbotron-fluid bg-ultra-dark text-light padding-bottom hero vh-50">
+  <div class="jumbotron jumbotron-fluid bg-ultra-dark text-light padding-bottom hero">
     <div class="container">
     <h1 class="display-4 main-heading brand">
       <img src="{{ url_for('static', filename='images/feedforest-logo.png') }}" 
@@ -87,22 +87,22 @@
       <div class="col-12">
         <h5 class="sub-heading">Read the latest articles from the following topics:</h5>
       </div>
-      <div class="col-12">
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
+      <div class="col-12 padding-md-top">
+        <div class="card-columns">
           {% for topic in topics %}
-          <div class="col mb-4">
-            <div class="card text-dark shadow-sm title-card h-100">
-              <div class="card-body">
-                <h5 class="card-title"><a href="#" class="text-dark stretched-link">{{ topic.topic_name }}</a></h5>
-                <p class="card-text text-muted">
+            <div class="card bg-dark text-light shadow-sm title-card h-100 mb-4" style="background-image: url('{{ image_overlays.get(topic.topic_name) }}');">
+              <div class="card-body color-overlay">
+                <h5 class="card-title"><a href="#" class="text-light stretched-link">{{ topic.topic_name }}</a></h5>
+                <p class="card-text text-light">
                   {% for feed in topic.rss_feeds[:3] %}
                     {{ feed.feed_name }}<br>
                   {% endfor %}
                   ...
                 </p>
-              </div>
+                <div class="hidden p-4"></div>
+                <p class="card-text text-right read-more-icon">Read <i class="fas fa-chevron-right"></i></p>
+              </div>  
             </div>  
-          </div>
           {% endfor %}
         </div>
       </div>
@@ -110,7 +110,7 @@
   </div>
   <!-- Sign up banner -->
   {% if not current_user.is_authenticated %}
-    <div class="pb-5 text-center">
+    <div class="pb-5 text-center padding-md-top">
       <div class="container">
         <div class="card text-center bg-light">
           <div class="card-body">

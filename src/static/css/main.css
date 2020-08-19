@@ -57,6 +57,23 @@ footer p {
 	padding-top: 0.625rem;
 }
 
+.card-columns {
+	column-gap: 24px;
+}
+
+.read-more-icon {
+	opacity: 0;
+	-webkit-transition: all 100ms ease-in;
+	-o-transition: all 100ms ease-in;
+	transition: all 100ms ease-in;
+}
+
+.read-more-icon i {
+	-webkit-transition: all 300ms ease-in;
+	-o-transition: all 300ms ease-in;
+	transition: all 300ms ease-in;
+}
+
 .navbar img {
 	height: 1.25rem;
 	width: auto;
@@ -64,6 +81,7 @@ footer p {
 
 .hero {
 	text-align: center;
+
 }
 
 .hero img {
@@ -72,35 +90,37 @@ footer p {
 }
 
 .title-card {
-	/*border-color: transparent;*/
-	border-radius: 10px;
+	border-color: transparent;
+	background-size: cover;
+	border-left: none;
+	border-right: none;
+	border-top: none;
+	border-bottom: none;
 }
 
-.title-card:before {
-	/* Position the pseudo-element.*/
-	content: ' ';
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	border-radius: 10px;
 
-	/* Create the box shadow at expanded size. */
-	box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-
-	/* Hidden by default. */
-	opacity: 0;
-	transition: opacity 400ms;
+.color-overlay {
+	background-color: rgba(32, 31, 47, 0.58);
+	-webkit-transition: all 100ms ease-in;
+	-o-transition: all 100ms ease-in;
+	transition: all 100ms ease-in;
 }
 
-.title-card:hover:before {
-	/* Show the pseudo-element on hover. */
+.color-overlay:hover {
+  	background-color: rgba(32, 31, 47, 0.40)
+}
+
+.title-card:hover .read-more-icon {
 	opacity: 1;
+}
+
+.title-card:hover .read-more-icon > i {
+	transform: translateX(4px);
 }
 
 .title-card .card-title a:hover {
 	text-decoration: none;
+	color: var(--light);
 }
 
 .sign-up-box {
@@ -131,10 +151,6 @@ footer p {
 		border-radius: 20px;
 	}
 
-	.hero {
-		text-align: left;
-	}
-
 	.sign-up-box {
 		padding-top: 47px;
 		padding-bottom: 83px;
@@ -144,30 +160,41 @@ footer p {
 		margin-left: auto;
 		margin-right: auto;
 	}
+
+	.card-columns {
+		column-count: 1;
+	}
 }
+
 /* Medium devices (tablets, 768px and up) */
 @media (min-width: 768px) {
 	.hero {
-		padding-bottom: 7rem;
+		padding-bottom: 8rem;
 	}
+
 	.padding-top {
 		padding-top: 1.875rem;
 	}
+
+	.padding-md-top {
+		padding-top: 1.875rem;
+	}
+
+	.card-columns {
+		column-count: 2;
+	}
 }
+
 /* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
+	.card-columns {
+		column-count: 3;
+	}
 }
 
 /* Extra large devices (large desktops, 1200px and up) */
 @media (min-width: 1200px) {
+	.card-columns {
+		column-count: 3;
+	}
 }
-
-/* Font sizes:
- * -----------
- *
- * Default: 16px = 1rem;
- * Main headings: 48px = 3rem;
- * Sub-headings: 24px = 1.5rem;
- * Secondary: 14px = 0.875rem;
- * Tertiary: 12px = 0.75rem;
-*/
