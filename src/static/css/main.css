@@ -17,9 +17,15 @@ h1, h2, h3, h4, h5, h6 {
 	font-family: var(--heading-font-stack);
 }
 
-footer {
+footer,
+footer a {
 	min-height: 424px;
 	color: #7E7C97;
+}
+
+footer a:hover {
+	text-decoration: none;
+	color: #b1b0c0;
 }
 
 footer hr {
@@ -91,6 +97,10 @@ footer p {
 .title-card:hover:before {
 	/* Show the pseudo-element on hover. */
 	opacity: 1;
+}
+
+.title-card .card-title a:hover {
+	text-decoration: none;
 }
 
 .sign-up-box {
