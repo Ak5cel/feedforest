@@ -1,7 +1,7 @@
 from flask import render_template, url_for, request, flash, redirect, Blueprint
 from flask_login import current_user, login_user, logout_user
 from werkzeug.urls import url_parse
-from ..models import User
+from ..models import User, Topic
 from .forms import (LoginForm, SignupForm,
                     RequestPasswordResetForm, PasswordResetForm)
 from .. import db, bcrypt
@@ -35,6 +35,7 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('user.my_feeds'))
     form = LoginForm()
+    topics = Topic.query.all()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         if user and user.check_password(form.password.data) and user.email_verified:
@@ -42,12 +43,11 @@ def login():
             next_page = request.args.get('next')
             if not next_page or url_parse(next_page).netloc != '':
                 return redirect(url_for('user.my_feeds'))
-            # next_view_name = next_page.split('/')[1]
             return redirect(next_page)
         else:
             flash('Login unsuccessful. Please check if you are using a \
                 verified email and the correct password.', 'danger')
-    return render_template('login.html', title='Login', form=form)
+    return render_template('login.html', title='Login', form=form, topics=topics)
 
 
 @auth.route('/logout')

@@ -8,7 +8,7 @@ from ..models import User
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    remember = BooleanField('Remember Me')
+    remember = BooleanField('Remember me')
     submit = SubmitField('Login')
 
 
@@ -47,9 +47,10 @@ class RequestPasswordResetForm(FlaskForm):
 
 class PasswordResetForm(FlaskForm):
     password = PasswordField('New Password',
-                             validators=[DataRequired(), Length(min=10, max=50)])
+                             validators=[DataRequired(), 
+                             Length(min=10, max=50, message='Password must be 10-50 characters long.')])
     confirm_password = PasswordField('Confirm Password',
-                                     validators=[DataRequired(), EqualTo('password')])
+                                     validators=[DataRequired(), EqualTo('password', message='The two passwords do not match.')])
     submit = SubmitField('Reset Password')
 
 
