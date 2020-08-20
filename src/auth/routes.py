@@ -61,13 +61,14 @@ def request_password_reset():
     if current_user.is_authenticated:
         return redirect(url_for('user.my_feeds'))
     form = RequestPasswordResetForm()
+    topics = Topic.query.all()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
         token = user.generate_token(expires_sec=1800)
         user.send_password_reset_email(token)
         flash('Please check your email for a link to reset your password. The link expires in 30 minutes.', 'info')
         return redirect(url_for('auth.login'))
-    return render_template('request-password-reset.html', title='Reset Password', form=form)
+    return render_template('request-password-reset.html', title='Reset Password', form=form, topics=topics)
 
 
 @auth.route('/reset-password/<string:token>', methods=['GET', 'POST'])
@@ -75,6 +76,7 @@ def reset_password_with_token(token):
     if current_user.is_authenticated:
         return redirect(url_for('general.my_feeds'))
     form = PasswordResetForm()
+    topics = Topic.query.all()
     if form.validate_on_submit():
         user = User.verify_token(token)
         if user is None:
@@ -85,7 +87,7 @@ def reset_password_with_token(token):
         db.session.commit()
         flash('Your password has been reset. You may now login.', 'success')
         return redirect(url_for('auth.login'))
-    return render_template('password-reset.html', title='Reset Password', form=form)
+    return render_template('password-reset.html', title='Reset Password', form=form, topics=topics)
 
 
 @auth.route('/verify-email/<string:token>')
