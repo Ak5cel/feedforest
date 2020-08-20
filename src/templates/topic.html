@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+	<div class="row">
+		<div class="col-12 d-flex align-items-center justify-content-between mt-5">
+			<h3 class="mb-4">{{ topic.topic_name }}</h3>
+			<small class="text-muted">Last updated: {{ latest_articles[0].refreshed_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</small>
+		</div>
+		<div class="col">
+			<div class="card-columns">
+				{% for feed in topic.rss_feeds %}
+					<div class="card mb-4">
+						<div class="card-body">
+							<h5 class="card-title mb-4">
+								<a class="text-dark" href="{{ feed.rss_link }}" title="{{ feed.rss_link }}">{{ feed.feed_name }}</a>
+							</h5>
+							{% for article in feed.articles %}
+								{% if article in latest_articles %}
+									{% if article in current_user.bookmarked_articles %}
+										<div class="article d-flex justify-content-between" data-status="bookmarked" data-article-id="{{ article.id }}">
+											<p class="card-text pr-4 pb-1">
+												<a href="{{ article.link }}">{{ article.title }}</a>
+												{% if article.published_on %}
+												<br>
+												<small class="text-muted">
+													{{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC
+												</small>
+												{% endif %}
+											</p>
+											<a href="#" class="toggle-bookmark">
+												<i class="far fa-bookmark"></i>
+											</a>
+										</div>	
+									{% else %}
+										<div class="article d-flex justify-content-between" data-status="not-bookmarked" data-article-id="{{ article.id }}">
+											<p class="card-text pr-4 pb-1">
+												<a href="{{ article.link }}">{{ article.title }}</a>
+												{% if article.published_on %}
+												<br>
+												<small class="text-muted">
+													{{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC
+												</small>
+												{% endif %}
+											</p>
+											<a href="#" class="toggle-bookmark">
+												<i class="far fa-bookmark"></i>
+											</a>
+										</div>
+									{% endif %}
+								{% endif %}			
+							{% endfor %}
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		</div>	
+	</div>
+</div>
+	
+	
+{% endblock content %}
+{% block scripts %}
+	<script src="{{ url_for('static', filename='bookmark-article.js') }}"></script>
+{% endblock scripts %}
