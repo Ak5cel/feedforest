@@ -1,4 +1,4 @@
-from flask import render_template, url_for, request, flash, redirect, Blueprint
+from flask import render_template, url_for, request, flash, redirect, Blueprint, jsonify, make_response
 from flask_login import current_user, login_required
 from ..models import Topic, RSSFeed, Article, User, user_article_map
 from ..general.forms import EmptyForm, HiddenElementForm
@@ -74,19 +74,26 @@ def remove_feed():
 
 
 @user.route('/bookmark', methods=['POST'])
-@login_required
 def bookmark_article():
+    if not current_user.is_authenticated:
+        res = make_response(jsonify({"message": "LOGIN_REQUIRED", "redirect": url_for('auth.login', next=request.full_path, _external=True)}), 401)
+        return res
     article_id = request.args.get('article_id', type=int)
     current_user.bookmark_article(article_id)
-    return "Bookmarked article"
+    res = make_response(jsonify({"message": f"Bookmarked article {article_id}"}), 200)
+    return res
 
 
 @user.route('/unbookmark', methods=['POST'])
 @login_required
 def unbookmark_article():
+    if not current_user.is_authenticated:
+        res = make_response(jsonify({"message": "LOGIN_REQUIRED", "redirect": url_for('auth.login', next=request.full_path, _external=True)}), 401)
+        return res
     article_id = request.args.get('article_id', type=int)
     current_user.unbookmark_article(article_id)
-    return redirect(url_for('user.my_articles'))
+    res = make_response(jsonify({"message": f"Unbookmarked article {article_id}"}), 200)
+    return res
 
 
 @user.route('/account/edit/email-pref', methods=['GET', 'POST'])

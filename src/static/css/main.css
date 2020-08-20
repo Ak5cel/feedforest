@@ -138,6 +138,26 @@ footer p {
 
 }
 
+.article .fa-bookmark {
+	/*visibility: hidden;*/
+	color: #cbea86;
+}
+
+.article:hover .fa-bookmark {
+	/*visibility: visible;*/
+	color: var(--success);
+}
+
+.article .fa-bookmark:hover {
+	font-weight: 900;
+	color: var(--success);
+}
+
+.article[data-status="bookmarked"] .fa-bookmark {
+	visibility: visible;
+	font-weight: 900;
+}
+
 /* Extra small devices (portrait phones, less than 576px)
  * No media query for `xs` since this is the default in Bootstrap */
 
