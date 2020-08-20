@@ -44,13 +44,14 @@ def home():
 
 @general.route('/topic/<int:id>')
 def topic(id):
+    topics = Topic.query.all()
     topic = Topic.query.get_or_404(id)
     sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
     latest_articles = db.session.query(Article)\
         .filter_by(topic_id=id)\
         .join(sub, sub.c.last_refresh == Article.refreshed_on)\
         .all()
-    return render_template('topic.html', topic=topic, latest_articles=latest_articles)
+    return render_template('topic.html', topics=topics, topic=topic, latest_articles=latest_articles)
 
 
 @general.route('/about')

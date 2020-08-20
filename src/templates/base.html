@@ -35,12 +35,10 @@
             href="{{ url_for('general.home') }}">Home</a>
           {% endif %}
           <div class="nav-item dropdown">
-            <!-- TODO: update link -->
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Topics</a>
             <div class="dropdown-menu">
               {% for topic in topics %}
-                <!-- TODO: update links -->
-                <a class="dropdown-item" href="#">{{ topic.topic_name }}</a>
+                <a class="dropdown-item" href="{{ url_for('general.topic', id=topic.id) }}">{{ topic.topic_name }}</a>
               {% endfor %}
             </div>
           </div>
