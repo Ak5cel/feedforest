@@ -14,6 +14,7 @@ def signup():
     if current_user.is_authenticated:
         return redirect(url_for('user.my_feeds'))
     form = SignupForm()
+    topics = Topic.query.all()
     if form.validate_on_submit():
         pw_hash = User.hash_password(form.password.data)
         new_user = User(username=form.username.data,
@@ -26,8 +27,8 @@ def signup():
         new_user.send_email_verification_email(token)
         flash('Account created successfully! We have sent you an email to \
             verify your email address.', 'success')
-        return render_template('email-verification-sent.html', title='Verify email')
-    return render_template('signup.html', title='Sign up', form=form)
+        return render_template('email-verification-sent.html', title='Verify email', topics=topics)
+    return render_template('signup.html', title='Sign up', form=form, topics=topics)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
