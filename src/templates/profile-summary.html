@@ -1,65 +1,69 @@
 {% extends "account.html" %}
 
 {% block account_info %}
-	<div class="media content-section p-3 mb-3">
-		
-		<div class="media-body d-flex flex-column align-items-start align-self-center">
-			<h3 class="font-weight-bold">{{ current_user.username }}</h3>
-			<p class="text-secondary">{{ current_user.email }}</p>
-			<a class="btn btn-outline-secondary btn-sm mt-1" href="{{ url_for('user.edit_profile') }}">Edit Profile</a>
-		</div>
-	</div>
-	<div class="content-section mb-3">
-		<div class="d-flex justify-content-between">
-			<h5>Selected Feeds</h5>
-			{% if current_user.selected_feeds[0] %}
-				<a class="btn btn-outline-secondary btn-sm" href="{{ url_for('user.edit_feeds') }}">Edit Feeds</a>
-			{% else %}
-				<a class="btn btn-outline-secondary btn-sm" href="{{ url_for('user.edit_feeds') }}">Add Feeds</a>
-			{% endif %}
-		</div>
-		{% if current_user.selected_feeds[0] %}
-			<ul class="list-group list-group-flush">
-				{% for selected_feed in current_user.selected_feeds %}
-					<li class="list-group-item">
-						<small class="text-muted">{{ selected_feed.feed_name }}</small>
-						<p class="mb-0"><a href="{{ selected_feed.rss_link }}">{{ selected_feed.rss_link }}</a></p>
-					</li>
-				{% endfor %}
-
-			</ul>
-		{% else %}
-			<div class="d-flex flex-column align-items-center justify-content-center" style="height: 150px">
-				<small class="text-muted mb-2">No feeds selected</small>
-				<small>
-					Click 
-					<a href="{{ url_for('user.edit_feeds') }}">Add Feeds</a>
-					to start adding feeds!
-				</small>
-			</div>
-		{% endif %}
-	</div>
-	<div class="content-section">
-		<div class="d-flex justify-content-between">
-			<h5>Email Preferences</h5>
-			<a class="btn btn-outline-secondary btn-sm" href="{{ url_for('user.edit_email_pref') }}">Edit Preferences</a>	
-		</div>
-		<ul class="list-group list-group-flush">
-			<li class="list-group-item">
-				<small>Email Frequency</small>
-				<form>
-					{{ hidden_time_form.hidden_tag() }}
-					{{ hidden_time_form.hidden_element(id="hiddenTime", type="hidden") }}
-				</form>				
-				{% if current_user.email_frequency %}
-					<p class="mb-0">Everyday @ <span id="hourField"></span>:00 <span id="ampmField"></span></p>
-				{% else %}
-					<p class="mb-0">Never</p>
-				{% endif %}
-				
-			</li>
-		</ul>
-	</div>
-	<script src="{{ url_for('static', filename='datetime-utils.js') }}"></script>
-	<script src="{{ url_for('static', filename='profile-summary-time.js') }}"></script>
+  <!-- Username and Email section -->
+  <div class="bg-white border p-4 mb-3 rounded-lg">
+    <h3 class="font-weight-bold">{{ current_user.username }}</h3>
+    <p class="text-secondary">{{ current_user.email }}</p>
+    <a class="btn btn-outline-primary mt-1" href="{{ url_for('user.edit_profile') }}">Edit Profile</a>
+  </div>
+  <!-- Selected feeds section -->
+  <div class="bg-white border p-4 mb-3 rounded-lg">
+    <div class="d-flex justify-content-between mb-3">
+      <h5>Selected Feeds</h5>
+      {% if current_user.selected_feeds[0] %}
+        <a class="btn btn-outline-primary" href="{{ url_for('user.edit_feeds') }}">Edit Feeds</a>
+      {% else %}
+        <a class="btn btn-outline-primary" href="{{ url_for('user.edit_feeds') }}">Add Feeds</a>
+      {% endif %}
+    </div>
+    {% if current_user.selected_feeds[0] %}
+      <ul class="list-group list-group-flush">
+        {% for selected_feed in current_user.selected_feeds %}
+          <li class="list-group-item px-0">
+            <small class="text-muted">{{ selected_feed.topic.topic_name.upper() }}</small>
+            <h6 class="">{{ selected_feed.feed_name }}</h6>
+            <p class="small text-primary">
+              <a href="{{ selected_feed.rss_link }}" title="{{ selected_feed.rss_link }}">RSS Link</a>
+              <i class="fas fa-external-link-alt"></i>
+              <a href="{{ selected_feed.site_url }}" title="{{ selected_feed.site_url }}">Site Link</a>
+            </p>  
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="d-flex flex-column align-items-center justify-content-center" style="height: 150px">
+        <small class="text-muted mb-2">No feeds selected</small>
+        <small>
+          Click 
+          <a href="{{ url_for('user.edit_feeds') }}">Add Feeds</a>
+          to start adding feeds!
+        </small>
+      </div>
+    {% endif %}
+  </div>
+  <!-- Email preferences section -->
+  <div class="bg-white border p-4 mb-3 rounded-lg">
+    <div class="d-flex justify-content-between mb-3">
+      <h5>Email Preferences</h5>
+      <a class="btn btn-outline-primary" href="{{ url_for('user.edit_email_pref') }}">Edit Preferences</a> 
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item px-0">
+        <small>Email Frequency</small>
+        <form>
+          {{ hidden_time_form.hidden_tag() }}
+          {{ hidden_time_form.hidden_element(id="hiddenTime", type="hidden") }}
+        </form>       
+        {% if current_user.email_frequency %}
+          <p class="mb-0">Everyday @ <span id="hourField"></span>:00 <span id="ampmField"></span></p>
+        {% else %}
+          <p class="mb-0">Never</p>
+        {% endif %}
+        
+      </li>
+    </ul>
+  </div>
+  <script src="{{ url_for('static', filename='datetime-utils.js') }}"></script>
+  <script src="{{ url_for('static', filename='profile-summary-time.js') }}"></script>
 {% endblock account_info %}

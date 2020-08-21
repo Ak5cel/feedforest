@@ -11,6 +11,7 @@ body {
 	font-size: 1rem;
 	color: #222222;
 	background-color: var(--light);
+	padding-top: 50px;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -59,6 +60,10 @@ footer p {
 
 .card-columns {
 	column-gap: 24px;
+}
+
+.nudge-up-20 {
+	margin-top: -20px;
 }
 
 .read-more-icon {
@@ -138,6 +143,11 @@ footer p {
 
 }
 
+.sidenav {
+	/*top: 5rem;*/
+	border-radius: 0;
+}
+
 .article .fa-bookmark {
 	/*visibility: hidden;*/
 	color: #cbea86;
@@ -158,11 +168,18 @@ footer p {
 	font-weight: 900;
 }
 
+
+
+
 /* Extra small devices (portrait phones, less than 576px)
  * No media query for `xs` since this is the default in Bootstrap */
 
 /* Small devices (landscape phones, 576px and up) */
 @media (min-width: 576px) {
+	body {
+		padding-top: 83px;
+	}
+
 	nav {
 		min-height: 83px;
 	}
@@ -202,6 +219,12 @@ footer p {
 
 	.card-columns {
 		column-count: 2;
+	}
+
+	.sidenav {
+		position: -webkit-sticky;
+  		position: sticky;
+  		top: calc(83px + 1.5rem);
 	}
 }
 

@@ -41,7 +41,8 @@ def my_articles():
 def account():
     hidden_time_form = HiddenElementForm()
     hidden_time_form.hidden_element.data = current_user.email_frequency
-    return render_template('profile-summary.html', title='Account', hidden_time_form=hidden_time_form)
+    topics = Topic.query.all()
+    return render_template('profile-summary.html', title='Account', hidden_time_form=hidden_time_form, topics=topics)
 
 
 @user.route('/account/edit/feeds', methods=['GET', 'POST'])

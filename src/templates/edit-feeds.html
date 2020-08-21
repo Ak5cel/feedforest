@@ -1,10 +1,10 @@
 {% extends "account.html" %}
 
 {% block account_info %}
-	<div class="content-section mb-3">
-		<h5 class="mb-4">Edit Feeds</h5>
+	<div class="mb-3">
+		<legend class="border-bottom mb-4">Edit Feeds</legend>
 		<div class="dropdown">
-			<button id="topicsDropdown" class="btn btn-outline-secondary dropdown-toggle mb-2" data-toggle="dropdown">
+			<button id="topicsDropdown" class="btn btn-outline-primary dropdown-toggle mb-3" data-toggle="dropdown">
 				All Topics
 			</button>
 			<div class="dropdown-menu">
@@ -14,33 +14,35 @@
 				{% endfor %}
 			</div>
 			<ul class="list-group list-group-flush">
-				{% for feed in feeds %}
-					<li class="feed-info {{ feed.topic.topic_name }} list-group-item d-flex justify-content-between align-items-stretch"
-						id="{{ feed.id }}">
-						<div>
-							<small class="text-muted">{{ feed.feed_name }}</small>
-							<p class="mb-0"><a href="{{ feed.rss_link }}">{{ feed.rss_link }}</a></p>	
-						</div>
-						<div class="d-flex flex-column justify-content-between align-items-end">
-							<small class="text-light-gray">{{ feed.topic.topic_name }}</small>
-							{% if feed in current_user.selected_feeds %}
-								<!-- <a class="rem-btn badge badge-pill badge-secondary" href="#">Remove</a> -->
-								<form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.remove_feed', feed_id=feed.id) }}" method="POST"
-									data-alt-action="{{ url_for('user.add_feed', feed_id=feed.id) }}">
-									{{ empty_form.hidden_tag() }}
-									{{ empty_form.submit(value='Remove', class='btn btn-sm btn-secondary') }}
-								</form>
-							{% else %}
-								<!-- <a class="add-btn badge badge-pill badge-success" href="#">Add</a> -->
-								<form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.add_feed', feed_id=feed.id) }}" method="POST"
-									data-alt-action="{{ url_for('user.remove_feed', feed_id=feed.id) }}">
-									{{ empty_form.hidden_tag() }}
-									{{ empty_form.submit(value='Add', class='btn btn-sm btn-success') }}
-								</form>
-							{% endif %}	
-						</div>
-					</li>
-				{% endfor %}
+        {% for feed in feeds %}
+          <li class="feed-info {{ feed.topic.topic_name }} list-group-item d-flex justify-content-between align-items-stretch"
+            id="{{ feed.id }}">
+            <div class="pr-3">
+              <small class="text-muted">{{ feed.topic.topic_name.upper() }}</small>
+              <h5 class="">{{ feed.feed_name }}</h5>
+              <p class="small text-primary">
+                <a href="{{ feed.rss_link }}" title="{{ feed.rss_link }}">RSS Link</a>
+                <i class="fas fa-external-link-alt"></i>
+                <a href="{{ feed.site_url }}" title="{{ feed.site_url }}">Site Link</a>
+              </p>
+            </div>
+            <div class="d-flex align-items-center">
+              {% if feed in current_user.selected_feeds %}
+                <form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.remove_feed', feed_id=feed.id) }}" method="POST"
+                  data-alt-action="{{ url_for('user.add_feed', feed_id=feed.id) }}">
+                  {{ empty_form.hidden_tag() }}
+                  {{ empty_form.submit(value='Remove', class='btn btn-sm btn-secondary nudge-up-20') }}
+                </form>
+              {% else %}
+                <form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.add_feed', feed_id=feed.id) }}" method="POST"
+                  data-alt-action="{{ url_for('user.remove_feed', feed_id=feed.id) }}">
+                  {{ empty_form.hidden_tag() }}
+                  {{ empty_form.submit(value='Add', class='btn btn-sm btn-success nudge-up-20') }}
+                </form>
+              {% endif %}
+            </div>
+          </li>
+        {% endfor %}
 			</ul>
 		</div>
 	</div>
