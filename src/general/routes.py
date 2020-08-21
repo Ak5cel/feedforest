@@ -56,12 +56,14 @@ def topic(id):
 
 @general.route('/about')
 def about():
-    return render_template('about.html', title='About Us')
+    topics = Topic.query.all()
+    return render_template('about.html', title='About Us', topics=topics)
 
 
 @general.route('/feedback', methods=['GET', 'POST'])
 def feedback():
     form = FeedbackForm()
+    topics = Topic.query.all()
     if form.validate_on_submit():
         send_feedback_email(name=form.name.data,
                             email=form.email.data,
@@ -69,4 +71,4 @@ def feedback():
                             type=form.feedback_type.data)
         flash('Thank you for your feedback!', 'success')
         return redirect(url_for('general.feedback'))
-    return render_template('feedback.html', title='Feedback', form=form)
+    return render_template('feedback.html', title='Feedback', form=form, topics=topics)
