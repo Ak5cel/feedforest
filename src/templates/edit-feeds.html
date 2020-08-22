@@ -7,16 +7,19 @@
 			<button id="topicsDropdown" class="btn btn-outline-primary dropdown-toggle mb-3" data-toggle="dropdown">
 				All Topics
 			</button>
+      <!-- Topics dropdown filter -->
 			<div class="dropdown-menu">
 				<a class="dropdown-item dropdown-link topic-selector active" id="all" href="#">All Topics</a>
 				{% for topic in topics %}
 					<a class="dropdown-item dropdown-link topic-selector"  id="{{ topic.topic_name }}" href="#">{{ topic.topic_name }}</a>
 				{% endfor %}
 			</div>
+      <!-- List of feeds -->
 			<ul class="list-group list-group-flush">
         {% for feed in feeds %}
-          <li class="feed-info {{ feed.topic.topic_name }} list-group-item d-flex justify-content-between align-items-stretch"
-            id="{{ feed.id }}">
+          <li class="feed-info list-group-item d-flex justify-content-between align-items-stretch"
+            id="{{ feed.id }}"
+            data-topic="{{ feed.topic.topic_name }}">
             <div class="pr-3">
               <small class="text-muted">{{ feed.topic.topic_name.upper() }}</small>
               <h5 class="">{{ feed.feed_name }}</h5>

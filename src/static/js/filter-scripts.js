@@ -1,112 +1,25 @@
-// SCRIPTS FOR THE HOME PAGE -------------------------------------------------------------
-function getSelectedTopics() {
-    // Get the topics form
-    const topicsForm = document.getElementById('topicsForm');
-    // Get all the checkboxes in the form
-    const topicsCheckboxes = topicsForm.getElementsByClassName('form-check-input');
-    // See which all topics are selected
-    let selectedTopics = [];
-    for (var i = 0; i < topicsCheckboxes.length; i++) {
-        if (topicsCheckboxes[i].checked) {
-            selectedTopics.push(topicsCheckboxes[i].name);
-        }
-    }
-    return selectedTopics;
-}
-
-function filterFeedsByTopic() {
-    // Get all selected topics
-    let selectedTopics = getSelectedTopics();
-    // Get all the filterable divs
-    let filterDivs = document.getElementsByClassName('filterdiv');
-    // Hide all filterdivs
-    for (var i = 0; i < filterDivs.length; i++) {
-        filterDivs[i].style.display = "none";
-    }
-    // Show only the divs matching selected topics
-    for (var i = 0; i < selectedTopics.length; i++) {
-        selectedTopic = selectedTopics[i];
-        for (var j = 0; j < filterDivs.length; j++) {
-            if (filterDivs[j].classList.contains(selectedTopic)) {
-                filterDivs[j].style.display = "";
-            }
-        }
-    }
-    
-}
-
-function filterFeedsBySite() {
-    // Get all selected topics from the topics dropdown
-    let selectedTopics = getSelectedTopics();
-    selectedTopics = selectedTopics.map(t => t.toUpperCase());
-    // Get the sites form
-    const sitesForm = document.getElementById('sitesForm');
-    // Get all the topic section divs in the form
-    var topicSections = document.getElementsByClassName('topic-section');
-    
-    for (var i = 0; i < topicSections.length; i++) {
-        topicNameUpperCase = topicSections[i].querySelector("h6").innerText;
-        topicName = topicNameUpperCase.charAt(0) + topicNameUpperCase.substr(1).toLowerCase();
-        // For each topic section, get all the checkboxes
-        let sitesCheckboxes = topicSections[i].getElementsByClassName('form-check-input');
-        // See which all sites are selected for that topic
-        let selectedSites = [];
-        for (var j = 0; j < sitesCheckboxes.length; j++) {
-            if (sitesCheckboxes[j].checked) {
-                selectedSites.push(sitesCheckboxes[j].name);
-            }
-        }
-        // Get that topic's filterdiv
-        let topicDiv = document.getElementsByClassName(`filterdiv ${topicName}`)[0];
-        // Get every article's site link and article link
-        let siteLinks = topicDiv.querySelectorAll("a.site-link");
-        let articleLinks = topicDiv.querySelectorAll("a.site-link + p");
-        // For each site link, if the site name is selected, display the entry
-        // Else, hide the entry
-        for (var entryNum = 0; entryNum < siteLinks.length; entryNum++) {
-            articleSite = siteLinks[entryNum].querySelector("small").innerText;
-            if (selectedSites.indexOf(articleSite) > -1) {
-                siteLinks[entryNum].style.display = "";
-                articleLinks[entryNum].style.display = "";
-            } else {
-                siteLinks[entryNum].style.display = "none";
-                articleLinks[entryNum].style.display = "none";
-            }
-        }
-        // If no site is selected for that topic, or if the topic is
-        // not selected in the Topics dropdown, hide the topic's div
-        if (selectedSites.length == 0 || selectedTopics.indexOf(topicNameUpperCase) <= -1) {
-            topicDiv.style.display = "none";
-        } else {
-            topicDiv.style.display = "";
-        }
-        
-    }
-}
-// END SCRIPTS FOR THE HOME PAGE ------------------------------------------------------
-
 // SCRIPTS FOR EDIT FEEDS PAGE --------------------------------------------------------
 $(document).ready(function() {
-    $('.topic-selector').on('click', (e) => {
-        let topic = e.target.id;
-        if (topic == 'all') {
-            // Show all feeds
-            $('.feed-info').show().addClass('d-flex');
-            // Set dropdown to display 'All Topics'
-            $('#topicsDropdown').text('All Topics');
-        } else {
-            // Hide all feeds:
-            // Removing 'd-flex' is necessary as otherwise the !important property of
-            // Bootstrap d-flex overrides hide()
-            $('.feed-info').hide().removeClass('d-flex');
-            // Show just the feeds from the selected topic
-            $('.feed-info' + '.' + topic).show().addClass('d-flex');   
-            // Set dropdown to display the selected topic
-            $('#topicsDropdown').text(topic);
-        }
-        // Highlight selected topic in the dropdown-menu
-        $('.topic-selector').removeClass('active');
-        $(e.target).addClass("active");
-    })
+  $('.topic-selector').on('click', (e) => {
+    let topic = e.target.id;
+    if (topic == 'all') {
+      // Show all feeds
+      $('.feed-info').show().addClass('d-flex');
+      // Set dropdown to display 'All Topics'
+      $('#topicsDropdown').text('All Topics');
+    } else {
+      // Hide all feeds:
+      // Removing 'd-flex' is necessary as otherwise the !important property of
+      // Bootstrap d-flex overrides hide()
+      $('.feed-info').hide().removeClass('d-flex');
+      // Show just the feeds from the selected topic
+      $('.feed-info[data-topic="' + topic + '"]').show().addClass('d-flex');   
+      // Set dropdown to display the selected topic
+      $('#topicsDropdown').text(topic);
+    }
+    // Highlight selected topic in the dropdown-menu
+    $('.topic-selector').removeClass('active');
+    $(e.target).addClass("active");
+  })
 })
 // END SCRIPTS FOR EDIT FEEDS PAGE --------------------------------------------------
