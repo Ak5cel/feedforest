@@ -18,6 +18,10 @@ h1, h2, h3, h4, h5, h6 {
 	font-family: var(--heading-font-stack);
 }
 
+footer {
+	background-color: #f8f9fa;
+}
+
 footer,
 footer a {
 	min-height: 424px;
@@ -39,6 +43,11 @@ footer hr {
 
 footer p {
 	margin: 0;
+}
+
+.content-block {
+	min-height: 70vh;
+	padding-bottom: 3rem;
 }
 
 .main-heading {
@@ -168,6 +177,9 @@ footer p {
 	font-weight: 900;
 }
 
+.article.toggle-display[data-status="not-bookmarked"] {
+	display: none !important;
+}
 
 
 

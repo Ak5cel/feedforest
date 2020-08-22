@@ -1,5 +1,5 @@
 $(document).ready(function() {
-  // Attach an onclick handler to the bookmark toggler icon
+  // Attach an onclick handler to the bookmark toggler icon/button
   $('.toggle-bookmark').on('click', (e) => {
 
     // Prevent default link behaviour
@@ -31,6 +31,11 @@ $(document).ready(function() {
         } else if (action == "unbookmark") {
           article.attr("data-status", "not-bookmarked");
         }
+        // Check whether there are any more bookmarked articles
+        var bookmarked_articles = $('.article.toggle-display[data-status="bookmarked"]');
+        if ($('.article.toggle-display').length > 0 && bookmarked_articles.length == 0) {
+          window.location.reload(true);
+        }
       },
       error: function(err) {
         if (err.responseJSON.message == "LOGIN_REQUIRED") {
@@ -41,6 +46,8 @@ $(document).ready(function() {
         }
       } 
     });
+
+    
   })
 
 })

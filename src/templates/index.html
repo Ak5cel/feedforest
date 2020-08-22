@@ -42,11 +42,14 @@
           </div>  
         {% endfor %}
       </div>
+      {% if current_user.is_authenticated %}
+      <div class="hidden" style="height: 5rem;"></div>
+      {% endif %}
     </div>
   </div>
 </div>
-<!-- Sign up banner -->
 {% if not current_user.is_authenticated %}
+<!-- Sign up banner -->
   <div class="pb-5 text-center padding-md-top">
     <div class="container">
       <div class="card text-center bg-light">
