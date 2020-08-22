@@ -1,51 +1,71 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<div class="col">
-		<h3 class="mb-4">My Articles</h3>
-		<div class="content-section pt-1">
-			{% if bookmarked_articles[0] %}
-				<ul class="list-group list-group-flush">
-					{% for article in bookmarked_articles %}
-						<li class="list-group-item p-2 d-flex justify-content-between">
-							<div class="d-flex flex-column justify-content-end">
-								<small>
-									<a href="{{ article.rssfeed.site_url }}">{{ article.rssfeed.feed_name }}</a>
-								</small>
-								<p class="mb-0 pr-3">
-									<a class="text-dark" href="{{ article.link }}">{{ article.title }}</a>
-									{% if article.published_on %}
-									<br>
-									<small class="text-muted">
-										{{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC
-									</small>
-									{% endif %}
-								</p>	
-							</div>
-							<div class="d-flex flex-column align-items-end">
-								<small class="text-light-gray pb-2">{{ article.topic.topic_name }}</small>
-								<form action="{{ url_for('user.unbookmark_article', article_id=article.id) }}" method="POST">
-									{{ empty_form.hidden_tag() }}
-									{{ empty_form.submit(value='Remove', class='btn btn-sm btn-secondary') }}
-								</form>
-							</div>
-						</li>				
-					{% endfor %}	
-				</ul>
-			{% else %}
-				<div class="d-flex flex-column align-items-center justify-content-center" style="height: 150px">
-					<small class="text-muted mb-2">No articles bookmarked</small>
-					<small>
-						Go to  
-						<a href="{{ url_for('user.my_feeds') }}">My Feeds</a>
-						and click on the <i class="far fa-bookmark text-success"></i> next to an article to bookmark it!
-					</small>
-				</div>
-			{% endif %}
-		</div>
-	</div>
-	
+<div class="container padding-bottom">
+  <div class="row">
+    <div class="col-md-12">
+      {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+    <div class="col">
+      <h3 class="mt-4 mt-md-5 mb-4">My Articles</h3>
+      <div class="content-section pt-1">
+        {% if bookmarked_articles[0] %}
+          <ul class="list-group list-group-flush">
+            {% for article in bookmarked_articles %}
+              <li class="list-group-item p-2 d-flex justify-content-between">
+                <div class="d-flex flex-column justify-content-end">
+                  <small>
+                    <a href="{{ article.rssfeed.site_url }}">{{ article.rssfeed.feed_name }}</a>
+                  </small>
+                  <p class="mb-0 pr-3">
+                    <a class="text-dark" href="{{ article.link }}">{{ article.title }}</a>
+                    {% if article.published_on %}
+                    <br>
+                    <small class="text-muted">
+                      {{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC
+                    </small>
+                    {% endif %}
+                  </p>  
+                </div>
+                <div class="d-flex flex-column align-items-end">
+                  <small class="text-light-gray pb-2">{{ article.topic.topic_name }}</small>
+                  <form action="{{ url_for('user.unbookmark_article', article_id=article.id) }}" method="POST">
+                    {{ empty_form.hidden_tag() }}
+                    {{ empty_form.submit(value='Remove', class='btn btn-sm btn-secondary') }}
+                  </form>
+                </div>
+              </li>       
+            {% endfor %}  
+          </ul>
+        {% else %}
+          <div class="d-flex flex-column align-items-center justify-content-center" style="height: 150px">
+            <small class="text-muted mb-2">No articles bookmarked</small>
+            <small>
+              Go to  
+              <a href="{{ url_for('user.my_feeds') }}">My Feeds</a>
+              and click on the <i class="far fa-bookmark text-success"></i> next to an article to bookmark it!
+            </small>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+  
 {% endblock content %}
+
 {% block scripts %}
-	<script src="{{ url_for('static', filename='bookmark-article.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bookmark-article.js') }}"></script>
 {% endblock scripts %}

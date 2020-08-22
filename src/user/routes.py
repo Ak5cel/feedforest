@@ -16,10 +16,12 @@ def my_feeds():
     sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
     latest_articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
     last_updated_on = db.session.query(db.func.max(Article.refreshed_on)).scalar()
+    topics = Topic.query.all()
     return render_template('myfeeds.html',
                            title='My Feeds',
                            latest_articles=latest_articles,
-                           last_updated_on=last_updated_on)
+                           last_updated_on=last_updated_on,
+                           topics=topics)
 
 
 @user.route('/articles')
@@ -31,8 +33,12 @@ def my_articles():
         .filter(user_article_map.c.user_id == current_user.id)\
         .order_by(user_article_map.c.bookmarked_on.desc())\
         .all()
-    return render_template('myarticles.html', title='My Articles',
-                           empty_form=empty_form, bookmarked_articles=bookmarked_articles)
+    topics = Topic.query.all()
+    return render_template('myarticles.html',
+                           title='My Articles',
+                           empty_form=empty_form,
+                           bookmarked_articles=bookmarked_articles,
+                           topics=topics)
 
 
 @user.route('/account')

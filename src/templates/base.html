@@ -46,6 +46,12 @@
             <a class="nav-link {% if request.endpoint == 'general.about' %} active {% endif %}" 
             href="{{ url_for('general.about') }}">About</a>
           {% endif %}
+          {% if current_user.is_authenticated %}
+            <a class="nav-link {% if request.endpoint == 'user.my_feeds' %} active {% endif %}" 
+            href="{{ url_for('user.my_feeds') }}">My Feeds</a>
+            <a class="nav-link {% if request.endpoint == 'user.my_articles' %} active {% endif %}" 
+            href="{{ url_for('user.my_articles') }}">My Articles</a>
+          {% endif %}
         </div>
         <div class="navbar-nav">
           {% if not current_user.is_authenticated %}

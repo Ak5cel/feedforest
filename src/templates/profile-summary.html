@@ -24,9 +24,9 @@
             <small class="text-muted">{{ selected_feed.topic.topic_name.upper() }}</small>
             <h6 class="">{{ selected_feed.feed_name }}</h6>
             <p class="small text-primary">
-              <a href="{{ selected_feed.rss_link }}" title="{{ selected_feed.rss_link }}">RSS Link</a>
+              <a href="{{ selected_feed.rss_link }}" title="{{ selected_feed.rss_link }}" target="_blank">RSS Link</a>
               <i class="fas fa-external-link-alt"></i>
-              <a href="{{ selected_feed.site_url }}" title="{{ selected_feed.site_url }}">Site Link</a>
+              <a href="{{ selected_feed.site_url }}" title="{{ selected_feed.site_url }}" target="_blank">Site Link</a>
             </p>  
           </li>
         {% endfor %}
