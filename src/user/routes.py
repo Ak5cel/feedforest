@@ -101,6 +101,7 @@ def unbookmark_article():
 @login_required
 def edit_email_pref():
     form = EmailPreferencesForm()
+    topics = Topic.query.all()
     if form.validate_on_submit():
         if form.frequency.data == 0:
             current_user.email_frequency = None
@@ -115,7 +116,7 @@ def edit_email_pref():
     else:
         form.frequency.data = 1 if current_user.email_frequency else 0
         form.time_from_db.data = current_user.email_frequency
-    return render_template('edit-email-pref.html', title='Account - Email Preferences', form=form)
+    return render_template('edit-email-pref.html', title='Account - Email Preferences', form=form, topics=topics)
 
 
 @user.route('/account/edit/profile', methods=['GET', 'POST'])
@@ -123,6 +124,7 @@ def edit_email_pref():
 def edit_profile():
     details_form = EditDetailsForm()
     password_form = ChangePasswordForm()
+    topics = Topic.query.all()
     if details_form.submit.data and details_form.validate():
         if details_form.username.data != current_user.username:
             current_user.username = details_form.username.data
@@ -147,4 +149,4 @@ def edit_profile():
         details_form.username.data = current_user.username
         details_form.email.data = current_user.email
     return render_template('edit-profile.html', title='Edit Profile',
-                           details_form=details_form, password_form=password_form)
+                           details_form=details_form, password_form=password_form, topics=topics)

@@ -60,10 +60,12 @@
         {% else %}
           <p class="mb-0">Never</p>
         {% endif %}
-        
       </li>
     </ul>
   </div>
-  <script src="{{ url_for('static', filename='datetime-utils.js') }}"></script>
-  <script src="{{ url_for('static', filename='profile-summary-time.js') }}"></script>
 {% endblock account_info %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/datetime-utils.js') }}"></script>
+<script src="{{ url_for('static', filename='js/profile-summary-time.js') }}"></script>
+{% endblock scripts %}

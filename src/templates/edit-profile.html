@@ -1,95 +1,95 @@
 {% extends "account.html" %}
 
 {% block account_info %}
-	<div class="mb-3">
-		<form action="" method="POST">
-			{{ details_form.hidden_tag() }}
-			<fieldset>
-				<legend class="border-bottom mb-4">Edit Profile</legend>
-				<div class="row">
-					<div class="form-group col-sm-12 col-md-8 col-xl-7">
-					    {{ details_form.username.label(for="usernameField") }}
-					    {% if details_form.username.errors %}
-					        {{ details_form.username(class="form-control form-control is-invalid", id="usernameField") }}
-					        <div class="invalid-feedback">
-					            {% for error in details_form.username.errors %}
-					                <span>{{ error }}</span>
-					            {% endfor %}
-					        </div>
-					    {% else %}
-					        {{ details_form.username(class="form-control form-control", id="usernameField") }}
-					    {% endif %}
-					</div>
-					<div class="form-group col-sm-12 col-md-8 col-xl-7">
-					    {{ details_form.email.label(for="emailField") }}
-					    {% if details_form.email.errors %}
-					        {{ details_form.email(class="form-control form-control is-invalid", id="emailField") }}
-					        <div class="invalid-feedback">
-					            {% for error in details_form.email.errors %}
-					                <span>{{ error }}</span>
-					            {% endfor %}
-					        </div>
-					    {% else %}
-					        {{ details_form.email(class="form-control form-control", id="emailField") }}
-					    {% endif %}
-					</div>
-					<div class="form-group col-sm-12 col-md-8 col-xl-7">
-					    {{ details_form.submit(class="btn btn-success btn-sm mt-3", value="Update Profile") }}
-					</div>		
-				</div>
-			</fieldset>
-		</form>
-	</div>
-	<div>
-		<form action="" method="POST">
-			{{ details_form.hidden_tag() }}
-			<fieldset>
-				<legend class="border-bottom mb-4">Change Password</legend>
-				<div class="row">
-					<div class="form-group col-sm-12 col-md-8 col-xl-7">
-						{{ password_form.old_password.label(for="oldPasswordField") }}
-						{% if password_form.old_password.errors %}
-							{{ password_form.old_password(class="form-control form-control is-invalid", id="oldPasswordField") }}
-							<div class="invalid-feedback">
-								{% for error in password_form.old_password.errors %}
-									<span>{{ error }}</span>
-								{% endfor %}
-							</div>
-						{% else %}
-							{{ password_form.old_password(class="form-control form-control", id="oldPasswordField") }}
-						{% endif %}
-					</div>
-					<div class="form-group col-sm-12 col-md-8 col-xl-7">
-						{{ password_form.new_password.label(for="newPasswordField") }}
-						{% if password_form.new_password.errors %}
-							{{ password_form.new_password(class="form-control form-control is-invalid", id="newPasswordField") }}
-							<div class="invalid-feedback">
-								{% for error in password_form.new_password.errors %}
-									<span>{{ error }}</span>
-								{% endfor %}
-							</div>
-						{% else %}
-							{{ password_form.new_password(class="form-control form-control", id="newPasswordField") }}
-						{% endif %}
-					</div>
-					<div class="form-group col-sm-12 col-md-8 col-xl-7">
-						{{ password_form.confirm_password.label(for="confirmPasswordField") }}
-						{% if password_form.confirm_password.errors %}
-							{{ password_form.confirm_password(class="form-control form-control is-invalid", id="confirmPasswordField") }}
-							<div class="invalid-feedback">
-								{% for error in password_form.confirm_password.errors %}
-									<span>{{ error }}</span>
-								{% endfor %}
-							</div>
-						{% else %}
-							{{ password_form.confirm_password(class="form-control form-control", id="confirmPasswordField") }}
-						{% endif %}
-					</div>
-					<div class="form-group col-sm-12 col-md-8 col-xl-7">
-					    {{ password_form.submit_pwd(class="btn btn-success btn-sm mt-3", value="Update Password") }}
-					</div>	
-				</div>
-			</fieldset>
-		</form>
-	</div>
+  <div class="mb-3">
+    <form action="" method="POST">
+      {{ details_form.hidden_tag() }}
+      <fieldset>
+        <legend class="border-bottom mb-4">Edit Profile</legend>
+        <div class="row">
+          <div class="form-group col-sm-12 col-md-8 col-xl-7">
+              {{ details_form.username.label(for="usernameField") }}
+              {% if details_form.username.errors %}
+                  {{ details_form.username(class="form-control form-control is-invalid", id="usernameField") }}
+                  <div class="invalid-feedback">
+                      {% for error in details_form.username.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ details_form.username(class="form-control form-control", id="usernameField") }}
+              {% endif %}
+          </div>
+          <div class="form-group col-sm-12 col-md-8 col-xl-7">
+              {{ details_form.email.label(for="emailField") }}
+              {% if details_form.email.errors %}
+                  {{ details_form.email(class="form-control form-control is-invalid", id="emailField") }}
+                  <div class="invalid-feedback">
+                      {% for error in details_form.email.errors %}
+                          <span>{{ error }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+                  {{ details_form.email(class="form-control form-control", id="emailField") }}
+              {% endif %}
+          </div>
+          <div class="form-group col-sm-12 col-md-8 col-xl-7">
+              {{ details_form.submit(class="btn btn-success btn-sm mt-3", value="Update Profile") }}
+          </div>    
+        </div>
+      </fieldset>
+    </form>
+  </div>
+  <div>
+    <form action="" method="POST">
+      {{ details_form.hidden_tag() }}
+      <fieldset>
+        <legend class="border-bottom mb-4">Change Password</legend>
+        <div class="row">
+          <div class="form-group col-sm-12 col-md-8 col-xl-7">
+            {{ password_form.old_password.label(for="oldPasswordField") }}
+            {% if password_form.old_password.errors %}
+              {{ password_form.old_password(class="form-control form-control is-invalid", id="oldPasswordField") }}
+              <div class="invalid-feedback">
+                {% for error in password_form.old_password.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ password_form.old_password(class="form-control form-control", id="oldPasswordField") }}
+            {% endif %}
+          </div>
+          <div class="form-group col-sm-12 col-md-8 col-xl-7">
+            {{ password_form.new_password.label(for="newPasswordField") }}
+            {% if password_form.new_password.errors %}
+              {{ password_form.new_password(class="form-control form-control is-invalid", id="newPasswordField") }}
+              <div class="invalid-feedback">
+                {% for error in password_form.new_password.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ password_form.new_password(class="form-control form-control", id="newPasswordField") }}
+            {% endif %}
+          </div>
+          <div class="form-group col-sm-12 col-md-8 col-xl-7">
+            {{ password_form.confirm_password.label(for="confirmPasswordField") }}
+            {% if password_form.confirm_password.errors %}
+              {{ password_form.confirm_password(class="form-control form-control is-invalid", id="confirmPasswordField") }}
+              <div class="invalid-feedback">
+                {% for error in password_form.confirm_password.errors %}
+                  <span>{{ error }}</span>
+                {% endfor %}
+              </div>
+            {% else %}
+              {{ password_form.confirm_password(class="form-control form-control", id="confirmPasswordField") }}
+            {% endif %}
+          </div>
+          <div class="form-group col-sm-12 col-md-8 col-xl-7">
+              {{ password_form.submit_pwd(class="btn btn-success btn-sm mt-3", value="Update Password") }}
+          </div>  
+        </div>
+      </fieldset>
+    </form>
+  </div>
 {% endblock account_info %}
