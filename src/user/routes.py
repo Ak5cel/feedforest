@@ -80,13 +80,17 @@ def remove_feed():
     return "Removed feed"
 
 
-@user.route('/bookmark', methods=['POST'])
+@user.route('/bookmark', methods=['GET', 'POST'])
 def bookmark_article():
     if not current_user.is_authenticated:
         res = make_response(jsonify({"message": "LOGIN_REQUIRED", "redirect": url_for('auth.login', next=request.full_path, _external=True)}), 401)
+        flash('Login to bookmark articles, and more!', 'info')
         return res
     article_id = request.args.get('article_id', type=int)
     current_user.bookmark_article(article_id)
+    if request.method == 'GET':
+        article = Article.query.get(article_id)
+        return redirect(url_for('general.topic', id=article.topic_id))
     res = make_response(jsonify({"message": f"Bookmarked article {article_id}"}), 200)
     return res
 
