@@ -3,8 +3,8 @@
 {% block content %}
 <div class="container">
   <div class="row">
-    <div class="col-12 d-flex align-items-center justify-content-between mt-4 mt-md-5">
-      <h3 class="mb-4">{{ topic.topic_name }}</h3>
+    <div class="col-12 d-md-flex align-items-center justify-content-between mt-4 mt-md-5 mb-4 mb-md-0">
+      <h3 class="mb-md-4">{{ topic.topic_name }}</h3>
       <small class="text-muted">Last updated: {{ latest_articles[0].refreshed_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</small>
     </div>
     <div class="col-md-12">
