@@ -3,11 +3,14 @@
 {% block content %}
 <div class="container padding-bottom">
   <div class="row">
-    <div class="col-12 d-sm-flex align-items-center justify-content-between mt-4 mt-md-5 mb-4 mb-sm-0">
+    <div class="col-12 d-sm-flex align-items-start justify-content-between mt-4 mt-md-5 mb-4 mb-sm-0">
       <h3 class="mb-sm-4">My Feeds</h3>
-      {% if current_user.selected_feeds[0] %}
-      <small class="text-muted">Last updated: {{ last_updated_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</small>
-      {% endif %}
+      <div class="text-sm-right mb-sm-3">
+        {% if current_user.selected_feeds[0] %}
+        <small class="text-muted">Last updated: {{ last_updated_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</small><br>
+        {% endif %}
+        <a href="{{ url_for('user.inbox') }}" class="btn btn-outline-primary btn-sm">View Inbox</a>
+      </div>
     </div>
     <div class="col-md-12">
       {% with messages = get_flashed_messages(with_categories=True) %}
