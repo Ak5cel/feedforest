@@ -60,7 +60,8 @@ class Article(db.Model):
 # Association table between users and followed feeds
 user_feed_map = db.Table('user_feed_map',
                          db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-                         db.Column('feed_id', db.Integer, db.ForeignKey('rss_feed.id'), primary_key=True))
+                         db.Column('feed_id', db.Integer, db.ForeignKey('rss_feed.id'), primary_key=True),
+                         db.Column('added_on', db.DateTime, default=datetime.utcnow))
 
 # Association table between users and bookmarked articles
 user_article_map = db.Table('user_article_map',

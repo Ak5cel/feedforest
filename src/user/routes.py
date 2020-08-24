@@ -1,6 +1,8 @@
+from itertools import groupby
+from operator import attrgetter
 from flask import render_template, url_for, request, flash, redirect, Blueprint, jsonify, make_response
 from flask_login import current_user, login_required
-from ..models import Topic, RSSFeed, Article, User, user_article_map
+from ..models import Topic, RSSFeed, Article, User, user_article_map, user_feed_map
 from ..general.forms import EmptyForm, HiddenElementForm
 from ..auth.forms import ChangePasswordForm
 from .forms import EditDetailsForm, EmailPreferencesForm
@@ -10,7 +12,7 @@ from ..utils import get_utc_time, get_24h_from_12h
 user = Blueprint('user', __name__)
 
 
-@user.route('/feeds')
+@user.route('/user/feeds')
 @login_required
 def my_feeds():
     sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
@@ -24,7 +26,7 @@ def my_feeds():
                            topics=topics)
 
 
-@user.route('/articles')
+@user.route('/user/articles')
 @login_required
 def my_articles():
     empty_form = EmptyForm()
@@ -38,6 +40,38 @@ def my_articles():
                            title='My Articles',
                            empty_form=empty_form,
                            bookmarked_articles=bookmarked_articles,
+                           topics=topics)
+
+
+@user.route('/user/inbox/all')
+def inbox():
+    articles = Article.query.join(user_feed_map, (Article.rssfeed_id == user_feed_map.c.feed_id))\
+        .filter(user_feed_map.c.user_id == current_user.id and Article.refreshed_on.date() >= user_feed_map.c.added_on.date())\
+        .order_by(Article.rssfeed_id, Article.published_on.desc())\
+        .all()
+    articles_grouped = {k: list(g) for k, g in groupby(articles, attrgetter('rssfeed_id'))}
+    topics = Topic.query.all()
+    return render_template('inbox-all.html',
+                           title='Inbox',
+                           articles_grouped=articles_grouped,
+                           topics=topics)
+
+
+@user.route('/user/inbox/')
+def inbox_for_topic():
+    feed_id = request.args.get('feed_id')
+    selected_feed = RSSFeed.query.get_or_404(feed_id)
+    if selected_feed not in current_user.selected_feeds:
+        flash(f"You have not subscribed to that feed.", 'warning')
+        return redirect(url_for('user.inbox'))
+    articles = Article.query.join(user_feed_map, (Article.rssfeed_id == user_feed_map.c.feed_id))\
+        .filter(user_feed_map.c.user_id == current_user.id and Article.refreshed_on.date() >= user_feed_map.c.added_on.date() and Article.rssfeed_id == feed_id)\
+        .all()
+    topics = Topic.query.all()
+    return render_template('inbox-topic.html',
+                           title='Inbox',
+                           articles=articles,
+                           selected_feed=selected_feed,
                            topics=topics)
 
 

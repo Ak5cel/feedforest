@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container padding-bottom">
+  <div class="row">
+    <div class="col-sm-12 col-md-4 col-lg-3 mt-4">
+      <div class="list-group sidenav">
+        <a class="list-group-item list-group-item-action {% if request.endpoint == 'user.inbox' %} active bg-secondary {% endif %}" 
+          href="{{ url_for('user.inbox') }}">
+            All subscribed feeds
+        </a>
+        {% for feed in current_user.selected_feeds %}
+          <a class="list-group-item list-group-item-action" 
+            href="{{ url_for('user.inbox_for_topic', feed_id=feed.id) }}">
+              {{ feed.feed_name }}
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-sm-12 col-md-8 col-lg-9 mt-4">
+      {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show">
+              {{ message }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      {% block inbox_content %}
+      {% endblock inbox_content %}
+    </div>
+  </div>
+</div>
+  
+{% endblock content %}
