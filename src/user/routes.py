@@ -1,5 +1,6 @@
 from itertools import groupby
 from operator import attrgetter
+from datetime import datetime
 from flask import render_template, url_for, request, flash, redirect, Blueprint, jsonify, make_response
 from flask_login import current_user, login_required
 from ..models import Topic, RSSFeed, Article, User, user_article_map, user_feed_map
@@ -45,8 +46,8 @@ def my_articles():
 
 @user.route('/user/inbox/all')
 def inbox():
-    articles = Article.query.join(user_feed_map, (Article.rssfeed_id == user_feed_map.c.feed_id))\
-        .filter(user_feed_map.c.user_id == current_user.id and Article.refreshed_on.date() >= user_feed_map.c.added_on.date())\
+    articles = db.session.query(Article).join(user_feed_map, (Article.rssfeed_id == user_feed_map.c.feed_id))\
+        .filter(user_feed_map.c.user_id == current_user.id, db.func.DATE(Article.refreshed_on) >= db.func.DATE(user_feed_map.c.added_on))\
         .order_by(Article.rssfeed_id, Article.published_on.desc())\
         .all()
     articles_grouped = {k: list(g) for k, g in groupby(articles, attrgetter('rssfeed_id'))}
@@ -64,9 +65,10 @@ def inbox_for_topic():
     if selected_feed not in current_user.selected_feeds:
         flash(f"You have not subscribed to that feed.", 'warning')
         return redirect(url_for('user.inbox'))
-    articles = Article.query.join(user_feed_map, (Article.rssfeed_id == user_feed_map.c.feed_id))\
-        .filter(user_feed_map.c.user_id == current_user.id and Article.refreshed_on.date() >= user_feed_map.c.added_on.date() and Article.rssfeed_id == feed_id)\
-        .all()
+    added_on = db.session.query(user_feed_map.c.added_on)\
+        .filter(user_feed_map.c.user_id == current_user.id, user_feed_map.c.feed_id == selected_feed.id)\
+        .scalar()
+    articles = Article.query.filter(db.func.DATE(Article.refreshed_on) >= db.func.DATE(added_on), Article.rssfeed_id == selected_feed.id).distinct().all()
     topics = Topic.query.all()
     return render_template('inbox-topic.html',
                            title='Inbox',
