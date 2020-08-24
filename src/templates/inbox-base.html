@@ -5,12 +5,13 @@
   <div class="row">
     <div class="col-sm-12 col-md-4 col-lg-3 mt-4">
       <div class="list-group sidenav">
-        <a class="list-group-item list-group-item-action {% if request.endpoint == 'user.inbox' %} active bg-secondary {% endif %}" 
+        <a class="list-group-item list-group-item-action {% if request.endpoint == 'user.inbox' %} active {% endif %}" 
           href="{{ url_for('user.inbox') }}">
             All subscribed feeds
         </a>
         {% for feed in current_user.selected_feeds %}
-          <a class="list-group-item list-group-item-action" 
+          <a class="list-group-item list-group-item-action 
+          {% if request.endpoint == 'user.inbox_for_topic' and request.args.get('feed_id') == str(feed.id) %} active {% endif %}" 
             href="{{ url_for('user.inbox_for_topic', feed_id=feed.id) }}">
               {{ feed.feed_name }}
           </a>

@@ -72,7 +72,8 @@ def inbox_for_topic():
                            title='Inbox',
                            articles=articles,
                            selected_feed=selected_feed,
-                           topics=topics)
+                           topics=topics,
+                           str=str)
 
 
 @user.route('/account')
