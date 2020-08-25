@@ -58,7 +58,7 @@ def fetch_articles():
     # -----------------------------------------------------------------
 
     # Sets number of articles to extract from each feed
-    MAX_ARTICLES_COUNT = 3
+    # MAX_ARTICLES_COUNT = 3
 
     # When the script is started, set CURRENT_REFRESH_TIME
     CURRENT_REFRESH_TIME = datetime.utcnow()
@@ -109,7 +109,7 @@ def fetch_articles():
         else:
             logging.debug('Remote Feed has been updated. Fetching latest articles...')
             # Extract the first 3 articles from the parsed feed
-            entries = parsed_feed.entries[:MAX_ARTICLES_COUNT]
+            entries = parsed_feed.entries
             logging.debug(f'Fetched {len(entries)} articles.')
             for entry in entries:
                 print(f'{entries.index(entry)}: {entry.title}')
