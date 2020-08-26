@@ -197,3 +197,32 @@ def edit_profile():
         details_form.email.data = current_user.email
     return render_template('edit-profile.html', title='Edit Profile',
                            details_form=details_form, password_form=password_form, topics=topics)
+
+
+@user.route('/test')
+def test():
+    return render_template('test.html')
+
+
+@user.route('/load', methods=['POST'])
+def load():
+    """ Route to return more articles upon request """
+
+    ARTICLES_PER_LOAD = 5
+
+    if request.args:
+        page = int(request.args.get("page"))
+        feed_id = int(request.args.get("feed_id"))
+
+        articles = Article.query\
+            .filter_by(rssfeed_id=feed_id)\
+            .paginate(per_page=ARTICLES_PER_LOAD, page=page)
+
+        return make_response(
+            jsonify({
+                "articles": [article.as_dict(date_format="UTC_STRING") for article in articles.items],
+                "site_url": articles.items[0].rssfeed.site_url,
+                "feed_name": articles.items[0].rssfeed.feed_name,
+                "has_next": articles.has_next
+            }
+            ), 200)

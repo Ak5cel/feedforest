@@ -1,4 +1,6 @@
+import datetime
 from flask import Flask, redirect, url_for, request, flash
+from flask.json import JSONEncoder
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
@@ -22,6 +24,18 @@ celery = Celery(
     broker='pyamqp://guest@localhost//',
     include=['src.tasks']
 )
+
+
+class CustomJSONEncoder(JSONEncoder):
+    """Add support for serialising datetimes and timedeltas"""
+
+    def default(self, o):
+        if type(o) == datetime.timedelta:
+            return str(o)
+        elif type(o) == datetime.datetime:
+            return o.isoformat()
+        else:
+            return super().default(o)
 
 
 class MyAdminIndexView(AdminIndexView):
@@ -59,6 +73,7 @@ def create_app(config_class=Config):
     login_manager.init_app(app)
     admin.init_app(app)
     make_celery(app, celery)
+    app.json_encoder = CustomJSONEncoder
     from .auth.routes import auth
     from .general.routes import general
     from .user.routes import user

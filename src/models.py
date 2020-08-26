@@ -53,6 +53,15 @@ class Article(db.Model):
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=False)
     rssfeed_id = db.Column(db.Integer, db.ForeignKey('rss_feed.id'), nullable=False)
 
+    def as_dict(self, date_format="ISO"):
+        result_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        if date_format == 'ISO':
+            return result_dict
+        elif date_format == 'UTC_STRING':
+            result_dict['published_on'] = result_dict['published_on'].strftime('%B %e, %Y, %I:%M %p %Z')
+            result_dict['refreshed_on'] = result_dict['refreshed_on'].strftime('%B %e, %Y, %I:%M %p %Z')
+            return result_dict
+
     def __repr__(self):
         return f"Article('{self.title}', '{self.link}')"
 
