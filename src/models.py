@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import url_for, render_template, current_app
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from sqlalchemy.sql import expression
 from premailer import transform
@@ -55,6 +55,12 @@ class Article(db.Model):
 
     def as_dict(self, date_format="ISO"):
         result_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+        if current_user.is_authenticated:
+            result_dict["is_bookmarked"] = self in current_user.bookmarked_articles
+        else:
+            result_dict["is_bookmarked"] = False
+
         if date_format == 'ISO':
             return result_dict
         elif date_format == 'UTC_STRING':

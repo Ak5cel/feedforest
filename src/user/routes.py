@@ -1,6 +1,5 @@
 from itertools import groupby
 from operator import attrgetter
-from datetime import datetime
 from flask import render_template, url_for, request, flash, redirect, Blueprint, jsonify, make_response
 from flask_login import current_user, login_required
 from ..models import Topic, RSSFeed, Article, User, user_article_map, user_feed_map
@@ -201,7 +200,8 @@ def edit_profile():
 
 @user.route('/test')
 def test():
-    return render_template('test.html')
+    articles = Article.query.filter_by(rssfeed_id=1).limit(6).all()
+    return render_template('test.html', articles=articles)
 
 
 @user.route('/load', methods=['POST'])

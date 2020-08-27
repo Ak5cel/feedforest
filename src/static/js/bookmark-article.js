@@ -11,7 +11,7 @@ $(document).ready(function() {
     var article_status = article.attr("data-status");
     if (article_status == "bookmarked") {
       action = "unbookmark";
-    } else if (article_status == "not-bookmarked") {
+    } else if (article_status == "notBookmarked") {
       action = "bookmark";
     }
 
@@ -29,7 +29,7 @@ $(document).ready(function() {
         if (action == "bookmark") {
           article.attr("data-status", "bookmarked");
         } else if (action == "unbookmark") {
-          article.attr("data-status", "not-bookmarked");
+          article.attr("data-status", "notbookmarked");
         }
         // Check whether there are any more bookmarked articles
         var bookmarked_articles = $('.article.toggle-display[data-status="bookmarked"]');
