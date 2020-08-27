@@ -48,17 +48,18 @@ def home():
 def topic(id):
     topics = Topic.query.all()
     topic = Topic.query.get_or_404(id)
-    last_refresh = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).scalar()
+    last_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
     latest_articles = db.session.query(Article)\
         .filter_by(topic_id=id, refreshed_on=last_refresh)\
         .order_by(Article.rssfeed_id, Article.published_on.desc())\
         .all()
     articles_grouped = {k: list(g) for k, g in groupby(latest_articles, attrgetter('rssfeed_id'))}
     return render_template('topic.html',
+                           title=topic.topic_name,
                            topics=topics,
                            topic=topic,
                            articles_grouped=articles_grouped,
-                           last_refresh=last_refresh)
+                           last_updated_on=last_refresh)
 
 
 @general.route('/about')

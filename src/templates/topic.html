@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-12 d-md-flex align-items-center justify-content-between mt-4 mt-md-5 mb-4 mb-md-0">
       <h3 class="mb-md-4">{{ topic.topic_name }}</h3>
-      <small class="text-muted">Last updated: {{ last_refresh.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</small>
+      <small class="text-muted">Last updated: {{ last_updated_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</small>
     </div>
     <div class="col-md-12">
         {% with messages = get_flashed_messages(with_categories=True) %}
