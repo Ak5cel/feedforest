@@ -1,3 +1,5 @@
+from itertools import groupby
+from operator import attrgetter
 from flask import render_template, url_for, request, flash, redirect, Blueprint
 from feedparser import parse
 from ..models import Topic, Article
@@ -46,12 +48,17 @@ def home():
 def topic(id):
     topics = Topic.query.all()
     topic = Topic.query.get_or_404(id)
-    sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
+    last_refresh = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).scalar()
     latest_articles = db.session.query(Article)\
-        .filter_by(topic_id=id)\
-        .join(sub, sub.c.last_refresh == Article.refreshed_on)\
+        .filter_by(topic_id=id, refreshed_on=last_refresh)\
+        .order_by(Article.rssfeed_id, Article.published_on.desc())\
         .all()
-    return render_template('topic.html', topics=topics, topic=topic, latest_articles=latest_articles)
+    articles_grouped = {k: list(g) for k, g in groupby(latest_articles, attrgetter('rssfeed_id'))}
+    return render_template('topic.html',
+                           topics=topics,
+                           topic=topic,
+                           articles_grouped=articles_grouped,
+                           last_refresh=last_refresh)
 
 
 @general.route('/about')

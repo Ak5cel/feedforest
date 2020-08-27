@@ -1,9 +1,8 @@
 $(document).ready(function() {
 
   function loadArticles(page, feed_id, loader) {
-    // var loader = document.querySelector('#loader');
-    var template = document.querySelector('#article_template');
-    var loadBtn = $(loader).siblings('#loadBtn')[0];
+    var template = loader.querySelector('.article_template');
+    var loadBtn = $(loader).siblings('.btn-load')[0];
 
     url = `/load?feed_id=${feed_id}&page=${page}`;
 
@@ -25,11 +24,22 @@ $(document).ready(function() {
             articleItem.setAttribute("data-status", "notBookmarked");
           }
 
-          template_clone.querySelector('#feedLink').setAttribute("href", res["site_url"]);
-          template_clone.querySelector('#feedLink').innerHTML = res["feed_name"].toUpperCase();
-          template_clone.querySelector('#articleLink').setAttribute("href", articles[i].link);
-          template_clone.querySelector('#articleLink').innerHTML = articles[i].title;
-          template_clone.querySelector('#publishedOn').innerHTML = articles[i].published_on + ' UTC';
+          let feedLinkNode = template_clone.querySelector('#feedLink');
+          if (feedLinkNode) {
+            feedLinkNode.setAttribute("href", res["site_url"]);
+            feedLinkNode.innerHTML = res["feed_name"].toUpperCase();
+          }
+
+          let articleLinkNode = template_clone.querySelector('#articleLink');
+          if (articleLinkNode) {
+            articleLinkNode.setAttribute("href", articles[i].link);
+            articleLinkNode.innerHTML = articles[i].title;
+          }
+
+          let publishedOnNode = template_clone.querySelector('#publishedOn');
+          if (publishedOnNode) {
+            publishedOnNode.innerHTML = articles[i].published_on + ' UTC';
+          }
 
           // Append template to DOM
           loader.appendChild(template_clone);
@@ -52,10 +62,10 @@ $(document).ready(function() {
   }
 
 
-  $('#loadBtn').on('click', (e) => {
+  $('.btn-load').on('click', (e) => {
     e.preventDefault();
 
-    var loader = $(e.target).siblings('#loader')[0];
+    var loader = $(e.target).siblings('.loader')[0];
     let page = parseInt(e.target.getAttribute("data-page"));
     let feedId = parseInt(e.target.getAttribute("data-feed-id"));
 
