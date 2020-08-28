@@ -201,12 +201,6 @@ def edit_profile():
                            details_form=details_form, password_form=password_form, topics=topics)
 
 
-@user.route('/test')
-def test():
-    articles = Article.query.filter_by(rssfeed_id=1).limit(6).all()
-    return render_template('test.html', articles=articles)
-
-
 @user.route('/load', methods=['POST'])
 def load():
     """ Route to return more articles upon request """
