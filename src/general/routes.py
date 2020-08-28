@@ -1,4 +1,6 @@
-from flask import render_template, url_for, request, flash, redirect, Blueprint
+from itertools import groupby
+from operator import attrgetter
+from flask import render_template, url_for, request, flash, redirect, Blueprint, jsonify, make_response
 from feedparser import parse
 from ..models import Topic, Article
 from .forms import FeedbackForm
@@ -46,12 +48,43 @@ def home():
 def topic(id):
     topics = Topic.query.all()
     topic = Topic.query.get_or_404(id)
-    sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
+    last_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
     latest_articles = db.session.query(Article)\
-        .filter_by(topic_id=id)\
-        .join(sub, sub.c.last_refresh == Article.refreshed_on)\
+        .filter_by(topic_id=id, refreshed_on=last_refresh)\
+        .order_by(Article.rssfeed_id, Article.published_on.desc())\
         .all()
-    return render_template('topic.html', topics=topics, topic=topic, latest_articles=latest_articles)
+    articles_grouped = {k: list(g) for k, g in groupby(latest_articles, attrgetter('rssfeed_id'))}
+    return render_template('topic.html',
+                           title=topic.topic_name,
+                           topics=topics,
+                           topic=topic,
+                           articles_grouped=articles_grouped,
+                           last_updated_on=last_refresh)
+
+
+@general.route('/load', methods=['POST'])
+def load():
+    """ Route to return more articles upon request """
+
+    ARTICLES_PER_LOAD = 5
+
+    if request.args:
+        page = int(request.args.get("page"))
+        feed_id = int(request.args.get("feed_id"))
+
+        articles = Article.query\
+            .filter_by(rssfeed_id=feed_id)\
+            .order_by(Article.published_on.desc())\
+            .paginate(per_page=ARTICLES_PER_LOAD, page=page)
+
+        return make_response(
+            jsonify({
+                "articles": [article.as_dict(date_format="UTC_STRING") for article in articles.items],
+                "site_url": articles.items[0].rssfeed.site_url,
+                "feed_name": articles.items[0].rssfeed.feed_name,
+                "has_next": articles.has_next
+            }
+            ), 200)
 
 
 @general.route('/about')

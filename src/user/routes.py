@@ -1,6 +1,5 @@
 from itertools import groupby
 from operator import attrgetter
-from datetime import datetime
 from flask import render_template, url_for, request, flash, redirect, Blueprint, jsonify, make_response
 from flask_login import current_user, login_required
 from ..models import Topic, RSSFeed, Article, User, user_article_map, user_feed_map
@@ -16,14 +15,17 @@ user = Blueprint('user', __name__)
 @user.route('/user/feeds')
 @login_required
 def my_feeds():
-    sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
-    latest_articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
-    last_updated_on = db.session.query(db.func.max(Article.refreshed_on)).scalar()
+    last_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
+    latest_articles = db.session.query(Article)\
+        .filter_by(refreshed_on=last_refresh)\
+        .order_by(Article.rssfeed_id, Article.published_on.desc())\
+        .all()
+    articles_grouped = {k: list(g) for k, g in groupby(latest_articles, attrgetter('rssfeed_id'))}
     topics = Topic.query.all()
     return render_template('myfeeds.html',
                            title='My Feeds',
-                           latest_articles=latest_articles,
-                           last_updated_on=last_updated_on,
+                           articles_grouped=articles_grouped,
+                           last_updated_on=last_refresh,
                            topics=topics)
 
 
