@@ -219,6 +219,7 @@ def load():
 
         articles = Article.query\
             .filter_by(rssfeed_id=feed_id)\
+            .order_by(Article.published_on.desc())\
             .paginate(per_page=ARTICLES_PER_LOAD, page=page)
 
         return make_response(
