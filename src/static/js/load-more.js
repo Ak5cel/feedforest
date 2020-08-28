@@ -41,6 +41,9 @@ $(document).ready(function() {
             publishedOnNode.innerHTML = articles[i].published_on + ' UTC';
           }
 
+          // Attach event handlers to the toggleBookmark icon/button
+          template_clone.querySelector(".toggle-bookmark").onclick = toggleBookmark;
+
           // Append template to DOM
           loader.appendChild(template_clone);
 
