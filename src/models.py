@@ -36,6 +36,7 @@ class RSSFeed(db.Model):
     rss_link = db.Column(db.String(768), unique=True, nullable=False)
     feed_name = db.Column(db.String(100), index=True, unique=True, nullable=False)
     site_url = db.Column(db.String(2048), nullable=False)
+    feed_type = db.Column(db.String(10), default='custom')  # either 'standard' or 'custom'
     updated_on = db.Column(db.DateTime)
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=False)
     articles = db.relationship('Article', backref='rssfeed', lazy=True)
@@ -72,17 +73,23 @@ class Article(db.Model):
         return f"Article('{self.title}', '{self.link}')"
 
 
-# Association table between users and followed feeds
-user_feed_map = db.Table('user_feed_map',
-                         db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-                         db.Column('feed_id', db.Integer, db.ForeignKey('rss_feed.id'), primary_key=True),
-                         db.Column('added_on', db.DateTime, default=datetime.utcnow))
-
 # Association table between users and bookmarked articles
 user_article_map = db.Table('user_article_map',
                             db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
                             db.Column('article_id', db.Integer, db.ForeignKey('article.id'), primary_key=True),
                             db.Column('bookmarked_on', db.DateTime, default=datetime.utcnow))
+
+
+class UserFeedAssociation(db.Model):
+    """Association object between users and followed feeds"""
+    __tablename__ = 'user_feed_assoc'
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    feed_id = db.Column(db.Integer, db.ForeignKey('rss_feed.id'), primary_key=True)
+    added_on = db.Column(db.DateTime, default=datetime.utcnow)
+    custom_feed_name = db.Column(db.String(100), default=None)
+
+    user = db.relationship('User', backref='selected_feeds')
+    feed = db.relationship('RSSFeed', backref='users')
 
 
 class UserRole(db.Model):
