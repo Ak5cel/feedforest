@@ -3,6 +3,7 @@ from flask import url_for, render_template, current_app
 from flask_login import UserMixin, current_user
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from sqlalchemy.sql import expression
+from sqlalchemy.ext.associationproxy import association_proxy
 from premailer import transform
 import smtplib
 import ssl
@@ -81,12 +82,17 @@ user_article_map = db.Table('user_article_map',
 
 
 class UserFeedAssociation(db.Model):
-    """Association object between users and followed feeds"""
+    """Association object that maps users and followed feeds"""
+
     __tablename__ = 'user_feed_assoc'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     feed_id = db.Column(db.Integer, db.ForeignKey('rss_feed.id'), primary_key=True)
     added_on = db.Column(db.DateTime, default=datetime.utcnow)
     custom_feed_name = db.Column(db.String(100), default=None)
+
+    # Bidirectional attribute/collection of "user"/"user_selected_feeds"
+    user = db.relationship('User', backref=db.backref('user_selected_feeds',
+                                                      cascade='all, delete-orphan'))
 
     feed = db.relationship('RSSFeed', backref='users')
 
@@ -119,7 +125,15 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128))
     email_verified = db.Column(db.Boolean, nullable=False, server_default=expression.true())
     email_frequency = db.Column(db.Time)
-    selected_feeds = db.relationship('UserFeedAssociation', backref='user')
+    _selected_feeds = db.relationship('UserFeedAssociation')
+
+    # Association proxy "user_selected_feeds" collection
+    # to "feed" attribute
+    # Need to specify the association proxy's creator argument to use
+    # UserFeedAssociation(feed=feed) on append() events
+    selected_feeds = association_proxy('user_selected_feeds', 'feed',
+                                       creator=lambda feed: UserFeedAssociation(feed=feed))
+
     bookmarked_articles = db.relationship('Article', secondary=user_article_map, lazy='subquery',
                                           backref=db.backref('bookmarked_by', lazy=True))
     role_id = db.Column(db.Integer,
@@ -141,11 +155,8 @@ class User(db.Model, UserMixin):
     def add_feed(self, feed_id):
         if int(feed_id):
             feed = RSSFeed.query.get(int(feed_id))
-            selected_feeds = [assoc_obj.feed for assoc_obj in self.selected_feeds]
-            if feed not in selected_feeds:
-                assoc = UserFeedAssociation()
-                assoc.feed = feed
-                self.selected_feeds.append(assoc)
+            if feed not in self.selected_feeds:
+                self.selected_feeds.append(feed)
                 db.session.commit()
 
     def remove_feed(self, feed_id):
