@@ -2,7 +2,7 @@ from itertools import groupby
 from operator import attrgetter
 from flask import render_template, url_for, request, flash, redirect, Blueprint, jsonify, make_response
 from flask_login import current_user, login_required
-from ..models import Topic, RSSFeed, Article, User, user_article_map, user_feed_map
+from ..models import Topic, RSSFeed, Article, User, user_article_map, UserFeedAssociation
 from ..general.forms import EmptyForm, HiddenElementForm
 from ..auth.forms import ChangePasswordForm
 from .forms import EditDetailsForm, EmailPreferencesForm
@@ -48,8 +48,8 @@ def my_articles():
 
 @user.route('/user/inbox/all')
 def inbox():
-    articles = db.session.query(Article).join(user_feed_map, (Article.rssfeed_id == user_feed_map.c.feed_id))\
-        .filter(user_feed_map.c.user_id == current_user.id, db.func.DATE(Article.refreshed_on) >= db.func.DATE(user_feed_map.c.added_on))\
+    articles = db.session.query(Article).join(UserFeedAssociation, (Article.rssfeed_id == UserFeedAssociation.feed_id))\
+        .filter(UserFeedAssociation.user_id == current_user.id, db.func.DATE(Article.refreshed_on) >= db.func.DATE(UserFeedAssociation.added_on))\
         .order_by(Article.rssfeed_id, Article.published_on.desc())\
         .all()
     articles_grouped = {k: list(g) for k, g in groupby(articles, attrgetter('rssfeed_id'))}
@@ -67,8 +67,8 @@ def inbox_for_topic():
     if selected_feed not in current_user.selected_feeds:
         flash(f"You have not subscribed to that feed.", 'warning')
         return redirect(url_for('user.inbox'))
-    added_on = db.session.query(user_feed_map.c.added_on)\
-        .filter(user_feed_map.c.user_id == current_user.id, user_feed_map.c.feed_id == selected_feed.id)\
+    added_on = db.session.query(UserFeedAssociation.added_on)\
+        .filter(UserFeedAssociation.user_id == current_user.id, UserFeedAssociation.feed_id == selected_feed.id)\
         .scalar()
     articles = Article.query.filter(db.func.DATE(Article.refreshed_on) >= db.func.DATE(added_on), Article.rssfeed_id == selected_feed.id).distinct().all()
     topics = Topic.query.all()

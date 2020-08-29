@@ -88,9 +88,6 @@ class UserFeedAssociation(db.Model):
     added_on = db.Column(db.DateTime, default=datetime.utcnow)
     custom_feed_name = db.Column(db.String(100), default=None)
 
-    user = db.relationship('User', backref='selected_feeds')
-    feed = db.relationship('RSSFeed', backref='users')
-
 
 class UserRole(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -120,8 +117,7 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128))
     email_verified = db.Column(db.Boolean, nullable=False, server_default=expression.true())
     email_frequency = db.Column(db.Time)
-    selected_feeds = db.relationship('RSSFeed', secondary=user_feed_map, lazy='subquery',
-                                     backref=db.backref('selected_by', lazy=True))
+    selected_feeds = db.relationship('UserFeedAssociation', backref='user')
     bookmarked_articles = db.relationship('Article', secondary=user_article_map, lazy='subquery',
                                           backref=db.backref('bookmarked_by', lazy=True))
     role_id = db.Column(db.Integer,
