@@ -88,6 +88,8 @@ class UserFeedAssociation(db.Model):
     added_on = db.Column(db.DateTime, default=datetime.utcnow)
     custom_feed_name = db.Column(db.String(100), default=None)
 
+    feed = db.relationship('RSSFeed', backref='users')
+
 
 class UserRole(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -139,8 +141,11 @@ class User(db.Model, UserMixin):
     def add_feed(self, feed_id):
         if int(feed_id):
             feed = RSSFeed.query.get(int(feed_id))
-            if feed not in self.selected_feeds:
-                self.selected_feeds.append(feed)
+            selected_feeds = [assoc_obj.feed for assoc_obj in self.selected_feeds]
+            if feed not in selected_feeds:
+                assoc = UserFeedAssociation()
+                assoc.feed = feed
+                self.selected_feeds.append(assoc)
                 db.session.commit()
 
     def remove_feed(self, feed_id):
