@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 from ..models import Topic, RSSFeed, Article, User, user_article_map, UserFeedAssociation
 from ..general.forms import EmptyForm, HiddenElementForm
 from ..auth.forms import ChangePasswordForm
-from .forms import EditDetailsForm, EmailPreferencesForm
+from .forms import EditDetailsForm, EmailPreferencesForm, AddCustomFeedForm
 from .. import db
 from ..utils import get_utc_time, get_24h_from_12h
 
@@ -96,11 +96,13 @@ def edit_feeds():
     topics = Topic.query.all()
     feeds = RSSFeed.query.all()
     empty_form = EmptyForm()
+    add_feed_form = AddCustomFeedForm()
     if empty_form.validate_on_submit():
         result = request.form
         flash(result.get('submit'), 'info')
     return render_template('edit-feeds.html', title='Account - Edit Feeds',
-                           topics=topics, feeds=feeds, empty_form=empty_form)
+                           topics=topics, feeds=feeds, empty_form=empty_form,
+                           add_feed_form=add_feed_form)
 
 
 @user.route('/account/edit/feeds/add', methods=['POST'])

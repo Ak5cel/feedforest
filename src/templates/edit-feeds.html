@@ -3,52 +3,124 @@
 {% block account_info %}
 	<div class="mb-3">
 		<legend class="border-bottom mb-4">Edit Feeds</legend>
+    <!-- Option to add custom feeds -->
+    <div class="bg-white border p-4 mb-3">
+      <p>
+        Got a feed in mind? Add it here:<br>
+        <!-- Button to trigger modal -->
+        <button class="btn btn-success btn-sm" 
+                data-toggle="modal"
+                data-target="#addCustomFeedModal">
+              Add a custom feed
+        </button>
+      </p>
+      <p class="text-muted small mb-0">Or take your pick from the choices below.</p>
+    </div>
+    <!-- Topics dropdown filter -->
 		<div class="dropdown">
 			<button id="topicsDropdown" class="btn btn-outline-primary dropdown-toggle mb-3" data-toggle="dropdown">
 				All Topics
 			</button>
-      <!-- Topics dropdown filter -->
 			<div class="dropdown-menu">
 				<a class="dropdown-item dropdown-link topic-selector active" id="all" href="#">All Topics</a>
 				{% for topic in topics %}
 					<a class="dropdown-item dropdown-link topic-selector"  id="{{ topic.topic_name }}" href="#">{{ topic.topic_name }}</a>
 				{% endfor %}
 			</div>
-      <!-- List of feeds -->
-			<ul class="list-group list-group-flush">
-        {% for feed in feeds %}
-          <li class="feed-info list-group-item d-flex justify-content-between align-items-stretch"
-            id="{{ feed.id }}"
-            data-topic="{{ feed.topic.topic_name }}">
-            <div class="pr-3">
-              <small class="text-muted">{{ feed.topic.topic_name.upper() }}</small>
-              <h5 class="">{{ feed.feed_name }}</h5>
-              <p class="small text-primary">
-                <a href="{{ feed.rss_link }}" title="{{ feed.rss_link }}" target="_blank">RSS Link</a>
-                <i class="fas fa-external-link-alt"></i>
-                <a href="{{ feed.site_url }}" title="{{ feed.site_url }}" target="_blank">Site Link</a>
-              </p>
-            </div>
-            <div class="d-flex align-items-center">
-              {% if feed in current_user.selected_feeds %}
-                <form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.remove_feed', feed_id=feed.id) }}" method="POST"
-                  data-alt-action="{{ url_for('user.add_feed', feed_id=feed.id) }}">
-                  {{ empty_form.hidden_tag() }}
-                  {{ empty_form.submit(value='Remove', class='btn btn-sm btn-secondary nudge-up-20') }}
-                </form>
-              {% else %}
-                <form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.add_feed', feed_id=feed.id) }}" method="POST"
-                  data-alt-action="{{ url_for('user.remove_feed', feed_id=feed.id) }}">
-                  {{ empty_form.hidden_tag() }}
-                  {{ empty_form.submit(value='Add', class='btn btn-sm btn-success nudge-up-20') }}
-                </form>
-              {% endif %}
-            </div>
-          </li>
-        {% endfor %}
-			</ul>
-		</div>
+    </div>
+    <!-- List of feeds -->
+		<ul class="list-group list-group-flush">
+      {% for feed in feeds %}
+        <li class="feed-info list-group-item d-flex justify-content-between align-items-stretch"
+          id="{{ feed.id }}"
+          data-topic="{{ feed.topic.topic_name }}">
+          <div class="pr-3">
+            <small class="text-muted">{{ feed.topic.topic_name.upper() }}</small>
+            <h5 class="">{{ feed.feed_name }}</h5>
+            <p class="small text-primary">
+              <a href="{{ feed.rss_link }}" title="{{ feed.rss_link }}" target="_blank">RSS Link</a>
+              <i class="fas fa-external-link-alt"></i>
+              <a href="{{ feed.site_url }}" title="{{ feed.site_url }}" target="_blank">Site Link</a>
+            </p>
+          </div>
+          <div class="d-flex align-items-center">
+            {% if feed in current_user.selected_feeds %}
+              <form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.remove_feed', feed_id=feed.id) }}" method="POST"
+                data-alt-action="{{ url_for('user.add_feed', feed_id=feed.id) }}">
+                {{ empty_form.hidden_tag() }}
+                {{ empty_form.submit(value='Remove', class='btn btn-sm btn-secondary nudge-up-20') }}
+              </form>
+            {% else %}
+              <form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.add_feed', feed_id=feed.id) }}" method="POST"
+                data-alt-action="{{ url_for('user.remove_feed', feed_id=feed.id) }}">
+                {{ empty_form.hidden_tag() }}
+                {{ empty_form.submit(value='Add', class='btn btn-sm btn-success nudge-up-20') }}
+              </form>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+		</ul>
 	</div>
+  <!-- Modals (need to be placed at the top level to avoid interference) -->
+  <!-- Modal to add custom feed -->
+  <div class="modal" id="addCustomFeedModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Add custom feed</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form action="" method="POST">
+            {{ add_feed_form.hidden_tag() }}
+            <div class="row">
+              <div class="form-group col-12">
+                  {{ add_feed_form.custom_feed_name.label(for="feedNameField") }}
+                  {% if add_feed_form.custom_feed_name.errors %}
+                      {{ add_feed_form.custom_feed_name(class="form-control form-control is-invalid", 
+                      id="feedNameField",
+                      placeholder="Enter feed name") }}
+                      <div class="invalid-feedback">
+                          {% for error in add_feed_form.custom_feed_name.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                      {{ add_feed_form.custom_feed_name(class="form-control form-control", 
+                      id="feedNameField",
+                      placeholder="Enter feed name") }}
+                  {% endif %}
+              </div>
+              <div class="form-group col-12">
+                  {{ add_feed_form.rss_link.label(for="rssLinkField") }}
+                  {% if add_feed_form.rss_link.errors %}
+                      {{ add_feed_form.rss_link(class="form-control form-control is-invalid", 
+                      id="rssLinkField", 
+                      placeholder="Paste in the link to the feed") }}
+                      <div class="invalid-feedback">
+                          {% for error in add_feed_form.rss_link.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                      {{ add_feed_form.rss_link(class="form-control form-control", 
+                      id="rssLinkField",
+                      placeholder="Paste in the link to the feed") }}
+                  {% endif %}
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button class="btn btn-primary" data-dismiss="modal">Add feed</button>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock account_info %}
 
 {% block scripts %}

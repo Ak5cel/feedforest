@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import (StringField,
+from wtforms import (StringField, TextAreaField,
                      SubmitField, RadioField, SelectField)
 from wtforms.validators import DataRequired, Length, Email, ValidationError
 from flask_login import current_user
@@ -33,3 +33,11 @@ class EmailPreferencesForm(FlaskForm):
     # Hidden elements
     utc_offset = StringField('offset')
     time_from_db = StringField('time_from_db')
+
+
+class AddCustomFeedForm(FlaskForm):
+    custom_feed_name = StringField('Feed name',
+                                   validators=[DataRequired(), Length(min=3, max=100)])
+    rss_link = TextAreaField('Link',
+                             validators=[DataRequired(), Length(min=3, max=768)])
+    submit = SubmitField('Add feed')
