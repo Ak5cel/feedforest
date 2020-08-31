@@ -4,6 +4,7 @@ from wtforms import (StringField, TextAreaField,
 from wtforms.validators import DataRequired, Length, Email, ValidationError
 from flask_login import current_user
 from ..models import User
+from ..utils import check_valid_feed
 
 
 class EditDetailsForm(FlaskForm):
@@ -40,4 +41,10 @@ class AddCustomFeedForm(FlaskForm):
                                    validators=[DataRequired(), Length(min=3, max=100)])
     rss_link = TextAreaField('Link',
                              validators=[DataRequired(), Length(min=3, max=768)])
+    topic = SelectField('Topic', coerce=int, default=1)
     submit = SubmitField('Add feed')
+
+    def validate_rss_link(self, rss_link):
+        result, message = check_valid_feed(rss_link.data)
+        if not result:
+            raise ValidationError(message)

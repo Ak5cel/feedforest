@@ -97,6 +97,7 @@ def edit_feeds():
     feeds = RSSFeed.query.all()
     empty_form = EmptyForm()
     add_feed_form = AddCustomFeedForm()
+    add_feed_form.topic.choices = [(t.id, t.topic_name) for t in topics]
     if empty_form.validate_on_submit():
         result = request.form
         flash(result.get('submit'), 'info')

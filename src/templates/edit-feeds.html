@@ -63,8 +63,9 @@
 		</ul>
 	</div>
   <!-- Modals (need to be placed at the top level to avoid interference) -->
+  
   <!-- Modal to add custom feed -->
-  <div class="modal" id="addCustomFeedModal" tabindex="-1" aria-hidden="true">
+  <div class="modal fade" id="addCustomFeedModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -77,6 +78,23 @@
           <form action="" method="POST">
             {{ add_feed_form.hidden_tag() }}
             <div class="row">
+              <div class="form-group col-12">
+                  {{ add_feed_form.rss_link.label(for="rssLinkField") }}
+                  {% if add_feed_form.rss_link.errors %}
+                      {{ add_feed_form.rss_link(class="form-control form-control is-invalid", 
+                      id="rssLinkField", 
+                      placeholder="Paste in the link to the feed") }}
+                      <div class="invalid-feedback">
+                          {% for error in add_feed_form.rss_link.errors %}
+                              <span>{{ error }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                      {{ add_feed_form.rss_link(class="form-control form-control", 
+                      id="rssLinkField",
+                      placeholder="Paste in the link to the feed") }}
+                  {% endif %}
+              </div>
               <div class="form-group col-12">
                   {{ add_feed_form.custom_feed_name.label(for="feedNameField") }}
                   {% if add_feed_form.custom_feed_name.errors %}
@@ -95,28 +113,26 @@
                   {% endif %}
               </div>
               <div class="form-group col-12">
-                  {{ add_feed_form.rss_link.label(for="rssLinkField") }}
-                  {% if add_feed_form.rss_link.errors %}
-                      {{ add_feed_form.rss_link(class="form-control form-control is-invalid", 
-                      id="rssLinkField", 
-                      placeholder="Paste in the link to the feed") }}
-                      <div class="invalid-feedback">
-                          {% for error in add_feed_form.rss_link.errors %}
-                              <span>{{ error }}</span>
-                          {% endfor %}
-                      </div>
-                  {% else %}
-                      {{ add_feed_form.rss_link(class="form-control form-control", 
-                      id="rssLinkField",
-                      placeholder="Paste in the link to the feed") }}
-                  {% endif %}
+                {{ add_feed_form.topic.label(for="topicField") }}
+                {% if add_feed_form.topic.errors %}
+                  {{ add_feed_form.topic(class="custom-select is-invalid", id="topicField") }}
+                  <div class="invalid-feedback">
+                    {% for error in add_feed_form.topic.errors %}
+                      <span>{{ error }}</span>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  {{ add_feed_form.topic(class="custom-select", id="topicField") }}
+                {% endif %}
+              </div>
+              <div class="form-group col-12 mb-0">
+                  {{ add_feed_form.submit(class="btn btn-success btn-block mt-3") }}
               </div>
             </div>
           </form>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button class="btn btn-primary" data-dismiss="modal">Add feed</button>
+          <button class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
