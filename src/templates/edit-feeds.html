@@ -75,7 +75,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <form action="" method="POST">
+          <form action="{{ url_for('user.edit_feeds') }}" method="POST" id="customFeedForm">
             {{ add_feed_form.hidden_tag() }}
             <div class="row">
               <div class="form-group col-12">
@@ -126,7 +126,7 @@
                 {% endif %}
               </div>
               <div class="form-group col-12 mb-0">
-                  {{ add_feed_form.submit(class="btn btn-success btn-block mt-3") }}
+                  {{ add_feed_form.submit_feed(class="btn btn-success btn-block mt-3", value="Add feed") }}
               </div>
             </div>
           </form>
@@ -142,4 +142,31 @@
 {% block scripts %}
 	<script src="{{ url_for('static', filename='js/filter-scripts.js') }}"></script>
 	<script src="{{ url_for('static', filename='js/add-remove-feeds.js') }}"></script>
+  <script>
+    function addCustomFeed(e) {
+      e.preventDefault();
+
+      var form = $('#customFeedForm')[0];
+      var submitBtn = $('#customFeedForm #submit_feed')[0];
+
+      var url = $(form).attr("action");
+
+      $.post(url, data=$(form).serialize(), function(res) {
+        if (res.message == "ok") {
+        } else {
+          for (var key in res.data) {
+            var field = $('.form-control[name="' + key + '"]')[0];
+            $(field).addClass('is-invalid');
+            var invalidFeedback = $("<div></div>").text(res.data[key]).addClass("invalid-feedback");
+            $(field).after(invalidFeedback);
+          }
+        }
+      });
+    }
+
+    $(document).ready(function () {
+      $('#submit_feed').on('click', addCustomFeed);
+    });
+    
+  </script>
 {% endblock scripts %}

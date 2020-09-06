@@ -1,5 +1,6 @@
 from itertools import groupby
 from operator import attrgetter
+import json
 from flask import render_template, url_for, request, flash, redirect, Blueprint, jsonify, make_response
 from flask_login import current_user, login_required
 from ..models import Topic, RSSFeed, Article, User, user_article_map, UserFeedAssociation
@@ -98,9 +99,11 @@ def edit_feeds():
     empty_form = EmptyForm()
     add_feed_form = AddCustomFeedForm()
     add_feed_form.topic.choices = [(t.id, t.topic_name) for t in topics]
-    if empty_form.validate_on_submit():
-        result = request.form
-        flash(result.get('submit'), 'info')
+    if add_feed_form.validate_on_submit():
+        flash('Validated: success', 'success')
+        return make_response(jsonify({"data": 'ok', "message": "ok"}), 200)
+    elif request.method == 'POST' and not add_feed_form.validate():
+        return make_response(jsonify({"data": add_feed_form.errors, "message": "error"}))
     return render_template('edit-feeds.html', title='Account - Edit Feeds',
                            topics=topics, feeds=feeds, empty_form=empty_form,
                            add_feed_form=add_feed_form)
@@ -112,6 +115,15 @@ def add_feed():
     feed_id = request.args.get('feed_id', type=int)
     current_user.add_feed(feed_id)
     return "Added feed"
+
+
+@user.route('/account/edit/feeds/add-custom', methods=['POST'])
+@login_required
+def add_custom_feed():
+    custom_feed_name = request.args.get('custom_feed_name')
+    rss_link = request.args.get('rss_link')
+    topic = request.args.get('topic')
+    return redirect(url_for('user.edit_feeds'))
 
 
 @user.route('/account/edit/feeds/remove', methods=['POST'])

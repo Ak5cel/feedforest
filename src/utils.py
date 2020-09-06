@@ -54,42 +54,49 @@ def check_broken_link(url):
         return (True, e.code, e.reason)
     except urllib.error.URLError as e:
         return (True, None, e.reason)
-    except Exception:
-        return (True, None, 'Unexpected Error')
+    except Exception as e:
+        return (True, None, e)
 
 
 def check_valid_feed(url):
     """Check whether the feed at the URL is well-formed and whether
-    it has been permanently redirected or marked as 'gone'.
+    it has been permanently redirected, marked as 'gone', or invalid in
+    any other way.
 
     Returns (result, message)
     result is True for a valid feed and False otherwise
     message is None for a valid feed, the appropriate message is
     returned otherwise.
     """
-
+    print(f'url: {url}')
     d = parse(url)
-    if d.status == 301:
-        result = False
-        message = f'301: The feed has been permanently redirected to {d.href}. \
-        Please use the new URL instead.'
-    elif d.status == 410:
-        result = False
-        message = f"The feed is marked as 'Gone' and is no longer available\
-         at the origin server. This condition is likely to be permanent."
-    elif d.status > 299:
-        result, status_code, reason = check_broken_link(url)
-        message = f'Error {status_code if status_code else ""}: {reason}'
-    elif d.bozo:
-        result = False
-        if 'text/html' in d.headers['Content-Type']:
-            message = "The target feed has a Content-Type of text/html and \
-            is not a valid xml feed"
+    print(f'd: {d}')
+    if 'status' in d.keys():
+        if d.status == 301:
+            result = False
+            message = f'301: The feed has been permanently redirected to {d.href}. \
+            Please use the new URL instead.'
+        elif d.status == 410:
+            result = False
+            message = f"The feed is marked as 'Gone' and is no longer available\
+             at the origin server. This condition is likely to be permanent."
+        elif d.status > 299:
+            result, status_code, reason = check_broken_link(url)
+            message = f'Error {status_code if status_code else ""}: {reason}'
+        elif d.bozo:
+            result = False
+            if 'text/html' in d.headers['Content-Type']:
+                message = "The target feed has a Content-Type of text/html and \
+                is not a valid xml feed"
+            else:
+                message = "The target feed is not a well-formed xml page."
         else:
-            message = "The target feed is not a well-formed xml page."
+            result = True
+            message = None
     else:
-        result = True
-        message = None
+        result, status_code, reason = check_broken_link(url)
+        result = not result  # Reversed becaus check_broken_link returns True for broken links
+        message = f'Error {status_code if status_code else ""}: {reason}'
 
     return (result, message)
 

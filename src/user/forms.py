@@ -42,9 +42,12 @@ class AddCustomFeedForm(FlaskForm):
     rss_link = TextAreaField('Link',
                              validators=[DataRequired(), Length(min=3, max=768)])
     topic = SelectField('Topic', coerce=int, default=1)
-    submit = SubmitField('Add feed')
+    submit_feed = SubmitField('Add feed')
 
     def validate_rss_link(self, rss_link):
+        print(f'Data: {rss_link.data}')
         result, message = check_valid_feed(rss_link.data)
+        print(f'Result: {result}')
+        print(f'Message: {message}')
         if not result:
             raise ValidationError(message)
