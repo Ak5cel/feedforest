@@ -1,4 +1,4 @@
-from itertools import groupby, filterfalse
+from itertools import groupby
 from operator import attrgetter
 import json
 from flask import render_template, url_for, request, flash, redirect, Blueprint, jsonify, make_response
@@ -103,17 +103,15 @@ def edit_feeds():
     feeds_grouped = {feed_type: list(feeds) for feed_type, feeds in groupby(feeds, attrgetter('feed_type'))}
 
     # Filter custom feeds to only include those added by the current user
-    selected_custom_feeds = filterfalse(lambda x: x not in current_user.selected_feeds , feeds_grouped['custom'])
-    feeds_grouped['custom'] = list(selected_custom_feeds)
+    feeds_grouped['custom'] = list(feed for feed in feeds_grouped['custom'] if feed in current_user.selected_feeds)
 
     # Change the default values of the custom feeds to those specified by the user
-    # 
     mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
     if feeds_grouped.get('custom'):
         for feed in feeds_grouped['custom']:
             feed.feed_name = mapping[feed.id]['feed_name']
             feed.topic_id = mapping[feed.id]['topic_id']
-            feed.topic = list(filterfalse(lambda x: x.id != feed.topic_id, topics))[0]
+            feed.topic = list(topic for topic in topics if topic.id == feed.topic_id)[0]
 
     empty_form = EmptyForm()
     add_feed_form = AddCustomFeedForm()
