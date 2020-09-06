@@ -19,6 +19,7 @@ $(document).ready(function() {
 				var btn = $form.children('.btn');
 				var btn_type = btn.attr('value');
 				var id = $form.attr('id');
+				var feedInfo = $form.parents('.feed-info')[0]
 
 				// The value of the toggled button
 				var newValue = '';
@@ -33,13 +34,21 @@ $(document).ready(function() {
 					newValue = 'Remove';
 					btn.removeClass('btn-success');
 					btn.addClass('btn-secondary');
+					$(feedInfo).attr('data-status', 'selected');
 				} else {
 					newValue = 'Add';
 					btn.removeClass('btn-secondary');
 					btn.addClass('btn-success');
+					$(feedInfo).attr('data-status', 'notSelected');
 				}
 				$form.attr("action", newURL);
-				btn.attr("value", newValue);	
+				btn.attr("value", newValue);
+
+				// Check whether there are any more selected feeds with toggle-display
+				var selectedToggleFeeds = $('.feed-info.toggle-display[data-status="selected"]');
+				if (selectedToggleFeeds.length == 0) {
+				  window.location.reload(true);
+				}
 			} else {
 				alert('Unexpected error. \nSorry, we were unable to process your request. Please try again later.')
 			}

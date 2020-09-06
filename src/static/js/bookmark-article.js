@@ -27,7 +27,7 @@ function toggleBookmark(e) {
       if (action == "bookmark") {
         article.attr("data-status", "bookmarked");
       } else if (action == "unbookmark") {
-        article.attr("data-status", "notbookmarked");
+        article.attr("data-status", "notBookmarked");
       }
       // Check whether there are any more bookmarked articles
       var bookmarked_articles = $('.article.toggle-display[data-status="bookmarked"]');

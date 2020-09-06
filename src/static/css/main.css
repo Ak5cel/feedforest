@@ -178,7 +178,11 @@ footer p {
 	color: var(--success);
 }
 
-.article.toggle-display[data-status="not-bookmarked"] {
+.article.toggle-display[data-status="notBookmarked"] {
+	display: none !important;
+}
+
+.feed-info.toggle-display[data-status="notSelected"] {
 	display: none !important;
 }
 
