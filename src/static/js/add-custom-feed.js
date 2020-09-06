@@ -13,7 +13,10 @@ function addCustomFeed(e) {
       $('#addCustomFeedModal').modal('hide');
       location.reload();
     } else {
-      // if validation fails, show error feedback under the fields
+      // if validation fails, remove previous error messages and 
+      // show new error feedback under the fields
+      $('.invalid-feedback').remove();
+      $('.form-control').removeClass('is-invalid');
       for (var key in res.data) {
         var field = $('.form-control[name="' + key + '"]')[0];
         $(field).addClass('is-invalid');
