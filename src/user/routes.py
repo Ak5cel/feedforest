@@ -112,8 +112,8 @@ def edit_feeds():
     if feeds_grouped.get('custom'):
         for feed in feeds_grouped['custom']:
             feed.feed_name = mapping[feed.id]['feed_name']
-            # feed.topic_id = mapping[feed.id]['topic_id']
-            # feed.topic = list(filterfalse(lambda x: x.id != feed.topic_id, topics))[0]
+            feed.topic_id = mapping[feed.id]['topic_id']
+            feed.topic = list(filterfalse(lambda x: x.id != feed.topic_id, topics))[0]
 
     empty_form = EmptyForm()
     add_feed_form = AddCustomFeedForm()
