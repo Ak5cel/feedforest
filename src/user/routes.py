@@ -1,4 +1,4 @@
-from itertools import groupby
+from itertools import groupby, filterfalse
 from operator import attrgetter
 import json
 from flask import render_template, url_for, request, flash, redirect, Blueprint, jsonify, make_response
@@ -94,8 +94,27 @@ def account():
 @user.route('/account/edit/feeds', methods=['GET', 'POST'])
 @login_required
 def edit_feeds():
-    topics = Topic.query.all()
-    feeds = RSSFeed.query.all()
+    topics = Topic.query.order_by(Topic.id).all()
+
+    # Feeds are ordered by feed type to group them later
+    feeds = RSSFeed.query.order_by(RSSFeed.feed_type, RSSFeed.topic_id).all()
+
+    # Group the feeds into 2 types based on feed type - custom and standard
+    feeds_grouped = {feed_type: list(feeds) for feed_type, feeds in groupby(feeds, attrgetter('feed_type'))}
+
+    # Filter custom feeds to only include those added by the current user
+    selected_custom_feeds = filterfalse(lambda x: x not in current_user.selected_feeds , feeds_grouped['custom'])
+    feeds_grouped['custom'] = list(selected_custom_feeds)
+
+    # Change the default values of the custom feeds to those specified by the user
+    # 
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    if feeds_grouped.get('custom'):
+        for feed in feeds_grouped['custom']:
+            feed.feed_name = mapping[feed.id]['feed_name']
+            # feed.topic_id = mapping[feed.id]['topic_id']
+            # feed.topic = list(filterfalse(lambda x: x.id != feed.topic_id, topics))[0]
+
     empty_form = EmptyForm()
     add_feed_form = AddCustomFeedForm()
     add_feed_form.topic.choices = [(t.id, t.topic_name) for t in topics]
@@ -106,7 +125,7 @@ def edit_feeds():
     elif request.method == 'POST' and not add_feed_form.validate():
         return make_response(jsonify({"data": add_feed_form.errors, "message": "error"}))
     return render_template('edit-feeds.html', title='Account - Edit Feeds',
-                           topics=topics, feeds=feeds, empty_form=empty_form,
+                           topics=topics, feeds_grouped=feeds_grouped, empty_form=empty_form,
                            add_feed_form=add_feed_form)
 
 

@@ -165,7 +165,7 @@ class User(db.Model, UserMixin):
 
     def add_custom_feed(self, **kwargs):
         # Check whether the feed already exists
-        feed = RSSFeed.query.filter_by(rss_link=kwargs.get('rss_link'), feed_type='standard').first()
+        feed = RSSFeed.query.filter_by(rss_link=kwargs.get('rss_link')).first()
         if feed:
             if feed not in self.selected_feeds:
                 self.user_selected_feeds.append(UserFeedAssociation(

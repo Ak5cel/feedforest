@@ -3,19 +3,60 @@
 {% block account_info %}
 	<div class="mb-3">
 		<legend class="border-bottom mb-4">Edit Feeds</legend>
-    <!-- Option to add custom feeds -->
-    <div class="bg-white border p-4 mb-3">
-      <p>
-        Got a feed in mind? Add it here:<br>
-        <!-- Button to trigger modal -->
-        <button class="btn btn-success btn-sm" 
-                data-toggle="modal"
-                data-target="#addCustomFeedModal">
-              Add a custom feed
-        </button>
-      </p>
-      <p class="text-muted small mb-0">Or take your pick from the choices below.</p>
-    </div>
+      <!-- Option to add custom feeds if the user has no custom feeds -->
+      <div class="bg-white border p-4 mb-3">
+        <p>
+          Got a feed in mind? Add it here:<br>
+          <!-- Button to trigger modal -->
+          <button class="btn btn-success btn-sm" 
+                  data-toggle="modal"
+                  data-target="#addCustomFeedModal">
+                Add a custom feed
+          </button>
+        </p>
+        {% if not feeds_grouped['custom'] %}
+          <p class="text-muted small mb-0">Or take your pick from the choices below.</p>
+        {% endif %}
+      </div>
+    {% if feeds_grouped['custom'] %}
+      <!-- Display all of the user's custom feeds here -->
+      <div class="bg-white border py-3 mb-3">
+        <!-- <h5 class="px-3">Custom Feeds</h5> -->
+        <legend class="border-bottom small px-3">Custom Feeds</legend>
+        <ul class="list-group list-group-flush">
+          {% for feed in feeds_grouped['custom'] %}
+            <li class="feed-info list-group-item d-flex justify-content-between align-items-stretch"
+              id="{{ feed.id }}"
+              data-topic="{{ feed.topic.topic_name }}">
+              <div class="pr-3">
+                <small class="text-muted">{{ feed.topic.topic_name.upper() }}</small>
+                <h5 class="">{{ feed.feed_name }}</h5>
+                <p class="small text-primary">
+                  <a href="{{ feed.rss_link }}" title="{{ feed.rss_link }}" target="_blank">RSS Link</a>
+                  <i class="fas fa-external-link-alt"></i>
+                  <a href="{{ feed.site_url }}" title="{{ feed.site_url }}" target="_blank">Site Link</a>
+                </p>
+              </div>
+              <div class="d-flex align-items-center">
+                {% if feed in current_user.selected_feeds %}
+                  <form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.remove_feed', feed_id=feed.id) }}" method="POST"
+                    data-alt-action="{{ url_for('user.add_feed', feed_id=feed.id) }}">
+                    {{ empty_form.hidden_tag() }}
+                    {{ empty_form.submit(value='Remove', class='btn btn-sm btn-secondary nudge-up-20') }}
+                  </form>
+                {% else %}
+                  <form id="{{ feed.id }}" class="add-remove" action="{{ url_for('user.add_feed', feed_id=feed.id) }}" method="POST"
+                    data-alt-action="{{ url_for('user.remove_feed', feed_id=feed.id) }}">
+                    {{ empty_form.hidden_tag() }}
+                    {{ empty_form.submit(value='Add', class='btn btn-sm btn-success nudge-up-20') }}
+                  </form>
+                {% endif %}
+              </div>
+            </li>
+          {% endfor %}
+        </ul>  
+      </div>
+    {% endif %}
     <!-- Topics dropdown filter -->
 		<div class="dropdown">
 			<button id="topicsDropdown" class="btn btn-outline-primary dropdown-toggle mb-3" data-toggle="dropdown">
@@ -28,9 +69,9 @@
 				{% endfor %}
 			</div>
     </div>
-    <!-- List of feeds -->
+    <!-- List of standard feeds -->
 		<ul class="list-group list-group-flush">
-      {% for feed in feeds %}
+      {% for feed in feeds_grouped['standard'] %}
         <li class="feed-info list-group-item d-flex justify-content-between align-items-stretch"
           id="{{ feed.id }}"
           data-topic="{{ feed.topic.topic_name }}">

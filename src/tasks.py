@@ -166,7 +166,7 @@ def get_user_ids():
     # users with 00:00 were not considered as 00:00 is less than 23:50 even
     # though it's on the next day.
     # Workaround:
-    if min_time.hour == 22 and min_time.minute == (60 - TIME_GAP):
+    if min_time.hour == 23 and min_time.minute == (60 - TIME_GAP):
         midnight_users = User.query.filter_by(email_frequency=time(0, 0)).all()
         users.extend(midnight_users)
     return [u.id for u in users]
