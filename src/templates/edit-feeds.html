@@ -144,6 +144,7 @@
 	<script src="{{ url_for('static', filename='js/add-remove-feeds.js') }}"></script>
   <script>
     function addCustomFeed(e) {
+      // Prevent modal from closing before validation
       e.preventDefault();
 
       var form = $('#customFeedForm')[0];
@@ -153,7 +154,11 @@
 
       $.post(url, data=$(form).serialize(), function(res) {
         if (res.message == "ok") {
+          // if validation succeeds, hide the modal and reload the page
+          $('#addCustomFeedModal').modal('hide');
+          location.reload();
         } else {
+          // if validation fails, show error feedback under the fields
           for (var key in res.data) {
             var field = $('.form-control[name="' + key + '"]')[0];
             $(field).addClass('is-invalid');

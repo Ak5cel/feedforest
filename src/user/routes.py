@@ -100,7 +100,8 @@ def edit_feeds():
     add_feed_form = AddCustomFeedForm()
     add_feed_form.topic.choices = [(t.id, t.topic_name) for t in topics]
     if add_feed_form.validate_on_submit():
-        flash('Validated: success', 'success')
+        form_data = {field.name: field.data for field in add_feed_form}
+        current_user.add_custom_feed(**form_data)
         return make_response(jsonify({"data": 'ok', "message": "ok"}), 200)
     elif request.method == 'POST' and not add_feed_form.validate():
         return make_response(jsonify({"data": add_feed_form.errors, "message": "error"}))

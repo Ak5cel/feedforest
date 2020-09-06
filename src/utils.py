@@ -68,9 +68,7 @@ def check_valid_feed(url):
     message is None for a valid feed, the appropriate message is
     returned otherwise.
     """
-    print(f'url: {url}')
     d = parse(url)
-    print(f'd: {d}')
     if 'status' in d.keys():
         if d.status == 301:
             result = False

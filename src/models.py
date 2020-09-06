@@ -1,4 +1,5 @@
 from datetime import datetime
+from feedparser import parse
 from flask import url_for, render_template, current_app
 from flask_login import UserMixin, current_user
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -89,6 +90,7 @@ class UserFeedAssociation(db.Model):
     feed_id = db.Column(db.Integer, db.ForeignKey('rss_feed.id'), primary_key=True)
     added_on = db.Column(db.DateTime, default=datetime.utcnow)
     custom_feed_name = db.Column(db.String(100), default=None)
+    custom_topic_id = db.Column(db.Integer, default=None) 
 
     # Bidirectional attribute/collection of "user"/"user_selected_feeds"
     user = db.relationship('User', backref=db.backref('user_selected_feeds',
@@ -125,14 +127,14 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128))
     email_verified = db.Column(db.Boolean, nullable=False, server_default=expression.true())
     email_frequency = db.Column(db.Time)
-    _selected_feeds = db.relationship('UserFeedAssociation')
+    assoc_objects = db.relationship('UserFeedAssociation')
 
     # Association proxy "user_selected_feeds" collection
     # to "feed" attribute
     # Need to specify the association proxy's creator argument to use
-    # UserFeedAssociation(feed=feed) on append() events
+    # on append() events
     selected_feeds = association_proxy('user_selected_feeds', 'feed',
-                                       creator=lambda feed: UserFeedAssociation(feed=feed))
+        creator=lambda feed: UserFeedAssociation(feed=feed))
 
     bookmarked_articles = db.relationship('Article', secondary=user_article_map, lazy='subquery',
                                           backref=db.backref('bookmarked_by', lazy=True))
@@ -158,6 +160,39 @@ class User(db.Model, UserMixin):
             if feed not in self.selected_feeds:
                 self.selected_feeds.append(feed)
                 db.session.commit()
+
+    def add_custom_feed(self, **kwargs):
+        # Check whether the feed already exists
+        feed = RSSFeed.query.filter_by(rss_link=kwargs.get('rss_link'), feed_type='standard').first()
+        if feed:
+            if feed not in self.selected_feeds:
+                self.user_selected_feeds.append(UserFeedAssociation(
+                                feed=feed,
+                                user=self,
+                                custom_feed_name=kwargs.get('custom_feed_name'),
+                                custom_topic_id=int(kwargs.get('topic'))
+                                ))
+                db.session.commit()
+        else:
+            # Parse new feed to find more info
+            d = parse(kwargs.get('rss_link'))
+            # Create a feed record with details from the actual rss feed
+            new_feed = RSSFeed(rss_link=kwargs.get('rss_link'),
+                feed_name=d.feed.title,
+                site_url=d.feed.link,
+                feed_type='custom',
+                topic_id=int(kwargs.get('topic')))
+            db.session.add(new_feed)
+            # Add new feed to user's selected feeds
+            self.user_selected_feeds.append(UserFeedAssociation(
+                feed=new_feed,
+                user=self,
+                custom_feed_name=kwargs.get('custom_feed_name'),
+                custom_topic_id=int(kwargs.get('topic'))
+                ))
+            # Commit all changes
+            db.session.commit()
+
 
     def remove_feed(self, feed_id):
         if int(feed_id):
