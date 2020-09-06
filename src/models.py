@@ -1,5 +1,6 @@
 from datetime import datetime
 from feedparser import parse
+from html import unescape
 from flask import url_for, render_template, current_app
 from flask_login import UserMixin, current_user
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
@@ -11,6 +12,7 @@ import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from . import db, login_manager, bcrypt
+
 
 
 @login_manager.user_loader
@@ -182,6 +184,18 @@ class User(db.Model, UserMixin):
                 site_url=d.feed.link,
                 feed_type='custom',
                 topic_id=int(kwargs.get('topic')))
+            # Add articles to the new feed
+            last_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
+            for entry in d.entries:
+                from .utils import get_datetime_from_time_struct
+                published_on = get_datetime_from_time_struct(entry.get('published_parsed'))
+                new_article = Article(title=unescape(entry.title),
+                                    link=entry.link,
+                                    refreshed_on=last_refresh,
+                                    published_on=published_on,
+                                    topic_id=int(kwargs.get('topic')),
+                                    rssfeed=new_feed)
+                db.session.add(new_article)
             db.session.add(new_feed)
             # Add new feed to user's selected feeds
             self.user_selected_feeds.append(UserFeedAssociation(
@@ -190,6 +204,8 @@ class User(db.Model, UserMixin):
                 custom_feed_name=kwargs.get('custom_feed_name'),
                 custom_topic_id=int(kwargs.get('topic'))
                 ))
+            
+
             # Commit all changes
             db.session.commit()
 
