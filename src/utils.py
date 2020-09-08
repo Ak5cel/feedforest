@@ -80,10 +80,11 @@ def check_valid_feed(url):
              at the origin server. This condition is likely to be permanent."
         elif d.status > 299:
             result, status_code, reason = check_broken_link(url)
+            result = not result  # Reversed because check_broken_link returns True for brokem links
             message = f'Error {status_code if status_code else ""}: {reason}'
         elif d.bozo:
             result = False
-            if 'text/html' in d.headers['Content-Type']:
+            if d.headers.get('Content-Type') == 'text/html' or d.headers.get('content-type') == 'text/html':
                 message = "The target feed has a Content-Type of text/html and \
                 is not a valid xml feed"
             else:
@@ -93,7 +94,7 @@ def check_valid_feed(url):
             message = None
     else:
         result, status_code, reason = check_broken_link(url)
-        result = not result  # Reversed becaus check_broken_link returns True for broken links
+        result = not result  # Reversed because check_broken_link returns True for broken links
         message = f'Error {status_code if status_code else ""}: {reason}'
 
     return (result, message)
