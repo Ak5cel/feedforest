@@ -16,16 +16,25 @@ user = Blueprint('user', __name__)
 @user.route('/user/feeds')
 @login_required
 def my_feeds():
+    topics = Topic.query.all()
     last_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
     latest_articles = db.session.query(Article)\
         .filter_by(refreshed_on=last_refresh)\
         .order_by(Article.rssfeed_id, Article.published_on.desc())\
         .all()
     articles_grouped = {k: list(g) for k, g in groupby(latest_articles, attrgetter('rssfeed_id'))}
-    topics = Topic.query.all()
+
+    # Change the default values of the custom feeds to those specified by the user
+    selected_feeds = current_user.selected_feeds
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    for feed in selected_feeds:
+        if feed.feed_type == 'custom':
+            feed.feed_name = mapping[feed.id]['feed_name']
+
     return render_template('myfeeds.html',
                            title='My Feeds',
                            articles_grouped=articles_grouped,
+                           selected_feeds=selected_feeds,
                            last_updated_on=last_refresh,
                            topics=topics)
 
@@ -40,6 +49,15 @@ def my_articles():
         .order_by(user_article_map.c.bookmarked_on.desc())\
         .all()
     topics = Topic.query.all()
+
+    # Change the default values of the custom feeds to those specified by the user
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    for article in bookmarked_articles:
+        if article.rssfeed.feed_type == 'custom':
+            article.rssfeed.feed_name = mapping[article.rssfeed_id]['feed_name']
+            article.rssfeed.topic_id = mapping[article.rssfeed_id]['topic_id']
+            article.rssfeed.topic = list(topic for topic in topics if topic.id == article.rssfeed.topic_id)[0]
+
     return render_template('myarticles.html',
                            title='My Articles',
                            empty_form=empty_form,
@@ -49,15 +67,24 @@ def my_articles():
 
 @user.route('/user/inbox/all')
 def inbox():
+    topics = Topic.query.all()
     articles = db.session.query(Article).join(UserFeedAssociation, (Article.rssfeed_id == UserFeedAssociation.feed_id))\
         .filter(UserFeedAssociation.user_id == current_user.id, db.func.DATE(Article.refreshed_on) >= db.func.DATE(UserFeedAssociation.added_on))\
         .order_by(Article.rssfeed_id, Article.published_on.desc())\
         .all()
     articles_grouped = {k: list(g) for k, g in groupby(articles, attrgetter('rssfeed_id'))}
-    topics = Topic.query.all()
+
+    # Change the default values of the custom feeds to those specified by the user
+    selected_feeds = current_user.selected_feeds
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    for feed in selected_feeds:
+        if feed.feed_type == 'custom':
+            feed.feed_name = mapping[feed.id]['feed_name']
+
     return render_template('inbox-all.html',
                            title='Inbox',
                            articles_grouped=articles_grouped,
+                           selected_feeds=selected_feeds,
                            topics=topics)
 
 
@@ -73,6 +100,15 @@ def inbox_for_topic():
         .scalar()
     articles = Article.query.filter(db.func.DATE(Article.refreshed_on) >= db.func.DATE(added_on), Article.rssfeed_id == selected_feed.id).distinct().all()
     topics = Topic.query.all()
+
+    # Change the default values of the custom feeds to those specified by the user
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    for article in articles:
+        if article.rssfeed.feed_type == 'custom':
+            article.rssfeed.feed_name = mapping[article.rssfeed_id]['feed_name']
+            article.rssfeed.topic_id = mapping[article.rssfeed_id]['topic_id']
+            article.rssfeed.topic = list(topic for topic in topics if topic.id == article.rssfeed.topic_id)[0]
+
     return render_template('inbox-topic.html',
                            title='Inbox',
                            articles=articles,
@@ -88,7 +124,19 @@ def account():
     hidden_time_form = HiddenElementForm()
     hidden_time_form.hidden_element.data = current_user.email_frequency
     topics = Topic.query.all()
-    return render_template('profile-summary.html', title='Account', hidden_time_form=hidden_time_form, topics=topics)
+
+    # Change the default values of the custom feeds to those specified by the user
+    selected_feeds = current_user.selected_feeds
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    for feed in selected_feeds:
+        if feed.feed_type == 'custom':
+            feed.feed_name = mapping[feed.id]['feed_name']
+
+    return render_template('profile-summary.html',
+                           title='Account',
+                           hidden_time_form=hidden_time_form,
+                           selected_feeds=selected_feeds,
+                           topics=topics)
 
 
 @user.route('/account/edit/feeds', methods=['GET', 'POST'])
