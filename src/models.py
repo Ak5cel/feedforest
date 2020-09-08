@@ -1,8 +1,13 @@
 from datetime import datetime
+from itertools import groupby
+from operator import attrgetter
+from feedparser import parse
+from html import unescape
 from flask import url_for, render_template, current_app
 from flask_login import UserMixin, current_user
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from sqlalchemy.sql import expression
+from sqlalchemy.ext.associationproxy import association_proxy
 from premailer import transform
 import smtplib
 import ssl
@@ -36,6 +41,7 @@ class RSSFeed(db.Model):
     rss_link = db.Column(db.String(768), unique=True, nullable=False)
     feed_name = db.Column(db.String(100), index=True, unique=True, nullable=False)
     site_url = db.Column(db.String(2048), nullable=False)
+    feed_type = db.Column(db.String(10), default='custom')  # either 'standard' or 'custom'
     updated_on = db.Column(db.DateTime)
     topic_id = db.Column(db.Integer, db.ForeignKey('topic.id'), nullable=False)
     articles = db.relationship('Article', backref='rssfeed', lazy=True)
@@ -72,17 +78,28 @@ class Article(db.Model):
         return f"Article('{self.title}', '{self.link}')"
 
 
-# Association table between users and followed feeds
-user_feed_map = db.Table('user_feed_map',
-                         db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
-                         db.Column('feed_id', db.Integer, db.ForeignKey('rss_feed.id'), primary_key=True),
-                         db.Column('added_on', db.DateTime, default=datetime.utcnow))
-
 # Association table between users and bookmarked articles
 user_article_map = db.Table('user_article_map',
                             db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
                             db.Column('article_id', db.Integer, db.ForeignKey('article.id'), primary_key=True),
                             db.Column('bookmarked_on', db.DateTime, default=datetime.utcnow))
+
+
+class UserFeedAssociation(db.Model):
+    """Association object that maps users and followed feeds"""
+
+    __tablename__ = 'user_feed_assoc'
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    feed_id = db.Column(db.Integer, db.ForeignKey('rss_feed.id'), primary_key=True)
+    added_on = db.Column(db.DateTime, default=datetime.utcnow)
+    custom_feed_name = db.Column(db.String(100), default=None)
+    custom_topic_id = db.Column(db.Integer, default=None)
+
+    # Bidirectional attribute/collection of "user"/"user_selected_feeds"
+    user = db.relationship('User', backref=db.backref('user_selected_feeds',
+                                                      cascade='all, delete-orphan'))
+
+    feed = db.relationship('RSSFeed', backref='users')
 
 
 class UserRole(db.Model):
@@ -113,8 +130,15 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128))
     email_verified = db.Column(db.Boolean, nullable=False, server_default=expression.true())
     email_frequency = db.Column(db.Time)
-    selected_feeds = db.relationship('RSSFeed', secondary=user_feed_map, lazy='subquery',
-                                     backref=db.backref('selected_by', lazy=True))
+    assoc_objects = db.relationship('UserFeedAssociation')
+
+    # Association proxy "user_selected_feeds" collection
+    # to "feed" attribute
+    # Need to specify the association proxy's creator argument to use
+    # on append() events
+    selected_feeds = association_proxy('user_selected_feeds', 'feed',
+                                       creator=lambda feed: UserFeedAssociation(feed=feed))
+
     bookmarked_articles = db.relationship('Article', secondary=user_article_map, lazy='subquery',
                                           backref=db.backref('bookmarked_by', lazy=True))
     role_id = db.Column(db.Integer,
@@ -139,6 +163,51 @@ class User(db.Model, UserMixin):
             if feed not in self.selected_feeds:
                 self.selected_feeds.append(feed)
                 db.session.commit()
+
+    def add_custom_feed(self, **kwargs):
+        # Check whether the feed already exists
+        feed = RSSFeed.query.filter_by(rss_link=kwargs.get('rss_link')).first()
+        if feed:
+            if feed not in self.selected_feeds:
+                self.user_selected_feeds.append(UserFeedAssociation(
+                    feed=feed,
+                    user=self,
+                    custom_feed_name=kwargs.get('custom_feed_name'),
+                    custom_topic_id=int(kwargs.get('topic'))
+                ))
+                db.session.commit()
+        else:
+            # Parse new feed to find more info
+            d = parse(kwargs.get('rss_link'))
+            # Create a feed record with details from the actual rss feed
+            new_feed = RSSFeed(rss_link=kwargs.get('rss_link'),
+                               feed_name=d.feed.title,
+                               site_url=d.feed.link,
+                               feed_type='custom',
+                               topic_id=int(kwargs.get('topic')))
+            # Add articles to the new feed
+            last_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
+            for entry in d.entries:
+                from .utils import get_datetime_from_time_struct
+                published_on = get_datetime_from_time_struct(entry.get('published_parsed'))
+                new_article = Article(title=unescape(entry.title),
+                                      link=entry.link,
+                                      refreshed_on=last_refresh,
+                                      published_on=published_on,
+                                      topic_id=int(kwargs.get('topic')),
+                                      rssfeed=new_feed)
+                db.session.add(new_article)
+            db.session.add(new_feed)
+            # Add new feed to user's selected feeds
+            self.user_selected_feeds.append(UserFeedAssociation(
+                feed=new_feed,
+                user=self,
+                custom_feed_name=kwargs.get('custom_feed_name'),
+                custom_topic_id=int(kwargs.get('topic'))
+            ))
+
+            # Commit all changes
+            db.session.commit()
 
     def remove_feed(self, feed_id):
         if int(feed_id):
@@ -270,8 +339,24 @@ class User(db.Model, UserMixin):
 
     def send_daily_email(self):
         print('Entered method')
-        sub = db.session.query(db.func.max(Article.refreshed_on).label('last_refresh')).subquery()
-        latest_articles = db.session.query(Article).join(sub, sub.c.last_refresh == Article.refreshed_on).all()
+        last_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
+        articles = db.session.query(Article)\
+            .filter_by(refreshed_on=last_refresh, )\
+            .order_by(Article.rssfeed_id, Article.published_on.desc())\
+            .all()
+
+        # Change the default values of the custom feeds to those specified by the user
+        mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in self.assoc_objects}
+        for article in articles:
+            if article.rssfeed.feed_type == 'custom':
+                article.rssfeed.feed_name = mapping[article.rssfeed_id]['feed_name']
+
+        # Filter latest articles to only include those from the user's selected feeds
+        articles = [article for article in articles if article.rssfeed_id in mapping.keys()]
+
+        # Group the articles by feed
+        articles_grouped = {k: list(g) for k, g in groupby(articles, attrgetter('rssfeed_id'))}
+
         my_feeds_link = url_for('user.my_feeds', _external=True)
         unsubscribe_link = url_for('user.edit_email_pref', _external=True)
         print('Sending email...')
@@ -281,12 +366,13 @@ class User(db.Model, UserMixin):
             receiver_email=self.email,
             text_body=render_template('email/daily-email.txt',
                                       user=self,
-                                      articles=latest_articles,
+                                      articles=articles,
                                       my_feeds_link=my_feeds_link,
                                       unsubscribe_link=unsubscribe_link),
             html_body=transform(render_template('email/daily-email.html',
                                                 user=self,
-                                                articles=latest_articles,
+                                                articles=articles,
+                                                articles_grouped=articles_grouped,
                                                 my_feeds_link=my_feeds_link,
                                                 unsubscribe_link=unsubscribe_link))
         )

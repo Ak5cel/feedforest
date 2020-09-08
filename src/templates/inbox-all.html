@@ -5,53 +5,30 @@
     <div class="d-flex justify-content-between mb-3">
       <h5>All Feeds</h5>
     </div>
-    {% if current_user.selected_feeds[0] %}
+    {% if selected_feeds[0] %}
       <ul class="list-group list-group-flush">
-        {% for feed in current_user.selected_feeds %}
+        {% for feed in selected_feeds %}
           {% for article in articles_grouped[feed.id] %}
-            {% if article in current_user.bookmarked_articles %}
-              <li class="article list-group-item px-3 d-flex justify-content-between"
-                data-status="bookmarked"
-                data-article-id="{{ article.id }}">
-                <div class="d-flex flex-column justify-content-end">
-                  <small>
-                    <a href="{{ article.rssfeed.site_url }}" class="text-muted">{{ article.rssfeed.feed_name.upper() }}</a>
-                  </small>
-                  <h6 class="pr-3">
-                    <a class="text-dark" href="{{ article.link }}">{{ article.title }}</a>
-                  </h6> 
-                  {% if article.published_on %}
-                  <p class="small text-muted">
-                    {{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC
-                  </p>
-                  {% endif %} 
-                </div>
-                <a href="#" class="toggle-bookmark">
-                  <i class="far fa-bookmark"></i>
-                </a>
-              </li>  
-            {% else %}
-              <li class="article list-group-item px-3 d-flex justify-content-between"
-                data-status="not-bookmarked"
-                data-article-id="{{ article.id }}">
-                <div class="d-flex flex-column justify-content-end">
-                  <small>
-                    <a href="{{ article.rssfeed.site_url }}" class="text-muted">{{ article.rssfeed.feed_name.upper() }}</a>
-                  </small>
-                  <h6 class="pr-3">
-                    <a class="text-dark" href="{{ article.link }}">{{ article.title }}</a>
-                  </h6> 
-                  {% if article.published_on %}
-                  <p class="small text-muted">
-                    {{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC
-                  </p>
-                  {% endif %} 
-                </div>
-                <a href="#" class="toggle-bookmark">
-                  <i class="far fa-bookmark"></i>
-                </a>
-              </li>
-            {% endif %}
+            <li class="article list-group-item px-3 d-flex justify-content-between"
+              data-status="{{ 'bookmarked' if (article in current_user.bookmarked_articles) else 'notBookmarked' }}"
+              data-article-id="{{ article.id }}">
+              <div class="d-flex flex-column justify-content-end">
+                <small>
+                  <a href="{{ article.rssfeed.site_url }}" class="text-muted">{{ feed.feed_name.upper() }}</a>
+                </small>
+                <h6 class="pr-3">
+                  <a class="text-dark" href="{{ article.link }}">{{ article.title }}</a>
+                </h6> 
+                {% if article.published_on %}
+                <p class="small text-muted">
+                  {{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC
+                </p>
+                {% endif %} 
+              </div>
+              <a href="#" class="toggle-bookmark">
+                <i class="far fa-bookmark"></i>
+              </a>
+            </li> 
           {% endfor %}
         {% endfor %}
       </ul>

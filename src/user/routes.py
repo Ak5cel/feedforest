@@ -1,11 +1,12 @@
 from itertools import groupby
 from operator import attrgetter
+import json
 from flask import render_template, url_for, request, flash, redirect, Blueprint, jsonify, make_response
 from flask_login import current_user, login_required
-from ..models import Topic, RSSFeed, Article, User, user_article_map, user_feed_map
+from ..models import Topic, RSSFeed, Article, User, user_article_map, UserFeedAssociation
 from ..general.forms import EmptyForm, HiddenElementForm
 from ..auth.forms import ChangePasswordForm
-from .forms import EditDetailsForm, EmailPreferencesForm
+from .forms import EditDetailsForm, EmailPreferencesForm, AddCustomFeedForm
 from .. import db
 from ..utils import get_utc_time, get_24h_from_12h
 
@@ -15,16 +16,25 @@ user = Blueprint('user', __name__)
 @user.route('/user/feeds')
 @login_required
 def my_feeds():
+    topics = Topic.query.all()
     last_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
     latest_articles = db.session.query(Article)\
         .filter_by(refreshed_on=last_refresh)\
         .order_by(Article.rssfeed_id, Article.published_on.desc())\
         .all()
     articles_grouped = {k: list(g) for k, g in groupby(latest_articles, attrgetter('rssfeed_id'))}
-    topics = Topic.query.all()
+
+    # Change the default values of the custom feeds to those specified by the user
+    selected_feeds = current_user.selected_feeds
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    for feed in selected_feeds:
+        if feed.feed_type == 'custom':
+            feed.feed_name = mapping[feed.id]['feed_name']
+
     return render_template('myfeeds.html',
                            title='My Feeds',
                            articles_grouped=articles_grouped,
+                           selected_feeds=selected_feeds,
                            last_updated_on=last_refresh,
                            topics=topics)
 
@@ -39,6 +49,15 @@ def my_articles():
         .order_by(user_article_map.c.bookmarked_on.desc())\
         .all()
     topics = Topic.query.all()
+
+    # Change the default values of the custom feeds to those specified by the user
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    for article in bookmarked_articles:
+        if article.rssfeed.feed_type == 'custom':
+            article.rssfeed.feed_name = mapping[article.rssfeed_id]['feed_name']
+            article.rssfeed.topic_id = mapping[article.rssfeed_id]['topic_id']
+            article.rssfeed.topic = list(topic for topic in topics if topic.id == article.rssfeed.topic_id)[0]
+
     return render_template('myarticles.html',
                            title='My Articles',
                            empty_form=empty_form,
@@ -48,15 +67,24 @@ def my_articles():
 
 @user.route('/user/inbox/all')
 def inbox():
-    articles = db.session.query(Article).join(user_feed_map, (Article.rssfeed_id == user_feed_map.c.feed_id))\
-        .filter(user_feed_map.c.user_id == current_user.id, db.func.DATE(Article.refreshed_on) >= db.func.DATE(user_feed_map.c.added_on))\
+    topics = Topic.query.all()
+    articles = db.session.query(Article).join(UserFeedAssociation, (Article.rssfeed_id == UserFeedAssociation.feed_id))\
+        .filter(UserFeedAssociation.user_id == current_user.id, db.func.DATE(Article.refreshed_on) >= db.func.DATE(UserFeedAssociation.added_on))\
         .order_by(Article.rssfeed_id, Article.published_on.desc())\
         .all()
     articles_grouped = {k: list(g) for k, g in groupby(articles, attrgetter('rssfeed_id'))}
-    topics = Topic.query.all()
+
+    # Change the default values of the custom feeds to those specified by the user
+    selected_feeds = current_user.selected_feeds
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    for feed in selected_feeds:
+        if feed.feed_type == 'custom':
+            feed.feed_name = mapping[feed.id]['feed_name']
+
     return render_template('inbox-all.html',
                            title='Inbox',
                            articles_grouped=articles_grouped,
+                           selected_feeds=selected_feeds,
                            topics=topics)
 
 
@@ -67,11 +95,20 @@ def inbox_for_topic():
     if selected_feed not in current_user.selected_feeds:
         flash(f"You have not subscribed to that feed.", 'warning')
         return redirect(url_for('user.inbox'))
-    added_on = db.session.query(user_feed_map.c.added_on)\
-        .filter(user_feed_map.c.user_id == current_user.id, user_feed_map.c.feed_id == selected_feed.id)\
+    added_on = db.session.query(UserFeedAssociation.added_on)\
+        .filter(UserFeedAssociation.user_id == current_user.id, UserFeedAssociation.feed_id == selected_feed.id)\
         .scalar()
     articles = Article.query.filter(db.func.DATE(Article.refreshed_on) >= db.func.DATE(added_on), Article.rssfeed_id == selected_feed.id).distinct().all()
     topics = Topic.query.all()
+
+    # Change the default values of the custom feeds to those specified by the user
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    for article in articles:
+        if article.rssfeed.feed_type == 'custom':
+            article.rssfeed.feed_name = mapping[article.rssfeed_id]['feed_name']
+            article.rssfeed.topic_id = mapping[article.rssfeed_id]['topic_id']
+            article.rssfeed.topic = list(topic for topic in topics if topic.id == article.rssfeed.topic_id)[0]
+
     return render_template('inbox-topic.html',
                            title='Inbox',
                            articles=articles,
@@ -87,20 +124,55 @@ def account():
     hidden_time_form = HiddenElementForm()
     hidden_time_form.hidden_element.data = current_user.email_frequency
     topics = Topic.query.all()
-    return render_template('profile-summary.html', title='Account', hidden_time_form=hidden_time_form, topics=topics)
+
+    # Change the default values of the custom feeds to those specified by the user
+    selected_feeds = current_user.selected_feeds
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    for feed in selected_feeds:
+        if feed.feed_type == 'custom':
+            feed.feed_name = mapping[feed.id]['feed_name']
+
+    return render_template('profile-summary.html',
+                           title='Account',
+                           hidden_time_form=hidden_time_form,
+                           selected_feeds=selected_feeds,
+                           topics=topics)
 
 
 @user.route('/account/edit/feeds', methods=['GET', 'POST'])
 @login_required
 def edit_feeds():
-    topics = Topic.query.all()
-    feeds = RSSFeed.query.all()
+    topics = Topic.query.order_by(Topic.id).all()
+
+    # Feeds are ordered by feed type to group them later
+    feeds = RSSFeed.query.order_by(RSSFeed.feed_type, RSSFeed.topic_id).all()
+
+    # Group the feeds into 2 types based on feed type - custom and standard
+    feeds_grouped = {feed_type: list(feeds) for feed_type, feeds in groupby(feeds, attrgetter('feed_type'))}
+
+    # Filter custom feeds to only include those added by the current user
+    feeds_grouped['custom'] = [feed for feed in feeds_grouped.get('custom', []) if feed in current_user.selected_feeds]
+
+    # Change the default values of the custom feeds to those specified by the user
+    mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
+    if feeds_grouped.get('custom'):
+        for feed in feeds_grouped['custom']:
+            feed.feed_name = mapping[feed.id]['feed_name']
+            feed.topic_id = mapping[feed.id]['topic_id']
+            feed.topic = list(topic for topic in topics if topic.id == feed.topic_id)[0]
+
     empty_form = EmptyForm()
-    if empty_form.validate_on_submit():
-        result = request.form
-        flash(result.get('submit'), 'info')
+    add_feed_form = AddCustomFeedForm()
+    add_feed_form.topic.choices = [(t.id, t.topic_name) for t in topics]
+    if add_feed_form.validate_on_submit():
+        form_data = {field.name: field.data for field in add_feed_form}
+        current_user.add_custom_feed(**form_data)
+        return make_response(jsonify({"data": 'ok', "message": "ok"}), 200)
+    elif request.method == 'POST' and not add_feed_form.validate():
+        return make_response(jsonify({"data": add_feed_form.errors, "message": "error"}))
     return render_template('edit-feeds.html', title='Account - Edit Feeds',
-                           topics=topics, feeds=feeds, empty_form=empty_form)
+                           topics=topics, feeds_grouped=feeds_grouped, empty_form=empty_form,
+                           add_feed_form=add_feed_form)
 
 
 @user.route('/account/edit/feeds/add', methods=['POST'])
@@ -109,6 +181,15 @@ def add_feed():
     feed_id = request.args.get('feed_id', type=int)
     current_user.add_feed(feed_id)
     return "Added feed"
+
+
+@user.route('/account/edit/feeds/add-custom', methods=['POST'])
+@login_required
+def add_custom_feed():
+    custom_feed_name = request.args.get('custom_feed_name')
+    rss_link = request.args.get('rss_link')
+    topic = request.args.get('topic')
+    return redirect(url_for('user.edit_feeds'))
 
 
 @user.route('/account/edit/feeds/remove', methods=['POST'])

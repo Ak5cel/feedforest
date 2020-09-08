@@ -11,15 +11,15 @@
   <div class="bg-white border p-4 mb-3 rounded-lg">
     <div class="d-flex justify-content-between mb-3">
       <h5>Selected Feeds</h5>
-      {% if current_user.selected_feeds[0] %}
+      {% if selected_feeds[0] %}
         <a class="btn btn-outline-primary" href="{{ url_for('user.edit_feeds') }}">Edit Feeds</a>
       {% else %}
         <a class="btn btn-outline-primary" href="{{ url_for('user.edit_feeds') }}">Add Feeds</a>
       {% endif %}
     </div>
-    {% if current_user.selected_feeds[0] %}
+    {% if selected_feeds[0] %}
       <ul class="list-group list-group-flush">
-        {% for selected_feed in current_user.selected_feeds %}
+        {% for selected_feed in selected_feeds %}
           <li class="list-group-item px-0">
             <small class="text-muted">{{ selected_feed.topic.topic_name.upper() }}</small>
             <h6>{{ selected_feed.feed_name }}</h6>

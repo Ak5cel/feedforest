@@ -6,7 +6,7 @@
     <div class="col-12 d-sm-flex align-items-start justify-content-between mt-4 mt-md-5 mb-4 mb-sm-0">
       <h3 class="mb-sm-4">My Feeds</h3>
       <div class="text-sm-right mb-sm-3">
-        {% if current_user.selected_feeds[0] %}
+        {% if selected_feeds[0] %}
         <small class="text-muted">Last updated: {{ last_updated_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</small><br>
         {% endif %}
         <a href="{{ url_for('user.inbox') }}" class="btn btn-outline-primary btn-sm">View Inbox</a>
@@ -27,9 +27,9 @@
       {% endwith %}
     </div>
     <div class="col">
-      {% if current_user.selected_feeds[0] %}
+      {% if selected_feeds[0] %}
         <div class="card-columns">
-          {% for feed in current_user.selected_feeds %}
+          {% for feed in selected_feeds %}
             <div class="card mb-4">
               <div class="card-body">
                 <h5 class="card-title mb-4">
