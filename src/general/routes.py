@@ -50,7 +50,7 @@ def topic(id):
     topic = Topic.query.get_or_404(id)
     last_refresh = db.session.query(db.func.max(Article.refreshed_on)).scalar()
     latest_articles = db.session.query(Article)\
-        .filter_by(topic_id=id, refreshed_on=last_refresh)\
+        .filter(Article.topic_id == id, Article.refreshed_on == last_refresh, Article.rssfeed.has(feed_type='standard'))\
         .order_by(Article.rssfeed_id, Article.published_on.desc())\
         .all()
     articles_grouped = {k: list(g) for k, g in groupby(latest_articles, attrgetter('rssfeed_id'))}
