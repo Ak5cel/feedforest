@@ -103,7 +103,7 @@ def edit_feeds():
     feeds_grouped = {feed_type: list(feeds) for feed_type, feeds in groupby(feeds, attrgetter('feed_type'))}
 
     # Filter custom feeds to only include those added by the current user
-    feeds_grouped['custom'] = list(feed for feed in feeds_grouped['custom'] if feed in current_user.selected_feeds)
+    feeds_grouped['custom'] = [feed for feed in feeds_grouped.get('custom', []) if feed in current_user.selected_feeds]
 
     # Change the default values of the custom feeds to those specified by the user
     mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}

@@ -18,9 +18,9 @@
           <p class="text-muted small mb-0">Or take your pick from the choices below.</p>
         {% endif %}
       </div>
-    {% if feeds_grouped['custom'] %}
+    {% if feeds_grouped['custom']|length > 0 %}
       <!-- Display all of the user's custom feeds here -->
-      <div class="bg-white border py-3 mb-3">
+      <div class="bg-white border py-3 mb-3" id="customFeedsContainer">
         <legend class="border-bottom small px-3">Custom Feeds</legend>
         <ul class="list-group list-group-flush">
           {% for feed in feeds_grouped['custom'] %}
