@@ -5,17 +5,23 @@
     <img src="https://i.ibb.co/C6r7y6j/undraw-daily-email.png" alt="undraw-daily-email" border="0">
     <h2>Hey {{ user.username }}!</h2>
     <p class="text-main" style="">Here are the latest articles from your selected feeds.</p>
-    {% for article in articles %}
-        <div class="article">
+    {% for feed_id, articles in articles_grouped.items() %}
+        <div class="feed">
             <hr>
-            <a href="{{ article.rssfeed.site_url }}" class="feed-name">{{ article.rssfeed.feed_name }}</a><br>
-            <a href="{{ article.link }} " class="article-title">{{ article.title }}</a><br>
-            {% if article.published_on %}
-                <span class="published-on">{{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</span>
-            {% endif %}            
+                <h3>
+                    <a href="{{ articles[0].rssfeed.site_url }}" class="feed-name">{{ articles[0].rssfeed.feed_name }}</a>
+                </h3>
+            {% for article in articles[:5] %}
+                <div class="article">
+                    <a href="{{ article.link }} " class="article-title">{{ article.title }}</a><br>
+                    {% if article.published_on %}
+                        <span class="published-on">{{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</span>
+                    {% endif %}
+                </div>
+            {% endfor %}    
         </div>
     {% endfor %}
-    <p class="text-main mt-30">Visit your feed wall for further updates</p>
+    <p class="text-main mt-30">Visit your feed wall to read more articles</p>
     <a href="{{ my_feeds_link }}" class="button" style="margin-top: 15px">My Feed Wall</a>
     <hr class="hr-bottom">
     <p class="sub-text align-left">Trouble with the link above? Paste this URL into your browser (login required):</p>
