@@ -46,7 +46,8 @@ $(document).ready(function() {
 
 				// Check whether there are any more selected feeds with toggle-display
 				var selectedToggleFeeds = $('.feed-info.toggle-display[data-status="selected"]');
-				if (selectedToggleFeeds.length == 0) {
+				var notSelectedToggleFeeds = $('.feed-info.toggle-display[data-status="selected"]');
+				if (selectedToggleFeeds.length == 0 && notSelectedToggleFeeds.length > 0) {
 				  window.location.reload(true);
 				}
 			} else {
