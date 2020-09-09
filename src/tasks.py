@@ -160,16 +160,17 @@ def get_user_ids():
     logging.debug(f'min_time: {min_time}')
     max_time = (start_time + timedelta(minutes=TIME_GAP)).time()
     logging.debug(f'min_time: {max_time}')
-    # Get all users whose preferred email time lies within the time gap
-    users = User.query.filter(User.email_frequency > min_time, User.email_frequency <= max_time).all()
-    # Edge case: in the last slot, for eg. slot between 23:50 and 00:00,
-    # users with 00:00 were not considered as 00:00 is less than 23:50 even
-    # though it's on the next day.
-    # Workaround:
-    if min_time.hour == 23 and min_time.minute == (60 - TIME_GAP):
-        midnight_users = User.query.filter_by(email_frequency=time(0, 0)).all()
-        users.extend(midnight_users)
-    return [u.id for u in users]
+    with current_app.test_request_context(base_url='https://www.feedforest.dev'):
+        # Get all users whose preferred email time lies within the time gap
+        users = User.query.filter(User.email_frequency > min_time, User.email_frequency <= max_time).all()
+        # Edge case: in the last slot, for eg. slot between 23:50 and 00:00,
+        # users with 00:00 were not considered as 00:00 is less than 23:50 even
+        # though it's on the next day.
+        # Workaround:
+        if min_time.hour == 23 and min_time.minute == (60 - TIME_GAP):
+            midnight_users = User.query.filter_by(email_frequency=time(0, 0)).all()
+            users.extend(midnight_users)
+        return [u.id for u in users]
 
 
 @celery.task
