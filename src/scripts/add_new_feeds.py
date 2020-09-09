@@ -22,6 +22,7 @@ def add_new_feeds(filename='new-feeds.csv'):
             new_feed = RSSFeed(rss_link=row['rss_link'],
                                feed_name=row['feed_name'],
                                site_url=row['site_url'],
+                               feed_type='standard',
                                topic=topic)
             db.session.add(new_feed)
 
