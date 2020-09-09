@@ -31,7 +31,7 @@
             <div class="card-body color-overlay">
               <h5 class="card-title"><a href="{{ url_for('general.topic', id=topic.id) }}" class="text-light stretched-link">{{ topic.topic_name }}</a></h5>
               <p class="card-text text-light">
-                {% for feed in topic.rss_feeds[:3] %}
+                {% for feed in (topic.rss_feeds | selectattr("feed_type", "equalto", "standard") | list)[:5] %}
                   {{ feed.feed_name }}<br>
                 {% endfor %}
                 ...
