@@ -28,10 +28,10 @@
                   data-article-id="{{ article.id }}">
                 <div class="d-flex flex-column justify-content-end">
                   <small>
-                    <a href="{{ article.rssfeed.site_url }}" class="text-muted">{{ article.rssfeed.feed_name.upper() }}</a>
+                    <a href="{{ article.rssfeed.site_url }}" target="_blank" class="text-muted">{{ article.rssfeed.feed_name.upper() }}</a>
                   </small>
                   <h6 class="pr-3">
-                    <a class="text-dark" href="{{ article.link }}">{{ article.title }}</a>
+                    <a class="text-dark" href="{{ article.link }}" target="_blank">{{ article.title }}</a>
                   </h6> 
                   {% if article.published_on %}
                   <!-- <br> -->

@@ -33,7 +33,7 @@
             <div class="card mb-4">
               <div class="card-body">
                 <h5 class="card-title mb-4">
-                  <a class="text-dark" href="{{ feed.rss_link }}" title="{{ feed.rss_link }}">{{ feed.feed_name }}</a>
+                  <a class="text-dark" href="{{ feed.rss_link }}" target="_blank" title="{{ feed.rss_link }}">{{ feed.feed_name }}</a>
                 </h5>
                 <div class="loader">
                   <!-- The preloaded set of articles -->
@@ -42,7 +42,7 @@
                           data-status="{{ 'bookmarked' if (article in current_user.bookmarked_articles) else 'notBookmarked' }}" 
                           data-article-id="{{ article.id }}">
                       <p class="card-text pr-4 pb-1">
-                        <a href="{{ article.link }}">{{ article.title }}</a>
+                        <a href="{{ article.link }}" target="_blank">{{ article.title }}</a>
                         {% if article.published_on %}
                         <br>
                         <small class="text-muted">
@@ -62,7 +62,7 @@
                           data-article-id=""
                           id="articleItem">
                       <p class="card-text pr-4 pb-1">
-                        <a id="articleLink" href=""></a>
+                        <a id="articleLink" href="" target="_blank"></a>
                         <br>
                         <small id="publishedOn" class="text-muted" >
                         </small>
