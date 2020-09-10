@@ -3,11 +3,14 @@ from celery import Celery
 
 
 def make_celery(app, celery_obj):
+    """Add flask app context to celery.Task"""
     celery_obj.conf.update(app.config)
-
-    class ContextTask(celery_obj.Task):
+    
+    TaskBase = celery_obj.Task
+    class ContextTask(TaskBase):
+        abstract = True
         def __call__(self, *args, **kwargs):
             with app.app_context():
-                return self.run(*args, **kwargs)
+                return TaskBase.__call__(self, *args, **kwargs)
 
     celery_obj.Task = ContextTask
