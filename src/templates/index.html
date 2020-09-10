@@ -13,16 +13,20 @@
   </p>
   {% if not current_user.is_authenticated %}
     <a href="{{ url_for('auth.signup') }}" class="btn btn-primary mr-1">Sign up</a>
+    <a href="#titles-section" class="btn btn-charcoal">Browse Feeds</a>
+  {% else %}
+  <a href="#titles-section" class="btn btn-primary">Browse Feeds</a>
   {% endif %}
-  <a href="#titles-section" class="btn btn-charcoal">Browse Feeds</a>
   </div>
-  <div class="hidden" id="titles-section"></div>
+  
 </div>
 <!-- Titles section -->
+<div class="hidden" id="titles-section"></div>
 <div class="container padding-top">
+
   <div class="row">
-    <div class="col-12">
-      <h5 class="sub-heading">Read the latest articles from the following topics:</h5>
+    <div class="col-12 text-center">
+      <h4 class="sub-heading">Browse from the following topics</h4>
     </div>
     <div class="col-12 padding-md-top">
       <div class="card-columns">
@@ -58,8 +62,10 @@
             Find it useful? Sign up for more
           </h5>
           <p class="card-text">
-            For creating a custom feed wall and receiving daily updates from the feeds of your choice, 
-            create an account!
+            Subscribe to your favourite RSS Feeds.<br>
+            Bookmark articles.<br>
+            Create a custom feed wall with all your feeds at a glance.<br>
+            Get daily updates from your feeds, straight to your inbox, at a time you choose.<br>
           </p>
           <a href="{{ url_for('auth.signup') }}" class="btn btn-primary">Create an account</a>
         </div>
