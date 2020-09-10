@@ -39,7 +39,7 @@ class Topic(db.Model):
 class RSSFeed(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     rss_link = db.Column(db.String(768), unique=True, nullable=False)
-    feed_name = db.Column(db.String(100), index=True, unique=True, nullable=False)
+    feed_name = db.Column(db.String(100), nullable=False)
     site_url = db.Column(db.String(2048), nullable=False)
     feed_type = db.Column(db.String(10), default='custom')  # either 'standard' or 'custom'
     updated_on = db.Column(db.DateTime)
