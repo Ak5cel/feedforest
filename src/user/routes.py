@@ -53,7 +53,7 @@ def my_articles():
     # Change the default values of the custom feeds to those specified by the user
     mapping = {obj.feed_id: {'feed_name': obj.custom_feed_name, 'topic_id': obj.custom_topic_id} for obj in current_user.assoc_objects}
     for article in bookmarked_articles:
-        if article.rssfeed.feed_type == 'custom':
+        if article.rssfeed.feed_type == 'custom' and article.rssfeed in current_user.selected_feeds:
             article.rssfeed.feed_name = mapping[article.rssfeed_id]['feed_name']
             article.rssfeed.topic_id = mapping[article.rssfeed_id]['topic_id']
             article.rssfeed.topic = list(topic for topic in topics if topic.id == article.rssfeed.topic_id)[0]
