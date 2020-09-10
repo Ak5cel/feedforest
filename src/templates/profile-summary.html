@@ -5,16 +5,16 @@
   <div class="bg-white border p-4 mb-3 rounded-lg">
     <h3 class="font-weight-bold">{{ current_user.username }}</h3>
     <p class="text-secondary">{{ current_user.email }}</p>
-    <a class="btn btn-outline-primary mt-1" href="{{ url_for('user.edit_profile') }}">Edit Profile</a>
+    <a class="btn btn-outline-primary btn-sm mt-1" href="{{ url_for('user.edit_profile') }}">Edit Profile</a>
   </div>
   <!-- Selected feeds section -->
   <div class="bg-white border p-4 mb-3 rounded-lg">
     <div class="d-flex justify-content-between mb-3">
       <h5>Selected Feeds</h5>
       {% if selected_feeds[0] %}
-        <a class="btn btn-outline-primary" href="{{ url_for('user.edit_feeds') }}">Edit Feeds</a>
+        <a class="btn btn-outline-primary btn-sm" href="{{ url_for('user.edit_feeds') }}">Edit Feeds</a>
       {% else %}
-        <a class="btn btn-outline-primary" href="{{ url_for('user.edit_feeds') }}">Add Feeds</a>
+        <a class="btn btn-outline-primary btn-sm" href="{{ url_for('user.edit_feeds') }}">Add Feeds</a>
       {% endif %}
     </div>
     {% if selected_feeds[0] %}
@@ -46,7 +46,7 @@
   <div class="bg-white border p-4 mb-3 rounded-lg">
     <div class="d-flex justify-content-between mb-3">
       <h5>Email Preferences</h5>
-      <a class="btn btn-outline-primary" href="{{ url_for('user.edit_email_pref') }}">Edit</a> 
+      <a class="btn btn-outline-primary btn-sm" href="{{ url_for('user.edit_email_pref') }}">Edit</a> 
     </div>
     <ul class="list-group list-group-flush">
       <li class="list-group-item px-0">
