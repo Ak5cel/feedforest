@@ -75,12 +75,15 @@ footer p {
 	margin-top: -20px;
 }
 
-.read-more-icon {
-	opacity: 0;
-	-webkit-transition: all 100ms ease-in;
-	-o-transition: all 100ms ease-in;
-	transition: all 100ms ease-in;
+@media (any-hover: hover) {
+	.read-more-icon {
+		opacity: 0;
+		-webkit-transition: all 100ms ease-in;
+		-o-transition: all 100ms ease-in;
+		transition: all 100ms ease-in;
+	}	
 }
+
 
 .read-more-icon i {
 	-webkit-transition: all 300ms ease-in;
