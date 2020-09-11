@@ -75,7 +75,7 @@ footer p {
 	margin-top: -20px;
 }
 
-@media (any-hover: hover) {
+@media (any-hover: hover) and (pointer: fine) {
 	.read-more-icon {
 		opacity: 0;
 		-webkit-transition: all 100ms ease-in;
