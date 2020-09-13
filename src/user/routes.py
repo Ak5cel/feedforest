@@ -109,10 +109,16 @@ def inbox_for_topic():
             article.rssfeed.topic_id = mapping[article.rssfeed_id]['topic_id']
             article.rssfeed.topic = list(topic for topic in topics if topic.id == article.rssfeed.topic_id)[0]
 
+    selected_feeds = current_user.selected_feeds
+    for feed in selected_feeds:
+        if feed.feed_type == 'custom':
+            feed.feed_name = mapping[feed.id]['feed_name']
+
     return render_template('inbox-topic.html',
                            title='Inbox',
                            articles=articles,
                            selected_feed=selected_feed,
+                           selected_feeds=selected_feeds,
                            topics=topics,
                            str=str)
 

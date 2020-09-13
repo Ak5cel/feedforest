@@ -9,7 +9,7 @@
           href="{{ url_for('user.inbox') }}">
             All subscribed feeds
         </a>
-        {% for feed in current_user.selected_feeds %}
+        {% for feed in selected_feeds %}
           <a class="list-group-item list-group-item-action 
           {% if request.endpoint == 'user.inbox_for_topic' and request.args.get('feed_id') == str(feed.id) %} active {% endif %}" 
             href="{{ url_for('user.inbox_for_topic', feed_id=feed.id) }}">

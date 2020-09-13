@@ -5,7 +5,7 @@
     <div class="d-flex justify-content-between mb-3">
       <h5>{{ selected_feed.feed_name }}</h5>
     </div>
-    {% if current_user.selected_feeds[0] %}
+    {% if selected_feeds[0] %}
       <ul class="list-group list-group-flush">
         {% for article in articles %}
           <li class="article list-group-item px-3 d-flex justify-content-between"
