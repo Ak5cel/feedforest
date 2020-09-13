@@ -13,7 +13,7 @@
                 </h3>
             {% for article in articles[:5] %}
                 <div class="article">
-                    <a href="{{ article.link }} " class="article-title">{{ article.title }}</a><br>
+                    <a href="{{ article.link }} " class="article-title">{{ article.title | safe }}</a><br>
                     {% if article.published_on %}
                         <span class="published-on">{{ article.published_on.strftime('%B %e, %Y, %I:%M %p %Z') }} UTC</span>
                     {% endif %}

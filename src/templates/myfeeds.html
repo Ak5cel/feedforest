@@ -42,7 +42,7 @@
                           data-status="{{ 'bookmarked' if (article in current_user.bookmarked_articles) else 'notBookmarked' }}" 
                           data-article-id="{{ article.id }}">
                       <p class="card-text pr-4 pb-1">
-                        <a href="{{ article.link }}" target="_blank">{{ article.title }}</a>
+                        <a href="{{ article.link }}" target="_blank">{{ article.title | safe }}</a>
                         {% if article.published_on %}
                         <br>
                         <small class="text-muted">
