@@ -21,6 +21,7 @@ class SignupForm(FlaskForm):
                              validators=[DataRequired(), Length(min=10, max=50)])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
+    accept_terms = BooleanField('I accept the Terms and Conditions', validators=[DataRequired()])
     submit = SubmitField('Sign up')
 
     def validate_username(self, username):
@@ -47,8 +48,8 @@ class RequestPasswordResetForm(FlaskForm):
 
 class PasswordResetForm(FlaskForm):
     password = PasswordField('New Password',
-                             validators=[DataRequired(), 
-                             Length(min=10, max=50, message='Password must be 10-50 characters long.')])
+                             validators=[DataRequired(),
+                                         Length(min=10, max=50, message='Password must be 10-50 characters long.')])
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password', message='The two passwords do not match.')])
     submit = SubmitField('Reset Password')
