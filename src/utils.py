@@ -35,6 +35,18 @@ def get_24h_from_12h(hour_12, am_or_pm):
         return 0 if am_or_pm == 'am' else 12
 
 
+def check_http_link(url):
+    """Return False if the url scheme is not 'http' or 'https',
+    returns True otherwise.
+    """
+
+    allowed_schemes = ['http', 'https']
+    components = urllib.parse.urlparse(url)
+    if components.scheme not in allowed_schemes:
+        return False
+    return True
+
+
 def check_broken_link(url):
     """Check whether the url is broken.
     Return tuple (result, status_code, reason) after the check.
@@ -68,34 +80,38 @@ def check_valid_feed(url):
     message is None for a valid feed, the appropriate message is
     returned otherwise.
     """
-    d = parse(url)
-    if 'status' in d.keys():
-        if d.status == 301:
-            result = False
-            message = f'301: The feed has been permanently redirected to {d.href}. \
-            Please use the new URL instead.'
-        elif d.status == 410:
-            result = False
-            message = f"The feed is marked as 'Gone' and is no longer available\
-             at the origin server. This condition is likely to be permanent."
-        elif d.status > 299:
-            result, status_code, reason = check_broken_link(url)
-            result = not result  # Reversed because check_broken_link returns True for brokem links
-            message = f'Error {status_code if status_code else ""}: {reason}'
-        elif d.bozo:
-            result = False
-            if d.headers.get('Content-Type') == 'text/html' or d.headers.get('content-type') == 'text/html':
-                message = "The target feed has a Content-Type of text/html and \
-                is not a valid xml feed"
+    if check_http_link(url):
+        d = parse(url)
+        if 'status' in d.keys():
+            if d.status == 301:
+                result = False
+                message = f'301: The feed has been permanently redirected to {d.href}. \
+                Please use the new URL instead.'
+            elif d.status == 410:
+                result = False
+                message = f"The feed is marked as 'Gone' and is no longer available\
+                 at the origin server. This condition is likely to be permanent."
+            elif d.status > 299:
+                result, status_code, reason = check_broken_link(url)
+                result = not result  # Reversed because check_broken_link returns True for brokem links
+                message = f'Error {status_code if status_code else ""}: {reason}'
+            elif d.bozo:
+                result = False
+                if d.headers.get('Content-Type') == 'text/html' or d.headers.get('content-type') == 'text/html':
+                    message = "The target feed has a Content-Type of text/html and \
+                    is not a valid xml feed"
+                else:
+                    message = "The target feed is not a well-formed xml page."
             else:
-                message = "The target feed is not a well-formed xml page."
+                result = True
+                message = None
         else:
-            result = True
-            message = None
+            result, status_code, reason = check_broken_link(url)
+            result = not result  # Reversed because check_broken_link returns True for broken links
+            message = f'Error {status_code if status_code else ""}: {reason}'
     else:
-        result, status_code, reason = check_broken_link(url)
-        result = not result  # Reversed because check_broken_link returns True for broken links
-        message = f'Error {status_code if status_code else ""}: {reason}'
+        result = False
+        message = "The url does not follow http or https scheme"
 
     return (result, message)
 
