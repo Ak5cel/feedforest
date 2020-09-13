@@ -165,14 +165,18 @@ footer p {
 	color: #cbea86;
 }
 
-.article:hover .fa-bookmark {
-	/*visibility: visible;*/
-	color: var(--success);
+@media (any-hover: hover) and (pointer: fine) {
+	.article:hover .fa-bookmark {
+		/*visibility: visible;*/
+		color: var(--success);
+	}
 }
 
-.article .fa-bookmark:hover {
-	font-weight: 900;
-	color: var(--success);
+@media (any-hover: hover) and (pointer: fine) {
+	article .fa-bookmark:hover {
+		font-weight: 900;
+		color: var(--success);
+	}
 }
 
 .article[data-status="bookmarked"] .fa-bookmark {
