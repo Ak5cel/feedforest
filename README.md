@@ -1,7 +1,7 @@
 # FeedForest
 
 FeedForest is a simple newsfeed subscription service. Stay up-to-date on news/articles from your favourite sites
-with a single account.
+with a single account. View the site live at [www.feedforest.dev](https://www.feedforest.dev)
 
 ### Features
   - Subscribe to your favourite RSS feeds, a selection of feeds from various topics is also available
