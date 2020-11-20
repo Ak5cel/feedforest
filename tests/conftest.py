@@ -8,24 +8,34 @@ from src.models import User, UserRole
 from .test_config import TestConfig
 
 
-@pytest.fixture
+@pytest.fixture()
 def client():
-    """Create and return a test client with sqlite database"""
+    flask_app = create_app(config_class=TestConfig)
 
-    app = create_app(config_class=TestConfig)
+    # Flask provides a way to test your application by exposing the Werkzeug test Client
+    # and handling the context locals for you.
+    testing_client = flask_app.test_client()
 
-    with app.test_client() as client:
-        with app.app_context():
-            db.create_all()
+    # Establish an application context before running the tests.
+    app_ctx = flask_app.app_context()
+    app_ctx.push()
 
-            # Add user roles now to avoid errors while creating users later
-            role1 = UserRole(role_name='admin')
-            role2 = UserRole(role_name='user')
-            db.session.add_all([role1, role2])
-            db.session.commit()
-            yield client
+    req_ctx = flask_app.test_request_context()
+    req_ctx.push()
 
-            db.drop_all()
+    db.create_all()
+
+    # Add user roles now to avoid errors while creating users later
+    role1 = UserRole(role_name='admin')
+    role2 = UserRole(role_name='user')
+    db.session.add_all([role1, role2])
+    db.session.commit()
+
+    yield testing_client
+
+    db.drop_all()
+    req_ctx.pop()
+    app_ctx.pop()
 
 
 @pytest.fixture()
