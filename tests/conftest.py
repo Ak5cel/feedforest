@@ -4,8 +4,6 @@ from flask_login import current_user
 from src import create_app, db
 from src.models import User, UserRole
 
-from .test_config import TestConfig
-
 
 @pytest.fixture(autouse=True)
 def disable_network_emails(monkeypatch):
@@ -18,7 +16,7 @@ def disable_network_emails(monkeypatch):
 
 @pytest.fixture()
 def client():
-    flask_app = create_app(config_class=TestConfig)
+    flask_app = create_app()
 
     # Flask provides a way to test your application by exposing the Werkzeug test Client
     # and handling the context locals for you.

@@ -1,4 +1,5 @@
 import datetime
+import os
 from flask import Flask, redirect, url_for, request, flash
 from flask.json import JSONEncoder
 from flask_sqlalchemy import SQLAlchemy
@@ -7,7 +8,7 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, current_user
 from flask_admin import Admin, AdminIndexView
 from celery import Celery
-from .config import Config
+from .config import Config, ProductionConfig, DevConfig, TestingConfig
 from .celery_init import make_celery
 
 
@@ -64,7 +65,19 @@ from .general import forms, routes
 from .user import forms, routes
 
 
-def create_app(config_class=Config):
+def create_app():
+    # If a config_class isn't set (i.e., it is set to the default Config class,
+    # set it depending on the ENV environment variable
+    ENV = os.environ.get('FLASK_ENV')
+    if ENV == 'production':
+        config_class = ProductionConfig
+    elif ENV == 'development':
+        config_class = DevConfig
+    elif ENV == 'testing':
+        config_class = TestingConfig
+    else:
+        config_class = Config
+
     app = Flask(__name__)
     app.config.from_object(config_class)
     db.init_app(app)
