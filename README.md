@@ -1,4 +1,5 @@
 # FeedForest
+[![Build Status](https://travis-ci.com/Ak5cel/feedforest.svg?token=aGCwp4MpV66xzpUAZHpg&branch=master)](https://travis-ci.com/Ak5cel/feedforest)
 
 FeedForest is a simple newsfeed subscription service. Stay up-to-date on news/articles from your favourite sites
 with a single account. View the site live at [www.feedforest.dev](https://www.feedforest.dev)
