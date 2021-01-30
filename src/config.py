@@ -12,7 +12,9 @@ class Config(object):
 
 
 class ProductionConfig(Config):
-    if os.environ.get('FLASK_ENV', None):
+    # Need to check whether FLASK_ENV is 'development' as well, as DevConfig extends
+    # ProductionConfig too
+    if os.environ.get('FLASK_ENV') == 'production' or os.environ.get('FLASK_ENV') == 'development':
         CONFIG_FILE_PATH = os.environ.get('FEEDFOREST_CONFIG_FILE_PATH')
         with open(CONFIG_FILE_PATH) as config_file:
             config = json.load(config_file)
@@ -29,7 +31,7 @@ class ProductionConfig(Config):
 
 
 class DevConfig(ProductionConfig):
-    if os.environ.get('FLASK_ENV', None):
+    if os.environ.get('FLASK_ENV') == 'development':
         DEBUG = True
 
 
