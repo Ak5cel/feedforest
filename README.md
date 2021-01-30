@@ -1,5 +1,7 @@
 # FeedForest
-[![Build Status](https://travis-ci.com/Ak5cel/feedforest.svg?token=aGCwp4MpV66xzpUAZHpg&branch=master)](https://travis-ci.com/Ak5cel/feedforest)
+[![Travis Build Status](https://travis-ci.com/Ak5cel/feedforest.svg?token=aGCwp4MpV66xzpUAZHpg&branch=master)](https://travis-ci.com/Ak5cel/feedforest)
+[![codecov](https://codecov.io/gh/Ak5cel/feedforest/branch/master/graph/badge.svg?token=NM7YWPWBIG)](https://codecov.io/gh/Ak5cel/feedforest)
+[![Active](http://img.shields.io/badge/Status-Active-green.svg)](https://tterb.github.io)
 
 FeedForest is a simple newsfeed subscription service. Stay up-to-date on news/articles from your favourite sites
 with a single account. View the site live at [www.feedforest.dev](https://www.feedforest.dev)
