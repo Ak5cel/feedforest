@@ -98,8 +98,8 @@ def verify_email(token):
         return redirect(url_for('user.my_feeds'))
     user = User.verify_token(token)
     if user is None:
-        flash('Invalid Token.', 'warning')
-        return redirect(url_for('general.home'))
+        flash('Token expired or invalid.', 'warning')
+        return render_template('email-verification-sent.html', title='Token expired', topics=Topic.query.all())
     user.email_verified = True
     db.session.commit()
     flash('Email verified. You may now login.', 'success')
@@ -116,4 +116,4 @@ def verify_new_email(token):
         user.email = email
         db.session.commit()
         flash('Email changed! New email: ' + email, 'success')
-    return redirect(url_for('general.home'))
+    return redirect(url_for('user.my_feeds'))

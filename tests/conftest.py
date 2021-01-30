@@ -1,11 +1,19 @@
-import os
-import tempfile
-
 import pytest
+from flask import url_for
+from flask_login import current_user
 from src import create_app, db
 from src.models import User, UserRole
 
 from .test_config import TestConfig
+
+
+@pytest.fixture(autouse=True)
+def disable_network_emails(monkeypatch):
+    def stunted_send_email():
+        pass
+    monkeypatch.setattr(User, "send_email_verification_email", lambda *args, **kwargs: stunted_send_email())
+    monkeypatch.setattr(User, "send_email_change_email", lambda *args, **kwargs: stunted_send_email())
+    monkeypatch.setattr(User, "send_password_reset_email", lambda *args, **kwargs: stunted_send_email())
 
 
 @pytest.fixture()
@@ -23,6 +31,23 @@ def client():
     req_ctx = flask_app.test_request_context()
     req_ctx.push()
 
+    # db.create_all()
+
+    # # Add user roles now to avoid errors while creating users later
+    # role1 = UserRole(role_name='admin')
+    # role2 = UserRole(role_name='user')
+    # db.session.add_all([role1, role2])
+    # db.session.commit()
+
+    yield testing_client
+
+    # db.drop_all()
+    req_ctx.pop()
+    app_ctx.pop()
+
+
+@pytest.fixture()
+def init_database():
     db.create_all()
 
     # Add user roles now to avoid errors while creating users later
@@ -31,25 +56,19 @@ def client():
     db.session.add_all([role1, role2])
     db.session.commit()
 
-    yield testing_client
+    yield db
 
     db.drop_all()
-    req_ctx.pop()
-    app_ctx.pop()
 
 
 @pytest.fixture()
-def sample_users():
-    """Add two sample users to the User table"""
+def existing_user():
+    """Add a user to the database and return this user"""
 
-    user1 = User(username="JohnDoe1",
-                 email="john_doe1@sample.com",
-                 password_hash=User.hash_password("password1"),
-                 email_verified=True)
-    user2 = User(username="JohnDoe2",
-                 email="john_doe2@sample.com",
-                 password_hash=User.hash_password("password2"),
-                 email_verified=True)
-    db.session.add(user1)
-    db.session.add(user2)
+    user = User(username="JohnDoe1",
+                email="john_doe1@sample.com",
+                password_hash=User.hash_password("password123"),
+                email_verified=True)
+    db.session.add(user)
     db.session.commit()
+    yield user

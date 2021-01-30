@@ -1,4 +1,4 @@
-from src import db
+from src import db, create_app
 from src.models import Topic, RSSFeed, Article
 topics = [
     {
@@ -57,6 +57,9 @@ topics = [
         ]
     }
 ]
+app = create_app()
+ctx = app.app_context()
+ctx.push()
 
 # Add all topics to Topic
 for topic in topics:
@@ -74,7 +77,7 @@ for site in data:
                       feed_name=site['feed_name'],
                       site_url=site['url'],
                       topic=Topic.query.get(1))
-db.session.add(newfeed)
+    db.session.add(newfeed)
 
 # Adding Technology-related feeds
 data = topics[1]['sites']
@@ -83,7 +86,7 @@ for site in data:
                       feed_name=site['feed_name'],
                       site_url=site['url'],
                       topic=Topic.query.get(2))
-db.session.add(newfeed)
+    db.session.add(newfeed)
 
 # Adding Health-related feeds
 data = topics[2]['sites']
@@ -92,6 +95,7 @@ for site in data:
                       feed_name=site['feed_name'],
                       site_url=site['url'],
                       topic=Topic.query.get(3))
-db.session.add(newfeed)
+    db.session.add(newfeed)
 
 db.session.commit()
+ctx.pop()

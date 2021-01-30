@@ -14,11 +14,19 @@ class LoginForm(FlaskForm):
 
 class SignupForm(FlaskForm):
     username = StringField('Username',
-                           validators=[DataRequired(), Length(min=3, max=30)])
+                           validators=[DataRequired(),
+                                       Length(min=3,
+                                              max=30,
+                                              message="Username must be between 3 and 30 characters long.")]
+                           )
     email = StringField('Email',
                         validators=[DataRequired(), Email(message='Not a valid email address')])
     password = PasswordField('Password',
-                             validators=[DataRequired(), Length(min=10, max=50)])
+                             validators=[DataRequired(),
+                                         Length(min=10,
+                                                max=50,
+                                                message="Password must be between 10 and 50 characters long.")]
+                             )
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     accept_terms = BooleanField('I accept the Terms and Conditions', validators=[DataRequired()])
