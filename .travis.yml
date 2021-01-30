@@ -7,4 +7,6 @@ install:
 env:
   - FLASK_ENV=testing
 script:
-  - pytest
+  - pytest --cov src
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
