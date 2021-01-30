@@ -2,10 +2,14 @@ import os
 import json
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-CONFIG_FILE_PATH = os.environ.get('FEEDFOREST_CONFIG_FILE_PATH')
+if not os.environ.get('TESTING'):
+    CONFIG_FILE_PATH = os.environ.get('FEEDFOREST_CONFIG_FILE_PATH')
 
-with open(CONFIG_FILE_PATH) as config_file:
-    config = json.load(config_file)
+    with open(CONFIG_FILE_PATH) as config_file:
+        config = json.load(config_file)
+else:
+    config = {}
+
 
 class Config(object):
     SECRET_KEY = config.get('SECRET_KEY') or '666b601b6739add4b3c04df94d9fe4f1'
