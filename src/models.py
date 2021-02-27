@@ -60,6 +60,23 @@ class Article(db.Model):
     rssfeed_id = db.Column(db.Integer, db.ForeignKey('rss_feed.id'), nullable=False)
 
     def as_dict(self, date_format="ISO"):
+        """
+        Returns a dict version of the article where the key is the
+        column name/attribute and the value is the corresponding value of
+        the attribute.
+
+        Also returns an additional key-value pair to indicate whether
+        the article is bookmarked by the current user or not. This is to make it
+        easier to render in the Jinja templates based on whether the article is
+        bookmarked or not. Only authenticated users can see 'bookmarked' status for
+        the article, so "is_bookmarked" is always `False` for anonymous users.
+
+        date_format can be either 'ISO' or 'UTC_STRING'. The datetimes will be formatted
+        and returned accordingly. This lets Flask handle the conversion and send the
+        values to the templates, without having to use additional html identifiers
+        and javascript to perform the conversions.
+        """
+
         result_dict = {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
         if current_user.is_authenticated:
@@ -128,7 +145,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(30), index=True, unique=True, nullable=False)
     email = db.Column(db.String(254), index=True, unique=True, nullable=False)
     password_hash = db.Column(db.String(128))
-    email_verified = db.Column(db.Boolean, nullable=False, server_default=expression.true())
+    email_verified = db.Column(db.Boolean, nullable=False, server_default=expression.false())
     email_frequency = db.Column(db.Time)
     assoc_objects = db.relationship('UserFeedAssociation')
 
