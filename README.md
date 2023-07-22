@@ -4,7 +4,7 @@
 [![Inactive](http://img.shields.io/badge/Status-Inactive-yellow.svg)](https://github.com/Ak5cel/feedforest)
 
 FeedForest is a simple newsfeed subscription service. Stay up-to-date on news/articles from your favourite sites
-with a single account. View the site live at [www.feedforest.dev](https://www.feedforest.dev)
+with a single account.
 
 ### Features
   - Subscribe to your favourite RSS feeds, a selection of feeds from various topics is also available
